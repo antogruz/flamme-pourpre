@@ -14,4 +14,20 @@ def allWidgets():
     frame.pack()
     window.mainloop()
 
-allWidgets()
+def frames():
+    window = tk.Tk()
+    window.title = "Frames"
+    top = tk.Frame(window).pack()
+    bot = tk.Frame(window).pack(side = "bottom")
+    riders = []
+    for name in ["rouleur", "sprinteur"]:
+        riders.append(tk.Button(top, text = name, fg = "green").pack())
+
+    cards = []
+    for i in range(2, 6):
+        cards.append(tk.Button(bot, text = str(i), bg = "green").pack(side = "left"))
+
+    window.mainloop()
+
+
+frames()
