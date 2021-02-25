@@ -2,9 +2,14 @@
 
 import tkinter as tk
 
-def allWidgets():
+def main():
     window = tk.Tk()
     window.title("Tac first window")
+    allWidgets(window)
+    frames(window)
+    window.mainloop()
+
+def allWidgets(window):
     frame = tk.Frame(window)
     label = tk.Label(window, text = "Bienvenue chez moi !").pack()
     button = tk.Button(frame, text = "Ne clique pas !").pack()
@@ -12,11 +17,8 @@ def allWidgets():
     check = tk.Checkbutton(window).pack()
     entry = tk.Entry(frame).pack()
     frame.pack()
-    window.mainloop()
 
-def frames():
-    window = tk.Tk()
-    window.title = "Frames"
+def frames(window):
     top = tk.Frame(window).pack()
     bot = tk.Frame(window).pack(side = "bottom")
     riders = []
@@ -27,7 +29,6 @@ def frames():
     for i in range(2, 6):
         cards.append(tk.Button(bot, text = str(i), bg = "green").pack(side = "left"))
 
-    window.mainloop()
 
 
-frames()
+main()
