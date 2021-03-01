@@ -5,7 +5,7 @@ import tkinter as tk
 def main():
     window = tk.Tk()
     window.title("Tac first window")
-    alerts(window)
+    pictures(window)
     window.mainloop()
 
 def allWidgets(window):
@@ -74,6 +74,10 @@ def alerts(window):
         tk.Label(window, text = "Alors ce sera sprinteur").pack()
 
 
+def pictures(window):
+    icon = tk.PhotoImage(file = "carte_aqueduc.png")
+    label = tk.Label(window, image = icon)
+    label.pack()
 
 
 
