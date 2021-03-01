@@ -5,7 +5,7 @@ import tkinter as tk
 def main():
     window = tk.Tk()
     window.title("Tac first window")
-    login(window)
+    alerts(window)
     window.mainloop()
 
 def allWidgets(window):
@@ -63,6 +63,17 @@ def login(window):
         tk.Label(window, text = field).grid(row = row, column = 0)
         tk.Entry(window).grid(row = row, column = 1)
     tk.Checkbutton(window, text = "Keep me logged in").grid(columnspan = 2)
+
+import tkinter.messagebox
+def alerts(window):
+    tk.messagebox.showinfo("Alert message", "hey ça roule ?")
+    response = tk.messagebox.askquestion("Quel coureur choisir ?", "Le Rouleur ?")
+    if response == "yes":
+        tk.Label(window, text = "Va pour le rouleur").pack()
+    else:
+        tk.Label(window, text = "Alors ce sera sprinteur").pack()
+
+
 
 
 
