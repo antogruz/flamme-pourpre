@@ -5,8 +5,7 @@ import tkinter as tk
 def main():
     window = tk.Tk()
     window.title("Tac first window")
-    #commands(window)
-    clicks(window)
+    login(window)
     window.mainloop()
 
 def allWidgets(window):
@@ -58,6 +57,12 @@ def clicks(window):
     window.bind("<Button-1>", leftClick)
     window.bind("<Button-2>", middleClick)
     window.bind("<Button-3>", rightClick)
+
+def login(window):
+    for field, row in zip(["Username", "Password"], [0, 1]):
+        tk.Label(window, text = field).grid(row = row, column = 0)
+        tk.Entry(window).grid(row = row, column = 1)
+    tk.Checkbutton(window, text = "Keep me logged in").grid(columnspan = 2)
 
 
 
