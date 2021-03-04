@@ -23,12 +23,22 @@ def track(window, riders):
 
 
 def buttons(tracks, window, riders):
-    def forward():
+    def forward(n):
         rider = riders[4]
-        rider.set(rider.square + 1, 1)
+        rider.set(rider.square + n, 1)
         updateDisplay(tracks, riders)
 
-    tk.Button(window, text = "Avance!", command = forward).pack()
+    def plus1():
+        forward(1)
+    def plus2():
+        forward(2)
+    def plus5():
+        forward(5)
+    def plus9():
+        forward(9)
+
+    for i, plus in zip([1, 2, 5, 9], [plus1, plus2, plus5, plus9]):
+        tk.Button(window, text = i, command = plus).pack(side = "left")
 
 
 def updateDisplay(tracks, riders):
