@@ -37,3 +37,6 @@ def descent(window):
 
 def slot(window, border='black'):
     return tk.Label(window, text = "-", highlightthickness = 1, highlightbackground = border, width = 3)
+
+def empty(widget):
+    widget.config(text = "-", fg = "black")

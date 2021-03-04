@@ -1,19 +1,38 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from track import createTrack
+from track import createTrack, empty
+from frames import Frames
 
 def main():
     window = tk.Tk()
     window.title("flamme rouge")
-    run(window)
+    riders = createRiders()
+    frames = Frames()
+    tracks = track(frames.new(window), riders)
+    buttons(tracks, frames.new(window), riders)
     window.mainloop()
 
-def run(window):
+def track(window, riders):
     trackWidgets = createTrack(window)
-    riders = createRiders()
     setPositions(riders)
     displayRiders(trackWidgets, riders)
+    return trackWidgets
+
+def buttons(tracks, window, riders):
+    def forward():
+        rider = riders[4]
+        move(tracks, rider, rider.square + 1)
+
+    tk.Button(window, text = "Avance!", command = forward).pack()
+
+
+def move(track, rider, square):
+    start = track[rider.square][rider.lane]
+    empty(start)
+    rider.set(square, 1)
+    end = track[square][1]
+    rider.display(end)
 
 def displayRiders(track, riders):
     for rider in riders:

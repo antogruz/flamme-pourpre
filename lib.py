@@ -2,6 +2,7 @@
 
 import tkinter as tk
 import colors
+from frames import Frames
 
 def main():
     window = tk.Tk()
@@ -28,16 +29,6 @@ def showColors(window):
         if (row > 36):
             row = 0
             col += 1
-
-class Frames():
-    def __init__(self):
-        self.count = 0
-
-    def new(self, window):
-        result = tk.Frame(window)
-        self.count += 1
-        result.grid(row = self.count)
-        return result
 
 main()
 
