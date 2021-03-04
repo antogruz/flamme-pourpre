@@ -22,17 +22,21 @@ def track(window, riders):
 def buttons(tracks, window, riders):
     def forward():
         rider = riders[4]
-        move(tracks, rider, rider.square + 1)
+        rider.set(rider.square + 1, 1)
+        updateDisplay(tracks, riders)
 
     tk.Button(window, text = "Avance!", command = forward).pack()
 
 
-def move(track, rider, square):
-    start = track[rider.square][rider.lane]
-    empty(start)
-    rider.set(square, 1)
-    end = track[square][1]
-    rider.display(end)
+def updateDisplay(tracks, riders):
+    removeTokens(tracks)
+    displayRiders(tracks, riders)
+
+
+def removeTokens(tracks):
+    for square in tracks:
+        for lane in square:
+            empty(lane)
 
 def displayRiders(track, riders):
     for rider in riders:
