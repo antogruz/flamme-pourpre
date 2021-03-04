@@ -8,6 +8,7 @@ def tests():
 class RiderTest(Tester):
     def __init__(self):
         self.rider = Rider(0, 0)
+        self.race = Race()
 
     def testRiderAtStart(self):
         assert_equals((0, 0), self.rider.position())
@@ -17,11 +18,15 @@ class RiderTest(Tester):
         assert_equals((1, 0), self.rider.position())
 
     def testTwoRiders(self):
-        race = Race()
-        race.addRider(1, 0)
-        self.rider.move(1, race)
+        self.race.addRider(1, 0)
+        self.rider.move(1, self.race)
         assert_equals((1, 1), self.rider.position())
 
+    def testBlocked(self):
+        self.race.addRider(1, 0)
+        self.race.addRider(1, 1)
+        self.rider.move(1, self.race)
+        assert_equals((0, 0), self.rider.position())
 
 
 class Rider():
@@ -33,9 +38,17 @@ class Rider():
         return (self.square, self.lane)
 
     def move(self, n, race):
-        self.square += n
-        if not race.free(self.square, 0):
-            self.lane = 1
+        slot = (self.square + n, 0)
+        while not race.free(slot):
+            slot = previous(slot)
+        self.square, self.lane = slot
+
+
+def previous(slot):
+    if slot[1] == 0:
+        return (slot[0], 1)
+    return (slot[0] - 1, 0)
+
 
 class Race():
     def __init__(self):
@@ -44,7 +57,7 @@ class Race():
     def addRider(self, square, lane):
         self.obstacles.append((square, lane))
 
-    def free(self, square, lane):
-        return not (square, lane) in self.obstacles
+    def free(self, slot):
+        return not slot in self.obstacles
 
 tests()
