@@ -48,6 +48,11 @@ class RiderTest(Tester):
         self.rider.move(9, self.race)
         assert_equals((5, 0), self.rider.position())
 
+    def testStopBeforeAscent(self):
+        self.race.set("ascent", 7)
+        self.rider.move(9, self.race)
+        assert_equals((6, 0), self.rider.position())
+
 
 class Rider():
     def __init__(self, square, lane):
@@ -65,10 +70,16 @@ class Rider():
         starting = race.getRoadType(self.square)
         if starting == "descent":
             distance = max(distance, 5)
-        if containsAscent(race, self.square, self.square + distance):
-            distance = min(distance, 5)
+        ascentFree = getDistanceBeforeAscent(race, self.square, distance) - 1
+        firstConstraint = max(ascentFree, 5)
+        distance = min(firstConstraint, distance)
         return distance
 
+def getDistanceBeforeAscent(race, start, maxDistance):
+    for i in range(maxDistance + 1):
+        if race.getRoadType(start + i) == "ascent":
+            return i
+    return maxDistance + 1
 
 def findAvailableSlot(race, square):
         slot = (square, 0)
