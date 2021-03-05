@@ -70,16 +70,20 @@ class Rider():
         starting = race.getRoadType(self.square)
         if starting == "descent":
             distance = max(distance, 5)
-        ascentFree = getDistanceBeforeAscent(race, self.square, distance) - 1
-        firstConstraint = max(ascentFree, 5)
-        distance = min(firstConstraint, distance)
+
+        while not ascentValid(race, self.square, distance):
+            distance -= 1
         return distance
 
-def getDistanceBeforeAscent(race, start, maxDistance):
-    for i in range(maxDistance + 1):
-        if race.getRoadType(start + i) == "ascent":
-            return i
-    return maxDistance + 1
+
+def ascentValid(race, start, distance):
+    return distance <= 5 or not containsAscent(race, start, start + distance)
+
+def containsAscent(race, start, end):
+    for i in range(start, end + 1):
+        if race.getRoadType(i) == "ascent":
+            return True
+    return False
 
 def findAvailableSlot(race, square):
         slot = (square, 0)
@@ -91,12 +95,6 @@ def previous(slot):
     if slot[1] == 0:
         return (slot[0], 1)
     return (slot[0] - 1, 0)
-
-def containsAscent(race, start, end):
-    for i in range(start, end + 1):
-        if race.getRoadType(i) == "ascent":
-            return True
-    return False
 
 class Race():
     def __init__(self, length = 100):
