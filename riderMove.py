@@ -121,4 +121,5 @@ class RiderTest(Tester):
         assert_equals((6, 0), self.rider.position())
 
 
-tests()
+if __name__ == "__main__":
+    tests()
