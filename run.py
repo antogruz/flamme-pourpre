@@ -4,29 +4,31 @@ import tkinter as tk
 from trackDisplay import displayTrack, empty
 from frames import Frames
 from riders import createRiders, setPositions
+from track import createTrack
 
 def main():
     window = tk.Tk()
     window.title("flamme rouge")
     riders = createRiders()
     frames = Frames()
-    tracks = track(frames.new(window), riders)
-    buttons(tracks, frames.new(window), riders)
+    track = createTrack()
+    boardWidgets = displayBoard(frames.new(window), track, riders)
+    buttons(boardWidgets, frames.new(window), riders)
     window.mainloop()
 
 
-def track(window, riders):
-    trackWidgets = displayTrack(window)
+def displayBoard(window, track, riders):
+    trackWidgets = displayTrack(window, track)
     setPositions(riders)
     displayRiders(trackWidgets, riders)
     return trackWidgets
 
 
-def buttons(tracks, window, riders):
+def buttons(boardWidgets, window, riders):
     def forward(n):
         rider = riders[4]
         rider.set(rider.square + n, 1)
-        updateDisplay(tracks, riders)
+        updateDisplay(boardWidgets, riders)
 
     def plus1():
         forward(1)
@@ -41,13 +43,13 @@ def buttons(tracks, window, riders):
         tk.Button(window, text = i, command = plus).pack(side = "left")
 
 
-def updateDisplay(tracks, riders):
-    removeTokens(tracks)
-    displayRiders(tracks, riders)
+def updateDisplay(boardWidgets, riders):
+    removeTokens(boardWidgets)
+    displayRiders(boardWidgets, riders)
 
 
-def removeTokens(tracks):
-    for square in tracks:
+def removeTokens(boardWidgets):
+    for square in boardWidgets:
         for lane in square:
             empty(lane)
 

@@ -2,40 +2,36 @@
 
 import tkinter as tk
 
-def displayTrack(window):
+def displayTrack(window, track):
     widgets = []
-    for column in range(60):
+    column = 0
+    while (track.getRoadType(column) != "out"):
         square = []
         for row in range(2):
-            lane = None
-            if column <= 4:
-                lane = start(window)
-            elif column >= 13 and column < 19:
-                lane = mountain(window)
-            elif column >= 19 and column < 23:
-                lane = descent(window)
-            elif column >= 55:
-                lane = end(window)
-            else:
-                lane = slot(window)
+            lane = getLabel(window, track.getRoadType(column))
             lane.grid(row = row, column = column, padx = 1, pady = 1)
             square.append(lane)
         widgets.append(square)
+        column += 1
     return widgets
 
-def end(window):
-    return start(window)
 
-def start(window):
-    return slot(window, 'goldenrod')
+def getLabel(window, roadType):
+    if roadType == "start":
+        return slot(window, 'goldenrod')
 
-def mountain(window):
-    return slot(window, 'red')
+    if roadType == "end":
+        return slot(window, 'goldenrod')
 
-def descent(window):
-    return slot(window, 'blue')
+    if roadType == "ascent":
+        return slot(window, 'red')
 
-def slot(window, border='black'):
+    if roadType == "descent":
+        return slot(window, 'blue')
+
+    return slot(window, 'black')
+
+def slot(window, border):
     return tk.Label(window, text = "-", highlightthickness = 1, highlightbackground = border, width = 3)
 
 def empty(widget):
