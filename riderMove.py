@@ -1,59 +1,5 @@
 #!/usr/bin/env python3
 
-from unittests import Tester, assert_equals
-
-def tests():
-    RiderTest().runTests()
-
-class RiderTest(Tester):
-    def __init__(self):
-        self.rider = Rider(0, 0)
-        self.race = Race()
-
-    def testRiderAtStart(self):
-        assert_equals((0, 0), self.rider.position())
-
-    def testRiderMove(self):
-        self.rider.move(1, Race())
-        assert_equals((1, 0), self.rider.position())
-
-    def testTwoRiders(self):
-        self.race.addRider(1, 0)
-        self.rider.move(1, self.race)
-        assert_equals((1, 1), self.rider.position())
-
-    def testBlocked(self):
-        self.race.addRider(1, 0)
-        self.race.addRider(1, 1)
-        self.rider.move(1, self.race)
-        assert_equals((0, 0), self.rider.position())
-
-    def testDescent(self):
-        self.race.setAll("descent")
-        self.rider.move(1, self.race)
-        assert_equals((5, 0), self.rider.position())
-
-    def testEndOfRace(self):
-        self.race = Race(4)
-        self.rider.move(4, self.race)
-        assert_equals((3, 0), self.rider.position())
-
-    def testStartInAscent(self):
-        self.race.setAll("ascent")
-        self.rider.move(9, self.race)
-        assert_equals((5, 0), self.rider.position())
-
-    def testThroughAscent(self):
-        self.race.set("ascent", 1)
-        self.rider.move(9, self.race)
-        assert_equals((5, 0), self.rider.position())
-
-    def testStopBeforeAscent(self):
-        self.race.set("ascent", 7)
-        self.rider.move(9, self.race)
-        assert_equals((6, 0), self.rider.position())
-
-
 class Rider():
     def __init__(self, square, lane):
         self.square = square
@@ -119,5 +65,60 @@ class Race():
 
     def isFree(self, slot):
         return not slot in self.obstacles
+
+
+from unittests import Tester, assert_equals
+
+def tests():
+    RiderTest().runTests()
+
+class RiderTest(Tester):
+    def __init__(self):
+        self.rider = Rider(0, 0)
+        self.race = Race()
+
+    def testRiderAtStart(self):
+        assert_equals((0, 0), self.rider.position())
+
+    def testRiderMove(self):
+        self.rider.move(1, Race())
+        assert_equals((1, 0), self.rider.position())
+
+    def testTwoRiders(self):
+        self.race.addRider(1, 0)
+        self.rider.move(1, self.race)
+        assert_equals((1, 1), self.rider.position())
+
+    def testBlocked(self):
+        self.race.addRider(1, 0)
+        self.race.addRider(1, 1)
+        self.rider.move(1, self.race)
+        assert_equals((0, 0), self.rider.position())
+
+    def testDescent(self):
+        self.race.setAll("descent")
+        self.rider.move(1, self.race)
+        assert_equals((5, 0), self.rider.position())
+
+    def testEndOfRace(self):
+        self.race = Race(4)
+        self.rider.move(4, self.race)
+        assert_equals((3, 0), self.rider.position())
+
+    def testStartInAscent(self):
+        self.race.setAll("ascent")
+        self.rider.move(9, self.race)
+        assert_equals((5, 0), self.rider.position())
+
+    def testThroughAscent(self):
+        self.race.set("ascent", 1)
+        self.rider.move(9, self.race)
+        assert_equals((5, 0), self.rider.position())
+
+    def testStopBeforeAscent(self):
+        self.race.set("ascent", 7)
+        self.rider.move(9, self.race)
+        assert_equals((6, 0), self.rider.position())
+
 
 tests()
