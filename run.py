@@ -3,31 +3,40 @@
 import tkinter as tk
 from trackDisplay import displayTrack, empty
 from frames import Frames
-from riders import createRiders, setPositions
-from track import createTrack
+from riderDisplay import createRiders
+from track import Track
+from riders import Riders
 
 def main():
     window = tk.Tk()
     window.title("flamme rouge")
     riders = createRiders()
+    road = RoadState(createTrack(), riders)
     frames = Frames()
-    track = createTrack()
-    boardWidgets = displayBoard(frames.new(window), track, riders)
-    buttons(boardWidgets, frames.new(window), riders)
+    boardWidgets = displayBoard(frames.new(window), road, riders)
+    buttons(boardWidgets, frames.new(window), road, riders)
     window.mainloop()
 
 
-def displayBoard(window, track, riders):
-    trackWidgets = displayTrack(window, track)
-    setPositions(riders)
+def createTrack():
+    return [(5, "start"), (8, "normal"), (6, "ascent"), (4, "descent"), (32, "normal"), (5, "end")]
+
+class RoadState(Track, Riders):
+    def __init__(self, trackDetail, riders):
+        Track.__init__(self, trackDetail)
+        Riders.__init__(self, riders)
+
+
+def displayBoard(window, road, riders):
+    trackWidgets = displayTrack(window, road)
     displayRiders(trackWidgets, riders)
     return trackWidgets
 
 
-def buttons(boardWidgets, window, riders):
+def buttons(boardWidgets, window, road, riders):
     def forward(n):
-        rider = riders[4]
-        rider.set(rider.square + n, 1)
+        rider = riders[2]
+        rider.move(n, road)
         updateDisplay(boardWidgets, riders)
 
     def plus1():
@@ -54,9 +63,9 @@ def removeTokens(boardWidgets):
             empty(lane)
 
 
-def displayRiders(track, riders):
+def displayRiders(boardWidgets, riders):
     for rider in riders:
-        rider.display(track[rider.square][rider.lane])
+        rider.display(boardWidgets)
 
 main()
 

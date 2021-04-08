@@ -9,7 +9,7 @@ def displayTrack(window, track):
         square = []
         for row in range(2):
             lane = getLabel(window, track.getRoadType(column))
-            lane.grid(row = row, column = column, padx = 1, pady = 1)
+            lane.grid(row = 1 - row, column = column, padx = 1, pady = 1)
             square.append(lane)
         widgets.append(square)
         column += 1

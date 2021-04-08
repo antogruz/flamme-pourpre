@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-def createTrack():
-    detail = [(5, "start"), (8, "normal"), (6, "ascent"), (4, "descent"), (32, "normal"), (5, "end")]
-    return Track(detail)
-
 class Track():
     def __init__(self, trackDetail):
         self.squares = []
