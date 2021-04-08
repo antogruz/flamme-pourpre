@@ -2,7 +2,7 @@
 
 import tkinter as tk
 
-def createTrack(window):
+def displayTrack(window):
     widgets = []
     for column in range(60):
         square = []

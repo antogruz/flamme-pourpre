@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from track import createTrack, empty
+from trackDisplay import displayTrack, empty
 from frames import Frames
 from riders import createRiders, setPositions
 
@@ -16,7 +16,7 @@ def main():
 
 
 def track(window, riders):
-    trackWidgets = createTrack(window)
+    trackWidgets = displayTrack(window)
     setPositions(riders)
     displayRiders(trackWidgets, riders)
     return trackWidgets
