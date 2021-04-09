@@ -5,7 +5,7 @@ import tkinter as tk
 def main():
     window = tk.Tk()
     window.title("Tac first window")
-    pictures(window)
+    allWidgets(window)
     window.mainloop()
 
 def allWidgets(window):
