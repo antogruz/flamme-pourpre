@@ -5,7 +5,7 @@ from trackDisplay import displayTrack, empty
 from frames import Frames
 from riderDisplay import createRiders
 from track import Track
-from riders import Riders
+from obstacles import Obstacles
 
 def main():
     window = tk.Tk()
@@ -28,7 +28,7 @@ def displayBoard(window, road, riders):
 
 
 def buttons(boardWidgets, window, road, riders):
-    obstacles = Riders(riders)
+    obstacles = Obstacles(riders)
 
     def forward(n):
         rider = riders[2]

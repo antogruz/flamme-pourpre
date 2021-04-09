@@ -36,12 +36,12 @@ class GameTest(Tester):
 
 
 
-from riders import Riders
+from obstacles import Obstacles
 class Game():
     def __init__(self, track, riders):
         self.track = track
         self.riders = riders
-        self.obstacles = Riders(riders)
+        self.obstacles = Obstacles(riders)
 
     def isOver(self):
         for r in self.riders:
