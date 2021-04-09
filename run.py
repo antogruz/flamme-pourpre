@@ -11,21 +11,15 @@ def main():
     window = tk.Tk()
     window.title("flamme rouge")
     riders = createRiders()
-    road = RoadState(createTrack(), riders)
+    track = Track(createTrack())
     frames = Frames()
-    boardWidgets = displayBoard(frames.new(window), road, riders)
-    buttons(boardWidgets, frames.new(window), road, riders)
+    boardWidgets = displayBoard(frames.new(window), track, riders)
+    buttons(boardWidgets, frames.new(window), track, riders)
     window.mainloop()
 
 
 def createTrack():
     return [(5, "start"), (8, "normal"), (6, "ascent"), (4, "descent"), (32, "normal"), (5, "end")]
-
-class RoadState(Track, Riders):
-    def __init__(self, trackDetail, riders):
-        Track.__init__(self, trackDetail)
-        Riders.__init__(self, riders)
-
 
 def displayBoard(window, road, riders):
     trackWidgets = displayTrack(window, road)
@@ -34,9 +28,11 @@ def displayBoard(window, road, riders):
 
 
 def buttons(boardWidgets, window, road, riders):
+    obstacles = Riders(riders)
+
     def forward(n):
         rider = riders[2]
-        rider.move(n, road)
+        rider.move(n, road, obstacles)
         updateDisplay(boardWidgets, riders)
 
     def plus1():

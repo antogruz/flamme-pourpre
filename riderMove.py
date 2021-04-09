@@ -8,22 +8,26 @@ class Rider():
     def position(self):
         return (self.square, self.lane)
 
-    def move(self, distance, race):
-        distance = self.adaptDistanceToRoadType(distance, race)
-        self.square, self.lane = self.findAvailableSlot(race, self.square + distance)
+    def move(self, distance, track, obstacles):
+        distance = self.adaptDistanceToRoadType(distance, track)
+        self.square, self.lane = self.findAvailableSlot(obstacles, self.square + distance)
 
-    def adaptDistanceToRoadType(self, distance, race):
-        starting = race.getRoadType(self.square)
+    def adaptDistanceToRoadType(self, distance, track):
+        starting = track.getRoadType(self.square)
         if starting == "descent":
             distance = max(distance, 5)
 
-        while not ascentValid(race, self.square, distance):
+        while track.getRoadType(self.square + distance) == "out":
             distance -= 1
+
+        while not ascentValid(track, self.square, distance):
+            distance -= 1
+
         return distance
 
-    def findAvailableSlot(self, race, square):
+    def findAvailableSlot(self, obstacles, square):
             slot = (square, 0)
-            while not (race.isFree(slot) and race.getRoadType(slot[0]) != "out") :
+            while not (obstacles.isFree(slot) ) :
                 if slot == self.position():
                     return slot
                 slot = previous(slot)
@@ -79,54 +83,57 @@ class RiderTest(Tester):
         self.rider = Rider(0, 0)
         self.race = Race()
 
+    def move(self, distance):
+        self.rider.move(distance, self.race, self.race)
+
     def testRiderAtStart(self):
         assert_equals((0, 0), self.rider.position())
 
     def testRiderMove(self):
-        self.rider.move(1, Race())
+        self.move(1)
         assert_equals((1, 0), self.rider.position())
 
     def testTwoRiders(self):
         self.race.addRider(1, 0)
-        self.rider.move(1, self.race)
+        self.move(1)
         assert_equals((1, 1), self.rider.position())
 
     def testBlocked(self):
         self.race.addRider(1, 0)
         self.race.addRider(1, 1)
-        self.rider.move(1, self.race)
+        self.move(1)
         assert_equals((0, 0), self.rider.position())
 
     def testDescent(self):
         self.race.setAll("descent")
-        self.rider.move(1, self.race)
+        self.move(1)
         assert_equals((5, 0), self.rider.position())
 
     def testEndOfRace(self):
         self.race = Race(4)
-        self.rider.move(4, self.race)
+        self.move(4)
         assert_equals((3, 0), self.rider.position())
 
     def testStartInAscent(self):
         self.race.setAll("ascent")
-        self.rider.move(9, self.race)
+        self.move(9)
         assert_equals((5, 0), self.rider.position())
 
     def testThroughAscent(self):
         self.race.set("ascent", 1)
-        self.rider.move(9, self.race)
+        self.move(9)
         assert_equals((5, 0), self.rider.position())
 
     def testStopBeforeAscent(self):
         self.race.set("ascent", 7)
-        self.rider.move(9, self.race)
+        self.move(9)
         assert_equals((6, 0), self.rider.position())
 
     def testShouldStayAtSamePositionIfBlocked(self):
         self.race.addRider(0, 0) # Myself
         self.race.addRider(1, 0)
         self.race.addRider(1, 1)
-        self.rider.move(1, self.race)
+        self.move(1)
         assert_equals((0, 0), self.rider.position())
 
 
