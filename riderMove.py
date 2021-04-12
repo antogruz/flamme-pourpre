@@ -12,8 +12,12 @@ class Rider():
         distance = self.adaptDistanceToRoadType(distance, track)
         self.square, self.lane = self.findAvailableSlot(obstacles, self.square + distance)
 
-    def getSlipstream(self):
+    def getSlipstream(self, track):
+        if track.getRoadType(self.square) == "ascent":
+            return False
+
         self.square += 1
+        return True
 
     def adaptDistanceToRoadType(self, distance, track):
         starting = track.getRoadType(self.square)

@@ -1,65 +1,95 @@
 #!/usr/bin/env python3
 
-from unittests import assert_equals
+from unittests import assert_equals, Tester
 from riderMove import Rider
 
 def tests():
-    testOneRiderDontMove()
-    testTwoRiders()
-    testTooFar()
-    testNoSlipstreamInSameGroup()
-    test3Groups()
-    testWholeGroupStreamed()
-    testChainStream()
+    SlipstremingTester().runTests()
+
+class SlipstremingTester(Tester):
+    def __init__(self):
+        self.rider = Rider(0, 0)
+        self.track = Track("normal")
+        self.others = []
+
+    def slipstream(self):
+        slipstreaming([self.rider] + self.others, self.track)
+
+    def addRider(self, square):
+        self.others.append(Rider(square, 0))
+
+    def assertPosition(self, square):
+        assert_equals((square, 0), self.rider.position())
+
+    def testOneRiderDontMove(self):
+        self.slipstream()
+        self.assertPosition(0)
+
+    def testTwoRiders(self):
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(1)
+
+    def testTooFar(self):
+        self.addRider(3)
+        self.slipstream()
+        self.assertPosition(0)
+
+    def testNoSlipstreamInSameGroup(self):
+        self.addRider(1)
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(0)
+
+    def test3Groups(self):
+        self.rider = Rider(3, 0)
+        self.addRider(0)
+        self.addRider(5)
+        self.slipstream()
+        self.assertPosition(4)
+
+    def testWholeGroupStreamed(self):
+        self.rider = Rider(1, 0)
+        self.addRider(0)
+        self.addRider(2)
+        self.addRider(4)
+        self.slipstream()
+        self.assertPosition(2)
+
+    def testChainStream(self):
+        self.addRider(2)
+        self.addRider(4)
+        self.slipstream()
+        self.assertPosition(2)
+
+    def testRiderInAscentIsNotStreamed(self):
+        self.track = Track("ascent")
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(0)
 
 
-def testOneRiderDontMove():
-    rider = Rider(0, 0)
-    track = None
-    slipstreaming([rider], track)
-    assert_equals((0, 0), rider.position())
+class Track():
+    def __init__(self, type):
+        self.type = type
 
-def testTwoRiders():
-    rider = Rider(0, 0)
-    aheadRider = Rider(2, 0)
-    slipstreaming([aheadRider, rider], None)
-    assert_equals((1, 0), rider.position())
+    def getRoadType(self, square):
+        return self.type
 
-def testTooFar():
-    rider = Rider(0, 0)
-    aheadRider = Rider(3, 0)
-    slipstreaming([aheadRider, rider], None)
-    assert_equals((0, 0), rider.position())
-
-def testNoSlipstreamInSameGroup():
-    rider = Rider(0, 0)
-    slipstreaming([rider, Rider(1, 0), Rider(2, 0)], None)
-    assert_equals((0, 0), rider.position())
-
-def test3Groups():
-    rider = Rider(3, 0)
-    slipstreaming([rider, Rider(0, 0), Rider(5, 0)], None)
-    assert_equals((4, 0), rider.position())
-
-def testWholeGroupStreamed():
-    rider = Rider(1, 0)
-    slipstreaming([rider, Rider(0, 0), Rider(2, 0), Rider(4, 0)], None)
-    assert_equals((2, 0), rider.position())
-
-def testChainStream():
-    rider = Rider(0, 0)
-    slipstreaming([rider, Rider(2, 0), Rider(4, 0)], None)
-    assert_equals((2, 0), rider.position())
-
+def slipstreamingNormal(riders):
+    slipstreaming(riders, Track("normal"))
 
 def slipstreaming(riders, track):
     candidates = sorted(riders, key=square)
     while candidates:
         group = getBackTrackGroup(candidates)
+        groupIsStreamed = False
         if someCanSlipstream(group, riders):
             for rider in group.riders:
-                rider.getSlipstream()
-        else:
+                if rider.getSlipstream(track):
+                    groupIsStreamed = True
+
+        if not groupIsStreamed:
             candidates = candidates[len(group.riders):]
 
 def square(rider):
