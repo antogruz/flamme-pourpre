@@ -36,6 +36,12 @@ class PlayerTest(Tester):
         p.pickNextMoves()
         assert_equals(3, rouleur.nextMove)
 
+    def testNoCardsLeftMeans2(self):
+        rider = Rider("exhausted", [])
+        Player(ChoiceDoer([0, 0, 0]), [rider]).pickNextMoves()
+        assert_equals(2, rider.nextMove)
+
+
 class ChoiceLogger():
     def __init__(self):
         self.choices = []
@@ -91,6 +97,8 @@ class Player():
 
     def pickCard(self, rider):
         cards = rider.draw()
+        if not cards:
+            return 2
         return cards[self.pick(cards)]
 
     def pick(self, list):
