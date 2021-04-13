@@ -96,27 +96,23 @@ def slipstreamingNormal(riders):
     slipstreaming(riders, Track("normal"))
 
 def slipstreaming(riders, track):
-    candidates = sorted(riders, key=square)
+    candidates = tailToHead(riders)
     while candidates:
-        group = getBackTrackGroup(candidates)
-        groupIsStreamed = False
-        if someCanSlipstream(group, riders, track):
-            groupIsStreamed = group.getSlipstream(track)
+        group, candidates = popBackTrackGroup(candidates)
 
-        if not groupIsStreamed:
-            candidates = candidates[len(group.riders):]
+        if someCanSlipstream(group, candidates, track):
+            streamedRiders = group.getSlipstream(track)
+            candidates = tailToHead(streamedRiders) + candidates
 
-def square(rider):
-    return rider.position()[0]
 
-def getBackTrackGroup(orderedRiders):
+def popBackTrackGroup(orderedRiders):
     group = Group()
     group.append(orderedRiders[0])
-    for rider in orderedRiders[1:]:
+    for rider in removeFirsts(orderedRiders, 1):
         if partOf(rider, group):
             group.append(rider)
-    orderedRider = orderedRiders[len(group.riders):]
-    return group
+
+    return group, removeFirsts(orderedRiders, len(group.riders))
 
 def partOf(rider, group):
     return rider.position()[0] <= group.head + 1
@@ -134,15 +130,27 @@ class Group():
         self.head = rider.position()[0]
 
     def getSlipstream(self, track):
-        self.riders = sorted(self.riders, key=square, reverse=True)
-        groupIsStreamed = False
-        for rider in self.riders:
+        self.riders = headTotail(self.riders)
+        for i, rider in enumerate(self.riders):
             if not rider.getSlipstream(track):
-                return groupIsStreamed
-            groupIsStreamed = True
+                return keepFirsts(self.riders, i)
 
-        return groupIsStreamed
+        return self.riders
 
+def tailToHead(riders):
+    return sorted(riders, key = square)
+
+def headTotail(riders):
+    return sorted(riders, key = square, reverse = True)
+
+def square(rider):
+    return rider.position()[0]
+
+def removeFirsts(l, count):
+    return l[count:]
+
+def keepFirsts(l, count):
+    return l[0:count]
 
 def someCanSlipstream(group, allRiders, track):
     for rider in allRiders:
