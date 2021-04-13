@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from track import streamable
+
 class Rider():
     def __init__(self, square, lane):
         self.square = square
@@ -13,7 +15,7 @@ class Rider():
         self.square, self.lane = self.findAvailableSlot(obstacles, self.square + distance)
 
     def getSlipstream(self, track):
-        if track.getRoadType(self.square) == "ascent":
+        if not streamable(track.getRoadType(self.square)):
             return False
 
         self.square += 1

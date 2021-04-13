@@ -12,6 +12,10 @@ class Track():
             return "out"
         return self.squares[square]
 
+
+def streamable(road):
+    return not road in ["end", "ascent"]
+
 from unittests import Tester, assert_equals
 
 def tests():
@@ -25,6 +29,7 @@ class TrackTest(Tester):
     def testNormal(self):
         track = Track([(3, "normal")])
         assert_equals("normal", track.getRoadType(1))
+
 
 if __name__ == "__main__":
     tests()

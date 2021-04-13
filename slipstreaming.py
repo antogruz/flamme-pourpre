@@ -2,7 +2,7 @@
 
 from unittests import assert_equals, Tester
 from riderMove import Rider
-from track import Track
+from track import Track, streamable
 
 def tests():
     SlipstremingTester().runTests()
@@ -91,9 +91,12 @@ class SlipstremingTester(Tester):
         assert_equals((0, 0), grimpeur.position())
         assert_equals((2, 0), rouleur.position())
 
+    def testNoSlipstreamingAfterEnd(self):
+        self.track = Track([(5, "end")])
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(0)
 
-def slipstreamingNormal(riders):
-    slipstreaming(riders, Track("normal"))
 
 def slipstreaming(riders, track):
     candidates = tailToHead(riders)
@@ -159,7 +162,7 @@ def someCanSlipstream(group, allRiders, track):
     return False
 
 def canSlipstream(square, rider, track):
-    if track.getRoadType(rider.square) == "ascent":
+    if not streamable(track.getRoadType(rider.square)):
         return False
 
     return rider.square == square + 2
