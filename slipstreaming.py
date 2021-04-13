@@ -2,6 +2,7 @@
 
 from unittests import assert_equals, Tester
 from riderMove import Rider
+from track import Track
 
 def tests():
     SlipstremingTester().runTests()
@@ -9,7 +10,7 @@ def tests():
 class SlipstremingTester(Tester):
     def __init__(self):
         self.rider = Rider(0, 0)
-        self.track = Track("normal")
+        self.track = Track([(10, "normal")])
         self.others = []
 
     def slipstream(self):
@@ -63,18 +64,33 @@ class SlipstremingTester(Tester):
         self.assertPosition(2)
 
     def testRiderInAscentIsNotStreamed(self):
-        self.track = Track("ascent")
+        self.track = Track([(1, "ascent"), (10, "normal")])
         self.addRider(2)
         self.slipstream()
         self.assertPosition(0)
 
+    def testRiderInAscentCannotStreamOthers(self):
+        self.track = Track([(2, "normal"), (1, "ascent")])
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(0)
 
-class Track():
-    def __init__(self, type):
-        self.type = type
+    def testHeadOfGroupInAscent(self):
+        self.track = Track([(1, "normal"), (1, "ascent"), (2, "normal")])
+        self.addRider(1)
+        self.addRider(3)
+        self.slipstream()
+        self.assertPosition(0)
 
-    def getRoadType(self, square):
-        return self.type
+    def testBackOfGroupInAscent(self):
+        track = Track([(1, "ascent"), (9, "normal")])
+        grimpeur = Rider(0, 0)
+        rouleur = Rider(1, 0)
+        streamer = Rider(3, 0)
+        slipstreaming([grimpeur, rouleur, streamer], track)
+        assert_equals((0, 0), grimpeur.position())
+        assert_equals((2, 0), rouleur.position())
+
 
 def slipstreamingNormal(riders):
     slipstreaming(riders, Track("normal"))
@@ -84,10 +100,8 @@ def slipstreaming(riders, track):
     while candidates:
         group = getBackTrackGroup(candidates)
         groupIsStreamed = False
-        if someCanSlipstream(group, riders):
-            for rider in group.riders:
-                if rider.getSlipstream(track):
-                    groupIsStreamed = True
+        if someCanSlipstream(group, riders, track):
+            groupIsStreamed = group.getSlipstream(track)
 
         if not groupIsStreamed:
             candidates = candidates[len(group.riders):]
@@ -105,27 +119,42 @@ def getBackTrackGroup(orderedRiders):
     return group
 
 def partOf(rider, group):
-    return rider.position()[0] <= group.endPosition + 1
+    return rider.position()[0] <= group.head + 1
 
 class Group():
     def __init__(self):
         self.riders = []
-        self.endPosition = -10
+        self.head = -10
 
     def isEmpty(self):
         return self.riders
 
     def append(self, rider):
         self.riders.append(rider)
-        self.endPosition = rider.position()[0]
+        self.head = rider.position()[0]
+
+    def getSlipstream(self, track):
+        self.riders = sorted(self.riders, key=square, reverse=True)
+        groupIsStreamed = False
+        for rider in self.riders:
+            if not rider.getSlipstream(track):
+                return groupIsStreamed
+            groupIsStreamed = True
+
+        return groupIsStreamed
 
 
-def someCanSlipstream(group, allRiders):
-    for other in allRiders:
-        if other.position()[0] == group.endPosition + 2:
+def someCanSlipstream(group, allRiders, track):
+    for rider in allRiders:
+        if canSlipstream(group.head, rider, track):
             return True
     return False
 
+def canSlipstream(square, rider, track):
+    if track.getRoadType(rider.square) == "ascent":
+        return False
+
+    return rider.square == square + 2
 
 def display(groups):
     for g in groups:
