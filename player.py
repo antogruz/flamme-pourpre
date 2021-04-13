@@ -29,7 +29,12 @@ class PlayerTest(Tester):
         assert_equals(4, sprinteur.nextMove)
 
 
-    #Test default if invalid choice
+    def testDefaultIfInvalidChoice(self):
+        choices = ChoiceDoer([-1, 9999])
+        rouleur = createRouleur()
+        p = Player(choices, [rouleur])
+        p.pickNextMoves()
+        assert_equals(3, rouleur.nextMove)
 
 class ChoiceLogger():
     def __init__(self):
@@ -77,12 +82,22 @@ class Player():
             self.pickOneMove(ridersToPick)
 
     def pickOneMove(self, riders):
-        choice = self.oracle.pick([r.name for r in riders])
-        rider = riders.pop(choice)
+        rider = self.pickRider(riders)
+        rider.play(self.pickCard(rider))
 
+    def pickRider(self, riders):
+        choice = self.pick([r.name for r in riders])
+        return riders.pop(choice)
+
+    def pickCard(self, rider):
         cards = rider.draw()
-        choice = self.oracle.pick(cards)
-        rider.play(cards[choice])
+        return cards[self.pick(cards)]
+
+    def pick(self, list):
+        choice = self.oracle.pick(list)
+        if choice < 0 or choice >= len(list):
+            return 0
+        return choice
 
 
 if __name__ == "__main__":
