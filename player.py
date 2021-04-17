@@ -41,6 +41,14 @@ class PlayerTest(Tester):
         Player(ChoiceDoer([0, 0, 0]), [rider]).pickNextMoves()
         assert_equals(2, rider.nextMove)
 
+    def testSeveralChoices(self):
+        choices = ChoiceDoer([0, 3, 0, 2])
+        rider = createRouleur()
+        p = Player(choices, [rider])
+        p.pickNextMoves()
+        p.pickNextMoves()
+        assert_equals(7, rider.nextMove)
+
 
 class ChoiceLogger():
     def __init__(self):
@@ -83,7 +91,7 @@ class Player():
         self.riders = riders
 
     def pickNextMoves(self):
-        ridersToPick = self.riders
+        ridersToPick = [r for r in self.riders]
         while (ridersToPick):
             self.pickOneMove(ridersToPick)
 

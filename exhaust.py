@@ -36,14 +36,18 @@ class Rider():
     def exhaust(self):
         self.exhausts += 1
 
+    def getSquare(self):
+        return self.square
+
+
 def exhaust(riders):
     for r in riders:
-        if not riderAtPosition(r.square + 1, riders):
+        if not riderAtPosition(r.getSquare() + 1, riders):
             r.exhaust()
 
 def riderAtPosition(square, riders):
     for r in riders:
-        if r.square == square:
+        if r.getSquare() == square:
             return True
     return False
 

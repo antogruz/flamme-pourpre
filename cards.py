@@ -73,7 +73,6 @@ class CardsTester(Tester):
         assert_similars([], cards.draw())
         assert_similars([], cards.discard)
 
-
 def deck(n):
     return [ i for i in reversed(range(1, n + 1)) ]
 
@@ -114,9 +113,6 @@ class Cards():
     def play(self, card):
         self.hand.remove(card)
         self.discard += self.hand
-
-
-
 
 if __name__ == "__main__":
     tests()

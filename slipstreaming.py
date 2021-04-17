@@ -162,10 +162,10 @@ def someCanSlipstream(group, allRiders, track):
     return False
 
 def canSlipstream(square, rider, track):
-    if not streamable(track.getRoadType(rider.square)):
+    if not streamable(track.getRoadType(rider.getSquare())):
         return False
 
-    return rider.square == square + 2
+    return rider.getSquare() == square + 2
 
 def display(groups):
     for g in groups:

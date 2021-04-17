@@ -10,6 +10,9 @@ class Rider():
     def position(self):
         return (self.square, self.lane)
 
+    def getSquare(self):
+        return self.square
+
     def move(self, distance, track, obstacles):
         distance = self.adaptDistanceToRoadType(distance, track)
         self.square, self.lane = self.findAvailableSlot(obstacles, self.square + distance)
