@@ -26,9 +26,11 @@ def main():
         animate(r, boardWidgets, window)
 
     window.update()
-    game.newTurn()
-    updateDisplay(boardWidgets, game.riders)
-    window.update()
+    while not game.isOver():
+        game.newTurn()
+        updateDisplay(boardWidgets, game.riders)
+        window.update()
+
     window.mainloop()
     #game.newTurn()
     #window.update()

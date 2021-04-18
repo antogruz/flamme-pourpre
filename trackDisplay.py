@@ -5,19 +5,24 @@ import tkinter as tk
 def displayTrack(window, track):
     widgets = []
     column = 0
+    bigRow = 0
     while (track.getRoadType(column) != "out"):
         square = []
         for row in range(2):
             lane = getLabel(window, track.getRoadType(column))
-            lane.grid(row = 2 - row, column = column, padx = 1, pady = 1)
+            setGrid(lane, column, row)
             square.append(lane)
         lane = invisible(window)
-        lane.grid(row = 0, column = column, padx = 1, pady = 1)
+        setGrid(lane, column, 2)
         square.append(lane)
         widgets.append(square)
         column += 1
     return widgets
 
+maxColumn = 30
+def setGrid(label, square, lane):
+    corridor = int(square / maxColumn)
+    label.grid(row = 3 * corridor + 2 - lane, column = square % maxColumn, padx = 1, pady = 1)
 
 def getLabel(window, roadType):
     if roadType == "start":
