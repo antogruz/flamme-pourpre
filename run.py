@@ -106,7 +106,7 @@ def findNextEmpty(start, end, obstacles):
         if obstacles.isFree((nextSquare, lane)):
             return (nextSquare, lane)
 
-    return (nextSquare, -1)
+    return (nextSquare, 2)
 
 
 class FirstOracle():

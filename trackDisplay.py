@@ -9,8 +9,11 @@ def displayTrack(window, track):
         square = []
         for row in range(2):
             lane = getLabel(window, track.getRoadType(column))
-            lane.grid(row = 1 - row, column = column, padx = 1, pady = 1)
+            lane.grid(row = 2 - row, column = column, padx = 1, pady = 1)
             square.append(lane)
+        lane = invisible(window)
+        lane.grid(row = 0, column = column, padx = 1, pady = 1)
+        square.append(lane)
         widgets.append(square)
         column += 1
     return widgets
@@ -32,7 +35,10 @@ def getLabel(window, roadType):
     return slot(window, 'black')
 
 def slot(window, border):
-    return tk.Label(window, text = "-", highlightthickness = 1, highlightbackground = border, width = 3)
+    return tk.Label(window, text = "", highlightthickness = 1, highlightbackground = border, width = 3)
+
+def invisible(window):
+    return tk.Label(window, width = 3)
 
 def empty(widget):
-    widget.config(text = "-", fg = "black")
+    widget.config(text = "", fg = "black")
