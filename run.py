@@ -8,7 +8,7 @@ from track import Track
 from obstacles import Obstacles
 from rider import Rider
 from player import Player
-from game import Game
+from race import Race
 from cards import Cards
 import riderMove
 import random
@@ -21,16 +21,16 @@ def main():
     track = Track(createTrack())
     frames = Frames()
     players, riders = createRiders(frames.new(window))
-    game = Game(track, riders, players)
+    race = Race(track, riders, players)
     boardWidgets = displayBoard(frames.new(window), track, riders)
-    for r in game.riders:
+    for r in race.riders:
         animate(r, boardWidgets, window)
 
     window.update()
-    while not game.isOver():
-        game.newTurn()
-        updateDisplay(boardWidgets, game.riders)
-        displayRanking(boardWidgets, game.ranking())
+    while not race.isOver():
+        race.newTurn()
+        updateDisplay(boardWidgets, race.riders)
+        displayRanking(boardWidgets, race.ranking())
         window.update()
 
     window.mainloop()

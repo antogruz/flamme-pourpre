@@ -7,46 +7,46 @@ from cards import Cards
 import riderMove
 
 def tests():
-    GameTest().runTests()
+    RaceTest().runTests()
 
-class GameTest(Tester):
+class RaceTest(Tester):
     def __init__(self):
         self.track = Track([(5, "normal"), (3, "end")])
 
-    def createGame(self, riders):
-        return Game(self.track, riders, [SimplePlayer(copy(riders), 2)])
+    def createRace(self, riders):
+        return Race(self.track, riders, [SimplePlayer(copy(riders), 2)])
 
-    def testCreateGame(self):
+    def testCreateRace(self):
         riders = [createRider(0, 0)]
-        game = self.createGame(riders)
-        assert_equals(False, game.isOver())
-        assert_similars([], game.ranking())
+        race = self.createRace(riders)
+        assert_equals(False, race.isOver())
+        assert_similars([], race.ranking())
 
-    def testGameOver(self):
-        game = self.createGame([])
-        assert_equals(True, game.isOver())
+    def testRaceOver(self):
+        race = self.createRace([])
+        assert_equals(True, race.isOver())
 
-    def testGameIsOverIfAllRidersHavePassedLine(self):
-        game = self.createGame([createRider(5, 0)])
-        assert_equals(True, game.isOver())
+    def testRaceIsOverIfAllRidersHavePassedLine(self):
+        race = self.createRace([createRider(5, 0)])
+        assert_equals(True, race.isOver())
 
     def testRiderMovesAfterATurn(self):
         rider = createRider(0, 0)
-        game = self.createGame([rider])
-        game.newTurn()
+        race = self.createRace([rider])
+        race.newTurn()
         assert_equals(2, rider.position()[0])
 
     def testArrival(self):
         rider = createRider(4, 0)
-        game = self.createGame([rider, createRider(0, 0)])
-        game.newTurn()
-        assert_similars([rider], game.ranking())
+        race = self.createRace([rider, createRider(0, 0)])
+        race.newTurn()
+        assert_similars([rider], race.ranking())
 
     def testDontPlayForArrivedRiders(self):
         rider = createRider(5, 0)
         rider.nextMove = 100
-        game = self.createGame([rider])
-        game.newTurn()
+        race = self.createRace([rider])
+        race.newTurn()
         assert_equals(100, rider.nextMove)
 
     def testRanking(self):
@@ -54,10 +54,10 @@ class GameTest(Tester):
         second = createRider(4, 0)
         third = createRider(3, 0)
         fourth = createRider(0, 0)
-        game = self.createGame([fourth, second, third, first])
-        while not game.isOver():
-            game.newTurn()
-        assert_equals([first, second, third, fourth], game.ranking())
+        race = self.createRace([fourth, second, third, first])
+        while not race.isOver():
+            race.newTurn()
+        assert_equals([first, second, third, fourth], race.ranking())
 
 
 def copy(list):
@@ -84,7 +84,7 @@ from obstacles import Obstacles
 from slipstreaming import slipstreaming
 from exhaust import exhaust
 
-class Game():
+class Race():
     def __init__(self, track, riders, players):
         self.track = track
         self.riders = riders
