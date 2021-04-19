@@ -12,6 +12,7 @@ from game import Game
 from cards import Cards
 import riderMove
 import random
+from display import displayBoard, displayRiders, displayRanking
 
 def main():
     window = tk.Tk()
@@ -29,11 +30,10 @@ def main():
     while not game.isOver():
         game.newTurn()
         updateDisplay(boardWidgets, game.riders)
+        displayRanking(boardWidgets, game.ranking())
         window.update()
 
     window.mainloop()
-    #game.newTurn()
-    #window.update()
 
 def createRiders(frame):
     players = []
@@ -153,26 +153,15 @@ def sprinteurDeck():
         deck += [2, 3, 4, 5, 9]
     return deck
 
-def displayBoard(window, road, riders):
-    trackWidgets = displayTrack(window, road)
-    displayRiders(trackWidgets, riders)
-    return trackWidgets
-
-
 def updateDisplay(boardWidgets, riders):
     removeTokens(boardWidgets)
     displayRiders(boardWidgets, riders)
-
 
 def removeTokens(boardWidgets):
     for square in boardWidgets:
         for lane in square:
             empty(lane)
 
-
-def displayRiders(boardWidgets, riders):
-    for rider in riders:
-        displayRider(boardWidgets, rider)
 
 main()
 

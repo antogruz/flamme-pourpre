@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
+rouleurShade = "o±ỏ"
+sprinteurShade = "o/ỏ"
 
 def displayRider(boardWidgets, rider):
     displayRiderAtPosition(boardWidgets, rider, rider.position())
@@ -12,11 +14,11 @@ def displayRiderAtPosition(boardWidgets, rider, position):
 
 def addRouleurDisplay(rider, color):
     rider.color = color
-    rider.shade = "o±ỏ"
+    rider.shade = rouleurShade
 
 def addSprinteurDisplay(rider, color):
     rider.color = color
-    rider.shade = "o/ỏ"
+    rider.shade = sprinteurShade
 
 def copyDisplay(target, model):
     target.color = model.color
