@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from unittests import *
-from trackDisplay import displayTrack
+from trackDisplay import displayTrack, empty
 from track import Track
 import tkinter as tk
 from frames import Frames
@@ -47,6 +47,32 @@ class VisualTester(Tester):
         widgets = displayTrack(self.frame, track)
         displayRanking(widgets, riders)
 
+    def testAnimatedRider(self):
+        track = Track([(10, "normal")])
+        rider = Rider(rouleurShade, "green", (0, 0))
+        display = RoadDisplay(self.frame, track,  [rider])
+        display.animate(rider, [(0, 0), (1, 1), (2, 2), (3, 1), (4, 0), (3, 0), (2, 0), (1, 0), (0, 0)])
+
+from time import sleep
+class RoadDisplay():
+    def __init__(self, frame, track, riders):
+        self.frame = frame
+        self.trackWidgets = displayTrack(frame, track)
+        displayRiders(self.trackWidgets, riders)
+        self.frame.update()
+
+    def animate(self, rider, path):
+        for i in range(len(path) - 1):
+            sleep(0.3)
+            self.move(rider, path[i], path[i + 1])
+
+    def move(self, rider, start, end):
+        self.empty(start)
+        displayRiderAtPosition(self.trackWidgets, rider, end)
+        self.frame.update()
+
+    def empty(self, position):
+        empty(self.trackWidgets[position[0]][position[1]])
 
 
 class Rider:
