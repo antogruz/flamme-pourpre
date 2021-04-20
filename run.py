@@ -12,7 +12,7 @@ from race import Race
 from cards import Cards
 import riderMove
 import random
-from display import displayBoard, displayRiders, displayRanking
+from display import displayBoard, displayRiders, displayRanking, RoadDisplay
 
 def main():
     window = tk.Tk()
@@ -22,24 +22,24 @@ def main():
     frames = Frames()
     players, riders = createRiders(frames.new(window))
     race = Race(track, riders, players)
-    boardWidgets = displayBoard(frames.new(window), track, riders)
+    roadDisplay = RoadDisplay(frames.new(window), track, riders)
     for r in race.riders:
-        animate(r, boardWidgets, window)
+        animate(r, roadDisplay)
 
     window.update()
     while not race.isOver():
         race.newTurn()
-        updateDisplay(boardWidgets, race.riders)
-        displayRanking(boardWidgets, race.ranking())
+        roadDisplay.update()
+        roadDisplay.ranking(race.ranking())
         window.update()
 
     window.mainloop()
 
-def createRiders(frame):
+def createRiders(choicesFrame):
     players = []
     riders = []
     square = 0
-    oracle = PlayerChoice(frame)
+    oracle = PlayerChoice(choicesFrame)
     for color in ["green", "red", "blue", "black"]:
         player, group = createPlayer(color, oracle, square)
         oracle = FirstOracle()
@@ -63,53 +63,10 @@ def createSprinteur(color, square, lane):
     addSprinteurDisplay(rider, color)
     return rider
 
-def animate(rider, roadWidgets, frame):
-    rider.riderMove = AnimatedRider(rider.riderMove, roadWidgets, frame)
+from animation import AnimatedRider
+def animate(rider, display):
+    rider.riderMove = AnimatedRider(rider.riderMove, display)
     copyDisplay(rider.riderMove, rider)
-
-from time import sleep
-class AnimatedRider():
-    def __init__(self, riderMove, roadWidgets, frame):
-        self.riderMove = riderMove
-        self.roadWidgets = roadWidgets
-        self.frame = frame
-
-    def position(self):
-        return self.riderMove.position()
-
-    def getSquare(self):
-        return self.riderMove.getSquare()
-
-    def move(self, distance, track, obstacles):
-        saved = self.position()
-        self.riderMove.move(distance, track, obstacles)
-        self.animate(obstacles, saved, self.position())
-
-    def getSlipstream(self, track):
-        return self.riderMove.getSlipstream(track)
-
-    def animate(self, obstacles, start, end):
-        sleep(0.3)
-        if start[0] == end[0]:
-            return
-
-        empty(self.roadWidgets[start[0]][start[1]])
-        next = findNextEmpty(start, end, obstacles)
-        displayRiderAtPosition(self.roadWidgets, self, next)
-        self.frame.update()
-        self.animate(obstacles, next, end)
-
-def findNextEmpty(start, end, obstacles):
-    nextSquare = start[0] + 1
-    if nextSquare == end[0]:
-        return end
-
-    for lane in range(2):
-        if obstacles.isFree((nextSquare, lane)):
-            return (nextSquare, lane)
-
-    return (nextSquare, 2)
-
 
 class FirstOracle():
     def pick(self, any):
@@ -152,15 +109,6 @@ def sprinteurDeck():
     for i in range(3):
         deck += [2, 3, 4, 5, 9]
     return deck
-
-def updateDisplay(boardWidgets, riders):
-    removeTokens(boardWidgets)
-    displayRiders(boardWidgets, riders)
-
-def removeTokens(boardWidgets):
-    for square in boardWidgets:
-        for lane in square:
-            empty(lane)
 
 
 main()

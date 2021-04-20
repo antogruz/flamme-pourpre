@@ -37,6 +37,9 @@ def getLabel(window, roadType):
     if roadType == "descent":
         return slot(window, 'blue')
 
+    if roadType == "target":
+        return slot(window, 'green')
+
     return slot(window, 'black')
 
 def slot(window, border):
