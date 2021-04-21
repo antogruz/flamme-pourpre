@@ -12,15 +12,20 @@ import riderMove
 import random
 from display import RoadDisplay
 
+
 def main():
     window = tk.Tk()
     window.title("flamme rouge")
 
     track = Track(createTrack())
     frames = Frames()
-    players, riders = createRiders(frames.new(window))
+    fast = parseArgs().fast
+    players, riders = createRiders(frames.new(window), fast)
     race = Race(track, riders, players)
-    roadDisplay = RoadDisplay(frames.new(window), track, riders)
+    clock = 0.3
+    if fast:
+        clock = 0.01
+    roadDisplay = RoadDisplay(frames.new(window), track, riders, clock)
     for r in race.riders:
         animate(r, roadDisplay)
 
@@ -33,11 +38,21 @@ def main():
 
     window.mainloop()
 
-def createRiders(choicesFrame):
+import argparse
+def parseArgs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--fast', action='store_true')
+    return parser.parse_args()
+
+def createRiders(choicesFrame, fast):
     players = []
     riders = []
     square = 0
-    oracle = PlayerChoice(choicesFrame)
+    if fast:
+        oracle = FirstOracle()
+    else:
+        oracle = PlayerChoice(choicesFrame)
+
     for color in ["green", "red", "blue", "black"]:
         player, group = createPlayer(color, oracle, square)
         oracle = FirstOracle()

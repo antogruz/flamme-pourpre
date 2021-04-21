@@ -63,12 +63,13 @@ class VisualTester(Tester):
 
 from time import sleep
 class RoadDisplay():
-    def __init__(self, frame, track, riders):
+    def __init__(self, frame, track, riders, clock = 0.3):
         self.frame = frame
         self.riders = riders
         self.trackWidgets = displayTrack(frame, track)
         displayRiders(self.trackWidgets, riders)
         self.frame.update()
+        self.clock = clock
 
     def ranking(self, ridersArrived):
         displayRanking(self.trackWidgets, ridersArrived)
@@ -76,7 +77,7 @@ class RoadDisplay():
 
     def animate(self, rider, path):
         for i in range(len(path) - 1):
-            sleep(0.3)
+            sleep(self.clock)
             self.move(rider, path[i], path[i + 1])
 
     def move(self, rider, start, end):
