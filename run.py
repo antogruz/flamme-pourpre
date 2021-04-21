@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from trackDisplay import displayTrack, empty
 from frames import Frames
-from riderDisplay import addRouleurDisplay, addSprinteurDisplay, displayRider, displayRiderAtPosition, copyDisplay
+from riderDisplay import addRouleurDisplay, addSprinteurDisplay, copyDisplay
 from track import Track
-from obstacles import Obstacles
 from rider import Rider
 from player import Player
 from race import Race
 from cards import Cards
 import riderMove
 import random
-from display import displayBoard, displayRiders, displayRanking, RoadDisplay
+from display import RoadDisplay
 
 def main():
     window = tk.Tk()
