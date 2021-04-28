@@ -1,0 +1,8 @@
+- Le joueur peut voir la liste des cartes qu'il a jouées pour chaque coureur
+- Le joueur peut voir la défausse de chacun de ses coureurs
+- Le joueur peut savoir combien de cartes il reste dans le deck de chaque coureur
+- On voit l'animation de l'aspiration
+- On voit une animation pour les cartes fatigue
+- unittests appelle before et pas __init__ avant chaque test
+- Unifier le display: pouvoir appeler display sur race
+- pouvoir lancer 'run' en mode rapide
