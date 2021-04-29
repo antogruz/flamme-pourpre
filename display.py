@@ -96,7 +96,7 @@ class RoadDisplay():
     def exhaust(self, rider):
         widget = self.widget(rider)
         originalBg = widget.cget('bg')
-        for color in ["yellow", "red", "yellow", originalBg]:
+        for color in ["yellow", "red", originalBg]:
             self.setBg(widget, color)
             sleep(self.clock)
 
@@ -115,6 +115,8 @@ class RoadDisplay():
     def update(self):
         removeTokens(self.trackWidgets)
         displayRiders(self.trackWidgets, self.riders)
+        self.frame.update()
+        sleep(self.clock)
 
 
 def removeTokens(trackWidgets):

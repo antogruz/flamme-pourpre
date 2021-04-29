@@ -75,6 +75,14 @@ class AnimatedRider(Rider):
         self.display.exhaust(self)
         Rider.exhaust(self)
 
+    def getSlipstream(self, track):
+        if not Rider.getSlipstream(self, track):
+            return False
+
+        self.display.update()
+        return True
+
+
 
 def findPath(obstacles, start, end):
     if start[0] == end[0]:
