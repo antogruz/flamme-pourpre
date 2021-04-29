@@ -53,6 +53,14 @@ class VisualTester(Tester):
         display = RoadDisplay(self.frame, track,  [rider])
         display.animate(rider, [(0, 0), (1, 1), (2, 2), (3, 1), (4, 0)])
 
+    def testZExhaustRiders(self):
+        track = Track([(10, "normal")])
+        rouleur = Rider(rouleurShade, "green", (0, 0))
+        sprinteur = Rider(sprinteurShade, "red", (3, 0))
+        display = RoadDisplay(self.frame, track, [rouleur, sprinteur])
+        display.exhaust(sprinteur)
+        display.exhaust(rouleur)
+
     def testUpdate(self):
         track = Track([(1, "normal"), (1, "target")])
         rider = Rider(rouleurShade, "green", (0, 0))
@@ -84,6 +92,22 @@ class RoadDisplay():
         self.empty(start)
         displayRiderAtPosition(self.trackWidgets, rider, end)
         self.frame.update()
+
+    def exhaust(self, rider):
+        widget = self.widget(rider)
+        originalBg = widget.cget('bg')
+        for color in ["yellow", "red", "yellow", originalBg]:
+            self.setBg(widget, color)
+            sleep(self.clock)
+
+    def setBg(self, widget, color):
+        widget.config(bg = color)
+        self.frame.update()
+
+
+    def widget(self, rider):
+        square, lane = rider.position()
+        return self.trackWidgets[square][lane]
 
     def empty(self, position):
         empty(self.trackWidgets[position[0]][position[1]])
