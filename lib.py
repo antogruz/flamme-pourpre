@@ -7,9 +7,9 @@ from frames import Frames
 def main():
     window = tk.Tk()
     window.title("Library")
-    frames = Frames()
-    reliefs(frames.new(window))
-    showColors(frames.new(window))
+    frames = Frames(window)
+    reliefs(frames.new())
+    showColors(frames.new())
     window.mainloop()
 
 
