@@ -43,7 +43,7 @@ def parseArgs():
     parser.add_argument('--faster', type=int)
     return parser.parse_args()
 
-from animation import AnimatedRider
+from moveAnimation import AnimatedRider
 def createRiders(choicesFrame, fast):
     players = []
     riders = []
