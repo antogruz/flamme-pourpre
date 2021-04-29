@@ -24,7 +24,7 @@ def main():
     race = Race(track, riders, players)
     clock = 0.3
     if fast:
-        clock = 0.01
+        clock /= 1000
     roadDisplay = RoadDisplay(frames.new(), track, riders, clock)
     for r in race.riders:
         animate(r, roadDisplay)
