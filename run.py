@@ -2,7 +2,7 @@
 
 import tkinter as tk
 from frames import Frames
-from riderDisplay import addRouleurDisplay, addSprinteurDisplay
+from riderDisplay import *
 from track import Track
 from player import Player
 from race import Race
@@ -62,19 +62,28 @@ def createRiders(choicesFrame, fast):
     return players, riders
 
 def createPlayer(color, oracle, square):
-        rouleur = createRouleur(color, square, 0)
-        sprinteur = createSprinteur(color, square, 1)
+        rouleur = createRider(color, square, 0, createRouleur())
+        sprinteur = createRider(color, square, 1, createSprinteur())
         return Player(oracle, [rouleur, sprinteur]), [rouleur, sprinteur]
 
-def createRouleur(color, square, lane):
-    rider = AnimatedRider("Rouleur", Cards(rouleurDeck(), random.shuffle), riderMove.Rider(square, lane), None)
-    addRouleurDisplay(rider, color)
+class Specialist:
+    def __init__(self, name, deck, shade):
+        self.name = name
+        self.deck = deck
+        self.shade = shade
+
+def createRider(color, square, lane, specialist):
+    rider = AnimatedRider(specialist.name, Cards(specialist.deck, random.shuffle), riderMove.Rider(square, lane), None)
+    rider.shade = specialist.shade
+    rider.color = color
     return rider
 
-def createSprinteur(color, square, lane):
-    rider = AnimatedRider("Sprinteur", Cards(sprinteurDeck(), random.shuffle), riderMove.Rider(square, lane), None)
-    addSprinteurDisplay(rider, color)
-    return rider
+def createRouleur():
+    return Specialist("Rouleur", rouleurDeck(), rouleurShade)
+
+def createSprinteur():
+    return Specialist("Sprinteur", sprinteurDeck(), sprinteurShade)
+
 
 def animate(rider, display):
     rider.display = display
