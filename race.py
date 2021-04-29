@@ -106,7 +106,7 @@ class Race():
         slipstreaming(self.riders, self.track)
         self.checkArrivals()
 
-        exhaust(self.riders)
+        exhaust(headToTail(self.riders))
 
     def ranking(self):
         return self.arrivals
