@@ -14,7 +14,7 @@ class RaceTest(Tester):
         self.track = Track([(5, "normal"), (3, "end")])
 
     def createRace(self, riders):
-        return Race(self.track, riders, [SimplePlayer(copy(riders), 2)])
+        return Race(self.track, riders, [SimplePlayer(copy(riders), 2)], NoDisplay())
 
     def testCreateRace(self):
         riders = [createRider(0, 0)]
@@ -69,6 +69,10 @@ def noop(x):
 def createRider(square, lane):
     return Rider("Tac", Cards([], noop), riderMove.Rider(square, lane))
 
+class NoDisplay:
+    def update(self):
+        pass
+
 class SimplePlayer():
     def __init__(self, riders, move):
         self.riders = riders
@@ -85,12 +89,13 @@ from slipstreaming import slipstreaming
 from exhaust import exhaust
 
 class Race():
-    def __init__(self, track, riders, players):
+    def __init__(self, track, riders, players, display):
         self.track = track
         self.riders = riders
         self.obstacles = Obstacles(riders)
         self.players = players
         self.arrivals = []
+        self.display = display
         self.checkArrivals()
 
     def isOver(self):
@@ -103,7 +108,7 @@ class Race():
         for r in headToTail(self.riders):
             r.move(r.nextMove, self.track, self.obstacles)
 
-        slipstreaming(self.riders, self.track)
+        slipstreaming(self.riders, self.track, self.display)
         self.checkArrivals()
 
         exhaust(headToTail(self.riders))

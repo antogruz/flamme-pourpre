@@ -20,11 +20,11 @@ def main():
     frames = Frames(window)
     faster = parseArgs().faster
     players, riders = createRiders(frames.new(), faster)
-    race = Race(track, riders, players)
     clock = 0.3
     if faster:
         clock /= faster
     roadDisplay = RoadDisplay(frames.new(), track, riders, clock)
+    race = Race(track, riders, players, roadDisplay)
     for r in race.riders:
         animate(r, roadDisplay)
 
