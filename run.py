@@ -18,14 +18,14 @@ def main():
     window.title("flamme rouge")
 
     track = Track(createTrack())
-    frames = Frames()
+    frames = Frames(window)
     fast = parseArgs().fast
-    players, riders = createRiders(frames.new(window), fast)
+    players, riders = createRiders(frames.new(), fast)
     race = Race(track, riders, players)
     clock = 0.3
     if fast:
         clock = 0.01
-    roadDisplay = RoadDisplay(frames.new(window), track, riders, clock)
+    roadDisplay = RoadDisplay(frames.new(), track, riders, clock)
     for r in race.riders:
         animate(r, roadDisplay)
 

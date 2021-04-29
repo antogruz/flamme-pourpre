@@ -10,7 +10,7 @@ from riderDisplay import *
 class VisualTester(Tester):
     def __init__(self):
         try:
-            self.frame = self.frames.new(self.window)
+            self.frame = self.frames.new()
         except:
             pass
 
@@ -127,8 +127,8 @@ def displayRanking(boardWidgets, riders):
 
 if __name__ == "__main__":
     tester = VisualTester()
-    tester.window = tk.Tk()
-    tester.window.title("Visual tests")
-    tester.frames = Frames()
+    window = tk.Tk()
+    window.title("Visual tests")
+    tester.frames = Frames(window)
     tester.runTests()
-    tester.window.mainloop()
+    window.mainloop()
