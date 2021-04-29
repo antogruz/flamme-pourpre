@@ -20,6 +20,3 @@ def addSprinteurDisplay(rider, color):
     rider.color = color
     rider.shade = sprinteurShade
 
-def copyDisplay(target, model):
-    target.color = model.color
-    target.shade = model.shade

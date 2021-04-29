@@ -2,9 +2,8 @@
 
 import tkinter as tk
 from frames import Frames
-from riderDisplay import addRouleurDisplay, addSprinteurDisplay, copyDisplay
+from riderDisplay import addRouleurDisplay, addSprinteurDisplay
 from track import Track
-from rider import Rider
 from player import Player
 from race import Race
 from cards import Cards
@@ -19,12 +18,12 @@ def main():
 
     track = Track(createTrack())
     frames = Frames(window)
-    fast = parseArgs().fast
-    players, riders = createRiders(frames.new(), fast)
+    faster = parseArgs().faster
+    players, riders = createRiders(frames.new(), faster)
     race = Race(track, riders, players)
     clock = 0.3
-    if fast:
-        clock /= 1000
+    if faster:
+        clock /= faster
     roadDisplay = RoadDisplay(frames.new(), track, riders, clock)
     for r in race.riders:
         animate(r, roadDisplay)
@@ -41,9 +40,10 @@ def main():
 import argparse
 def parseArgs():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--fast', action='store_true')
+    parser.add_argument('--faster', type=int)
     return parser.parse_args()
 
+from animation import AnimatedRider
 def createRiders(choicesFrame, fast):
     players = []
     riders = []
@@ -67,19 +67,17 @@ def createPlayer(color, oracle, square):
         return Player(oracle, [rouleur, sprinteur]), [rouleur, sprinteur]
 
 def createRouleur(color, square, lane):
-    rider = Rider("Rouleur", Cards(rouleurDeck(), random.shuffle), riderMove.Rider(square, lane))
+    rider = AnimatedRider("Rouleur", Cards(rouleurDeck(), random.shuffle), riderMove.Rider(square, lane), None)
     addRouleurDisplay(rider, color)
     return rider
 
 def createSprinteur(color, square, lane):
-    rider = Rider("Sprinteur", Cards(sprinteurDeck(), random.shuffle), riderMove.Rider(square, lane))
+    rider = AnimatedRider("Sprinteur", Cards(sprinteurDeck(), random.shuffle), riderMove.Rider(square, lane), None)
     addSprinteurDisplay(rider, color)
     return rider
 
-from animation import AnimatedRider
 def animate(rider, display):
-    rider.riderMove = AnimatedRider(rider.riderMove, display)
-    copyDisplay(rider.riderMove, rider)
+    rider.display = display
 
 class FirstOracle():
     def pick(self, any):

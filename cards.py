@@ -84,7 +84,7 @@ def increasingOrder(list):
     list.sort()
 
 class Cards():
-    def __init__(self, deck, shuffle):
+    def __init__(self, deck, shuffle = noop):
         self.deck = deck
         self.discard = []
         self.shuffle = shuffle
@@ -113,6 +113,9 @@ class Cards():
     def play(self, card):
         self.hand.remove(card)
         self.discard += self.hand
+
+def noop(a):
+    pass
 
 if __name__ == "__main__":
     tests()
