@@ -5,6 +5,7 @@ from track import Track
 from rider import Rider
 from cards import Cards
 import riderMove
+from animation import Logger
 
 def tests():
     RaceTest().runTests()
@@ -14,7 +15,7 @@ class RaceTest(Tester):
         self.track = Track([(5, "normal"), (3, "end")])
 
     def createRace(self, riders):
-        return Race(self.track, riders, [SimplePlayer(copy(riders), 2)], NoDisplay())
+        return Race(self.track, riders, [SimplePlayer(copy(riders), 2)], Logger())
 
     def testCreateRace(self):
         riders = [createRider(0, 0)]
@@ -69,10 +70,6 @@ def noop(x):
 def createRider(square, lane):
     return Rider("Tac", Cards([], noop), riderMove.Rider(square, lane))
 
-class NoDisplay:
-    def update(self):
-        pass
-
 class SimplePlayer():
     def __init__(self, riders, move):
         self.riders = riders
@@ -89,13 +86,13 @@ from slipstreaming import slipstreaming
 from exhaust import exhaust
 
 class Race():
-    def __init__(self, track, riders, players, display):
+    def __init__(self, track, riders, players, logger):
         self.track = track
         self.riders = riders
         self.obstacles = Obstacles(riders)
         self.players = players
         self.arrivals = []
-        self.display = display
+        self.logger = logger
         self.checkArrivals()
 
     def isOver(self):
@@ -106,12 +103,14 @@ class Race():
             p.pickNextMoves()
 
         for r in headToTail(self.riders):
+            start = r.position()
             r.move(r.nextMove, self.track, self.obstacles)
+            self.logger.logMove(r, start, r.position(), self.obstacles)
 
-        slipstreaming(self.riders, self.track, self.display)
+        slipstreaming(self.riders, self.track, self.logger)
         self.checkArrivals()
 
-        exhaust(headToTail(self.riders))
+        exhaust(headToTail(self.riders), self.logger)
 
     def ranking(self):
         return self.arrivals

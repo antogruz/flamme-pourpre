@@ -16,7 +16,7 @@ class VisualTester(Tester):
 
     def testTrack(self):
         track = Track([(1, "start"), (1, "normal"), (1, "ascent"), (1, "descent"), (1, "end")])
-        RoadDisplay(self.frame, track, [])
+        RoadDisplay(self.frame, track)
 
     def testRiders(self):
         track = Track([(10, "normal")])
@@ -30,7 +30,8 @@ class VisualTester(Tester):
                 Rider(sprinteurShade, "red", (6, 2)),
                 Rider(sprinteurShade, "blue", (8, 0))
             ]
-        RoadDisplay(self.frame, track, riders)
+        RoadDisplay(self.frame, track).displayRiders(riders)
+
 
     def testRanking(self):
         track = Track([(10, "normal")])
@@ -44,66 +45,35 @@ class VisualTester(Tester):
                 Rider(sprinteurShade, "red", (6, 2)),
                 Rider(sprinteurShade, "blue", (8, 0))
             ]
-        display = RoadDisplay(self.frame, track, [])
+        display = RoadDisplay(self.frame, track)
         display.ranking(riders)
-
-    def testZAnimatedRider(self):
-        track = Track([(10, "normal")])
-        rider = Rider(rouleurShade, "green", (0, 0))
-        display = RoadDisplay(self.frame, track,  [rider])
-        display.animate(rider, [(0, 0), (1, 1), (2, 2), (3, 1), (4, 0)])
-
-    def testZExhaustRiders(self):
-        track = Track([(10, "normal")])
-        rouleur = Rider(rouleurShade, "green", (0, 0))
-        sprinteur = Rider(sprinteurShade, "red", (3, 0))
-        display = RoadDisplay(self.frame, track, [rouleur, sprinteur])
-        display.exhaust(sprinteur)
-        display.exhaust(rouleur)
-
-    def testUpdate(self):
-        track = Track([(1, "normal"), (1, "target")])
-        rider = Rider(rouleurShade, "green", (0, 0))
-        display = RoadDisplay(self.frame, track, [rider])
-        rider.pos = (1, 0)
-        display.update()
 
 
 from time import sleep
 class RoadDisplay():
-    def __init__(self, frame, track, riders, clock = 0.3):
+    def __init__(self, frame, track):
         self.frame = frame
-        self.riders = riders
         self.trackWidgets = displayTrack(frame, track)
-        displayRiders(self.trackWidgets, riders)
         self.frame.update()
-        self.clock = clock
+        self.defaultBackground = self.trackWidgets[0][0].cget('bg')
 
     def ranking(self, ridersArrived):
         displayRanking(self.trackWidgets, ridersArrived)
 
-
-    def animate(self, rider, path):
-        for i in range(len(path) - 1):
-            sleep(self.clock)
-            self.move(rider, path[i], path[i + 1])
+    def displayRiders(self, riders):
+        removeTokens(self.trackWidgets)
+        for rider in riders:
+            displayRider(self.trackWidgets, rider)
+        self.update()
 
     def move(self, rider, start, end):
         self.empty(start)
         displayRiderAtPosition(self.trackWidgets, rider, end)
-        self.frame.update()
 
-    def exhaust(self, rider):
-        widget = self.widget(rider)
-        originalBg = widget.cget('bg')
-        for color in ["yellow", "red", originalBg]:
-            self.setBg(widget, color)
-            sleep(self.clock)
-
-    def setBg(self, widget, color):
-        widget.config(bg = color)
-        self.frame.update()
-
+    def setBackground(self, rider, color):
+        if color== "default":
+            color = self.defaultBackground
+        self.widget(rider).config(bg = color)
 
     def widget(self, rider):
         square, lane = rider.position()
@@ -113,10 +83,7 @@ class RoadDisplay():
         empty(self.trackWidgets[position[0]][position[1]])
 
     def update(self):
-        removeTokens(self.trackWidgets)
-        displayRiders(self.trackWidgets, self.riders)
         self.frame.update()
-        sleep(self.clock)
 
 
 def removeTokens(trackWidgets):
@@ -140,9 +107,6 @@ def displayBoard(window, road, riders):
     return trackWidgets
 
 
-def displayRiders(boardWidgets, riders):
-    for rider in riders:
-        displayRider(boardWidgets, rider)
 
 
 def displayRanking(boardWidgets, riders):

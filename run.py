@@ -10,6 +10,7 @@ from cards import Cards
 import riderMove
 import random
 from display import RoadDisplay
+from animation import Logger, Animation
 
 
 def main():
@@ -23,15 +24,19 @@ def main():
     clock = 0.3
     if faster:
         clock /= faster
-    roadDisplay = RoadDisplay(frames.new(), track, riders, clock)
-    race = Race(track, riders, players, roadDisplay)
-    for r in race.riders:
-        animate(r, roadDisplay)
+    roadDisplay = RoadDisplay(frames.new(), track)
+    roadDisplay.displayRiders(riders)
+    animation = Animation(roadDisplay, clock)
+
+    logger = Logger()
+    race = Race(track, riders, players, logger)
 
     window.update()
     while not race.isOver():
+        logger.__init__()
         race.newTurn()
-        roadDisplay.update()
+        animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
+        roadDisplay.displayRiders(race.riders)
         roadDisplay.ranking(race.ranking())
         window.update()
 
@@ -43,7 +48,7 @@ def parseArgs():
     parser.add_argument('--faster', type=int)
     return parser.parse_args()
 
-from moveAnimation import AnimatedRider
+from rider import Rider
 def createRiders(choicesFrame, fast):
     players = []
     riders = []
@@ -73,7 +78,7 @@ class Specialist:
         self.shade = shade
 
 def createRider(color, square, lane, specialist):
-    rider = AnimatedRider(specialist.name, Cards(specialist.deck, random.shuffle), riderMove.Rider(square, lane), None)
+    rider = Rider(specialist.name, Cards(specialist.deck, random.shuffle), riderMove.Rider(square, lane))
     rider.shade = specialist.shade
     rider.color = color
     return rider
