@@ -11,7 +11,7 @@ def tests():
     RaceTest().runTests()
 
 class RaceTest(Tester):
-    def __init__(self):
+    def __before__(self):
         self.track = Track([(5, "normal"), (3, "end")])
 
     def createRace(self, riders):

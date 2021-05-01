@@ -10,15 +10,15 @@ from display import RoadDisplay
 from path import findPath
 
 class VisualTester(Tester):
-    def __init__(self):
-        try:
-            self.frame = self.frames.new()
-            self.track = Track([(10, "normal")])
-            self.logger = Logger()
-            self.display = RoadDisplay(self.frame, self.track)
-            self.animation = Animation(self.display)
-        except:
-            pass
+    def __init__(self, frames):
+        self.frames = frames
+
+    def __before__(self):
+        self.frame = self.frames.new()
+        self.track = Track([(10, "normal")])
+        self.logger = Logger()
+        self.display = RoadDisplay(self.frame, self.track)
+        self.animation = Animation(self.display)
 
 
     def animate(self):
@@ -120,8 +120,5 @@ class Animation:
         self.display.update()
 
 if __name__ == "__main__":
-    tester = VisualTester()
     window = tk.Tk()
-    tester.frames = Frames(window)
-    tester.runTests()
-    window.mainloop()
+    VisualTester(Frames(window)).runTests()

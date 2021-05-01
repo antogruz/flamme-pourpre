@@ -8,7 +8,7 @@ def tests():
     SlipstremingTester().runTests()
 
 class SlipstremingTester(Tester):
-    def __init__(self):
+    def __before__(self):
         self.rider = Rider(0, 0)
         self.track = Track([(10, "normal")])
         self.others = []

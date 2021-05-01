@@ -7,7 +7,7 @@ from obstacles import Obstacles
 from riderMove import Rider as RiderToken
 
 class PathTester(Tester):
-    def __init__(self):
+    def __before__(self):
         self.track = Track([(5, "normal")])
 
     def testNoMoves(self):

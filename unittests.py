@@ -9,7 +9,8 @@ class Tester:
         testNames = [m for m in methodNames if "test" in m]
         for test in testNames:
             print(test)
-            self.__init__()
+            if "__before__" in methodNames:
+                self.__before__()
             getattr(self, test)()
             try:
                 self.__del__()

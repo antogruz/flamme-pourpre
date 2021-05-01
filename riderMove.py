@@ -91,7 +91,7 @@ def tests():
     RiderTest().runTests()
 
 class RiderTest(Tester):
-    def __init__(self):
+    def __before__(self):
         self.rider = Rider(0, 0)
         self.race = Race()
 

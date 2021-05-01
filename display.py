@@ -8,11 +8,12 @@ from frames import Frames
 from riderDisplay import *
 
 class VisualTester(Tester):
-    def __init__(self):
-        try:
-            self.frame = self.frames.new()
-        except:
-            pass
+    def __init__(self, frames):
+        self.frames = frames
+
+    def __before__(self):
+        self.frame = self.frames.new()
+
 
     def testTrack(self):
         track = Track([(1, "start"), (1, "normal"), (1, "ascent"), (1, "descent"), (1, "end")])
@@ -114,11 +115,8 @@ def displayRanking(boardWidgets, riders):
         displayRiderAtPosition(boardWidgets, r, (len(boardWidgets) - 1 - i, 2))
 
 
-
 if __name__ == "__main__":
-    tester = VisualTester()
     window = tk.Tk()
     window.title("Visual tests")
-    tester.frames = Frames(window)
-    tester.runTests()
+    VisualTester(Frames(window)).runTests()
     window.mainloop()
