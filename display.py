@@ -118,5 +118,6 @@ def displayRanking(boardWidgets, riders):
 if __name__ == "__main__":
     window = tk.Tk()
     window.title("Visual tests")
+    window.bind("<space>", lambda e: window.destroy())
     VisualTester(Frames(window)).runTests()
     window.mainloop()
