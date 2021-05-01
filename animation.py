@@ -7,6 +7,7 @@ from track import Track
 from obstacles import Obstacles
 from riderDisplay import rouleurShade
 from display import RoadDisplay
+from path import findPath
 
 class VisualTester(Tester):
     def __init__(self):
@@ -83,24 +84,6 @@ class Logger():
     def getExhausted(self):
         return self.exhausted
 
-
-def findPath(obstacles, start, end):
-    if start[0] == end[0]:
-        return [end]
-
-    next = findNextEmpty(obstacles, start, end)
-    return [start] + findPath(obstacles, next, end)
-
-def findNextEmpty(obstacles, start, end):
-    nextSquare = start[0] + 1
-    if nextSquare == end[0]:
-        return end
-
-    for lane in range(2):
-        if obstacles.isFree((nextSquare, lane)):
-            return nextSquare, lane
-
-    return nextSquare, 2
 
 from time import sleep
 class Animation:
