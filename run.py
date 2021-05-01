@@ -28,13 +28,12 @@ def main():
     roadDisplay.displayRiders(riders)
     animation = Animation(roadDisplay, clock)
 
-    logger = Logger()
-    race = Race(track, riders, players, logger)
+    race = Race(track, riders, players)
 
     window.update()
     while not race.isOver():
-        logger.__init__()
-        race.newTurn()
+        logger = Logger()
+        race.newTurn(logger)
         animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
         roadDisplay.displayRiders(race.riders)
         roadDisplay.ranking(race.ranking())
