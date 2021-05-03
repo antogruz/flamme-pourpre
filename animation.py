@@ -7,7 +7,7 @@ from track import Track
 from obstacles import Obstacles
 from riderDisplay import rouleurShade
 from display import RoadDisplay
-from path import findPath
+from logger import Logger
 
 class VisualTester(Tester):
     def __init__(self, frames):
@@ -58,32 +58,6 @@ class Rider:
 
     def position(self):
         return self.pos
-
-class Logger():
-    def __init__(self):
-        self.moves = []
-        self.groups = []
-        self.exhausted = []
-
-    def logMove(self, rider, start, end, obstacles):
-        path = findPath(obstacles, start, end)
-        self.moves.append((rider, path))
-
-    def logGroup(self, riders):
-        self.groups.append([(rider, rider.position()) for rider in riders])
-
-    def logExhaust(self, rider):
-        self.exhausted.append(rider)
-
-    def getMoves(self):
-        return self.moves
-
-    def getGroups(self):
-        return self.groups
-
-    def getExhausted(self):
-        return self.exhausted
-
 
 from time import sleep
 class Animation:

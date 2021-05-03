@@ -5,7 +5,7 @@ from track import Track
 from rider import Rider
 from cards import Cards
 import riderMove
-from animation import Logger
+from logger import Logger
 
 def tests():
     RaceTest().runTests()
