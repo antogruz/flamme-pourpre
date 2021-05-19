@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from frames import Frames
 from riderDisplay import *
 from track import Track
 from player import Player
@@ -11,6 +10,8 @@ import riderMove
 import random
 from display import RoadDisplay
 from animation import Logger, Animation
+from raceLayout import RaceLayout
+from cardsDisplay import displayCards
 
 
 def main():
@@ -18,13 +19,14 @@ def main():
     window.title("flamme rouge")
 
     track = Track(createTrack())
-    frames = Frames(window)
+    layout = RaceLayout(window, 2)
     faster = parseArgs().faster
-    players, riders = createRiders(frames.new(), faster)
+    players, riders = createRiders(layout.getUserFrame(), faster)
+    onCardsDisplay = riders[0:2]
     clock = 0.3
     if faster:
         clock /= faster
-    roadDisplay = RoadDisplay(frames.new(), track)
+    roadDisplay = RoadDisplay(layout.getTrackFrame(), track)
     roadDisplay.displayRiders(riders)
     animation = Animation(roadDisplay, clock)
 
@@ -32,6 +34,8 @@ def main():
 
     window.update()
     while not race.isOver():
+        for rider, frame in zip(onCardsDisplay, layout.getDecksFrames()):
+            displayRiderCards(frame, rider)
         logger = Logger()
         race.newTurn(logger)
         animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
@@ -40,6 +44,9 @@ def main():
         window.update()
 
     window.mainloop()
+
+def displayRiderCards(frame, rider):
+    displayCards(frame, rider, rider.cards.inDeck(), rider.cards.discard, rider.cards.played)
 
 import argparse
 def parseArgs():

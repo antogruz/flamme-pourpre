@@ -21,7 +21,7 @@ class VisualTester(Tester):
 from display import rouleurShade
 class Rider:
     def __init__(self):
-        self.shape = rouleurShade
+        self.shade = rouleurShade
         self.name = "Rouleur"
         self.color = "green"
 
@@ -35,7 +35,7 @@ def displayCards(frame, rider, deckSize, discard, played):
 
 
 def displayRider(window, rider):
-    tk.Label(window, text = rider.name + " " + rider.shape, fg = rider.color).pack()
+    tk.Label(window, text = rider.name + " " + rider.shade, fg = rider.color).pack()
 
 def displayDeck(window, cardsCount):
     bigCard(window, cardsCount, "black", "raised").pack()

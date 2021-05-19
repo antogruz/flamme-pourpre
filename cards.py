@@ -87,6 +87,7 @@ class Cards():
     def __init__(self, deck, shuffle = noop):
         self.deck = deck
         self.discard = []
+        self.played = []
         self.shuffle = shuffle
         shuffle(self.deck)
 
@@ -112,6 +113,7 @@ class Cards():
 
     def play(self, card):
         self.hand.remove(card)
+        self.played.append(card)
         self.discard += self.hand
 
 def noop(a):
