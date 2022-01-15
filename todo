@@ -1,8 +1,6 @@
-- Le joueur peut voir la liste des cartes qu'il a jouées pour chaque coureur
-- Le joueur peut voir la défausse de chacun de ses coureurs
-- Le joueur peut savoir combien de cartes il reste dans le deck de chaque coureur
+- Les cartes fatigue sont affichées différemment, et non-comptabilisées dans les cartes jouées
+- Le joueur peut savoir combien de cartes il reste dans le deck de chaque coureur. (À améliorer)
 - On voit l'animation de l'aspiration
-- On voit une animation pour les cartes fatigue
-- unittests appelle before et pas __init__ avant chaque test
 - Unifier le display: pouvoir appeler display sur race
-- pouvoir lancer 'run' en mode rapide
+- Le jeu fonctionne sur le nouveau mac
+- à la racine du repo ne sont que les points d'entrée d'un utilisateur
