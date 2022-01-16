@@ -10,6 +10,7 @@ def main():
     frames = Frames(window)
     reliefs(frames.new())
     showColors(frames.new())
+    window.bind("<space>", lambda e: window.destroy())
     window.mainloop()
 
 

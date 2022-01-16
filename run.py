@@ -43,6 +43,7 @@ def main():
         roadDisplay.ranking(race.ranking())
         window.update()
 
+    window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
 
 def displayRiderCards(frame, rider):
