@@ -108,8 +108,6 @@ def displayBoard(window, road, riders):
     return trackWidgets
 
 
-
-
 def displayRanking(boardWidgets, riders):
     for i, r in enumerate(riders):
         displayRiderAtPosition(boardWidgets, r, (len(boardWidgets) - 1 - i, 2))

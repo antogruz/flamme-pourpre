@@ -1,5 +1,4 @@
 - Les cartes fatigue sont affichées différemment, et non-comptabilisées dans les cartes jouées
-- On voit l'animation de l'aspiration
 - Unifier le display: pouvoir appeler display sur race
 - Le jeu fonctionne sur le nouveau mac
-- à la racine du repo ne sont que les points d'entrée d'un utilisateur
+- Ajouter un README

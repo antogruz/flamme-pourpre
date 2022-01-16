@@ -60,35 +60,8 @@ def previous(slot):
         return (slot[0], 1)
     return (slot[0] - 1, 0)
 
-class Race():
-    def __init__(self, length = 100):
-        self.obstacles = []
-        self.length = length
-        self.setAll("normal")
-
-    def addRider(self, square, lane):
-        self.obstacles.append((square, lane))
-
-    def setAll(self, field):
-        self.field = [field for i in range(self.length)]
-
-    def set(self, field, square):
-        self.field[square] = field
-
-
-    def getRoadType(self, square):
-        if square >= self.length:
-            return "out"
-        return self.field[square]
-
-    def isFree(self, slot):
-        return not slot in self.obstacles
-
 
 from unittests import Tester, assert_equals
-
-def tests():
-    RiderTest().runTests()
 
 class RiderTest(Tester):
     def __before__(self):
@@ -149,5 +122,31 @@ class RiderTest(Tester):
         assert_equals((0, 0), self.rider.position())
 
 
+class Race():
+    def __init__(self, length = 100):
+        self.obstacles = []
+        self.length = length
+        self.setAll("normal")
+
+    def addRider(self, square, lane):
+        self.obstacles.append((square, lane))
+
+    def setAll(self, field):
+        self.field = [field for i in range(self.length)]
+
+    def set(self, field, square):
+        self.field[square] = field
+
+
+    def getRoadType(self, square):
+        if square >= self.length:
+            return "out"
+        return self.field[square]
+
+    def isFree(self, slot):
+        return not slot in self.obstacles
+
+
+
 if __name__ == "__main__":
-    tests()
+    RiderTest().runTests()

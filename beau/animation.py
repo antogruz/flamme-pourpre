@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-import tkinter as tk
 from frames import Frames
-from unittests import *
+from unittests import Tester
 from track import Track
 from obstacles import Obstacles
 from riderDisplay import rouleurShade
@@ -93,6 +92,7 @@ class Animation:
             self.display.move(rider, start, end)
         self.display.update()
 
+import tkinter as tk
 if __name__ == "__main__":
     window = tk.Tk()
     VisualTester(Frames(window)).runTests()

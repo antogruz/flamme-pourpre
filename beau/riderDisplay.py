@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import tkinter as tk
 rouleurShade = "o±ỏ"
 sprinteurShade = "o/ỏ"
 
