@@ -38,7 +38,7 @@ def displayRider(window, rider):
     tk.Label(window, text = rider.name + " " + rider.shade, fg = rider.color).pack()
 
 def displayDeck(window, cardsCount):
-    bigCard(window, cardsCount, "black", "raised").pack()
+    bigCard(window, cardsCount, "snow4", "raised", "se").pack()
 
 def displayDiscard(window, cards, color):
     if cards:
@@ -58,8 +58,8 @@ def displayPlayed(window, cards):
         last = c
         smallCard(window, str(c)).grid(row = row, column = col, padx = 1, pady = 1)
 
-def bigCard(window, text, color = "black", relief = "flat"):
-    label = cardLabel(window, text, color, relief)
+def bigCard(window, text, color = "black", relief = "flat", anchor = "center"):
+    label = cardLabel(window, text, color, relief, anchor)
     resize(label, 3)
     return label
 
@@ -68,8 +68,8 @@ def smallCard(window, text, color = "black", relief = "flat"):
     resize(label, 1)
     return label
 
-def cardLabel(window, text, color, relief):
-    return tk.Label(window, text = text, fg = color,  highlightthickness = 1, highlightbackground = "black", relief = relief)
+def cardLabel(window, text, color, relief, anchor = "center"):
+    return tk.Label(window, text = text, fg = color,  highlightthickness = 1, highlightbackground = "black", relief = relief, anchor = anchor)
 
 def resize(label, n):
     label.config(width = n, height = n)

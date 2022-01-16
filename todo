@@ -1,5 +1,4 @@
 - Les cartes fatigue sont affichées différemment, et non-comptabilisées dans les cartes jouées
-- Le joueur peut savoir combien de cartes il reste dans le deck de chaque coureur. (À améliorer)
 - On voit l'animation de l'aspiration
 - Unifier le display: pouvoir appeler display sur race
 - Le jeu fonctionne sur le nouveau mac
