@@ -11,7 +11,10 @@ class Rider():
 
     def play(self, card):
         self.cards.play(card)
-        self.nextMove = card
+        if card == "f":
+            self.nextMove = 2
+        else:
+            self.nextMove = card
 
     def position(self):
         return self.riderMove.position()
@@ -26,5 +29,5 @@ class Rider():
         return self.riderMove.position()[0]
 
     def exhaust(self):
-        self.cards.discard.append(2)
+        self.cards.discard.append("f")
 

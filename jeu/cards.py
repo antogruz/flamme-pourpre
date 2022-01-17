@@ -73,6 +73,12 @@ class CardsTester(Tester):
         assert_similars([], cards.draw())
         assert_similars([], cards.discard)
 
+    def testPlayingExhaustCardDontShowIt(self):
+        cards = Cards([3, 4, 5, "f"])
+        cards.draw()
+        cards.play("f")
+        assert_similars([], cards.played)
+
 def deck(n):
     return [ i for i in reversed(range(1, n + 1)) ]
 
@@ -113,7 +119,8 @@ class Cards():
 
     def play(self, card):
         self.hand.remove(card)
-        self.played.append(card)
+        if card != "f":
+            self.played.append(card)
         self.discard += self.hand
 
 def noop(a):
