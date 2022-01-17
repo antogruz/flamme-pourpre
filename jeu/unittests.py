@@ -31,5 +31,6 @@ def assert_contains(expected, collection):
 def assert_similars(expected, actual):
     if not len(expected) == len(actual):
         print("Expected size of", expected, "(", len(expected), ") to be", len(actual), "the size of", actual)
+        raise Exception("Error in test")
     for e in expected:
         assert_contains(e, actual)
