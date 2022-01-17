@@ -50,3 +50,45 @@ def invisible(window):
 
 def empty(widget):
     widget.config(text = "", fg = "black")
+
+
+from unittests import Tester
+from frames import Frames
+from tracks import *
+
+class VisualTester(Tester):
+    def __init__(self, frames):
+        self.frames = frames
+
+    def __before__(self):
+        self.frame = self.frames.new()
+
+    def display(self, track, name):
+        tk.Label(self.frame, text = name).pack()
+        displayTrack(self.frames.new(), track)
+
+    def testCorsoPaseo(self):
+        self.display(corsoPaseo(), "Corso Paseo")
+
+    def testColDuBallon(self):
+        self.display(colDuBallon(), "Col du Ballon")
+
+    def testHauteMontagne(self):
+        self.display(hauteMontagne(), "Haute Montagne")
+
+    def testClassicissima(self):
+        self.display(classicissima(), "Classicissima")
+
+    def testRonde(self):
+        self.display(rondeVanWevelgem(), "Ronde Van Wevelgem")
+
+    def testFirenzeMilano(self):
+        self.display(firenzeMilano(), "Firenze Milano")
+
+
+if __name__ == "__main__":
+    window = tk.Tk()
+    window.title("Tracks")
+    window.bind("<space>", lambda e: window.destroy())
+    VisualTester(Frames(window)).runTests()
+    window.mainloop()

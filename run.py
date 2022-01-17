@@ -3,6 +3,7 @@
 import tkinter as tk
 from riderDisplay import *
 from track import Track
+from tracks import *
 from player import Player
 from race import Race
 from cards import Cards
@@ -18,7 +19,7 @@ def main():
     window = tk.Tk()
     window.title("flamme rouge")
 
-    track = Track(createTrack())
+    track = colDuBallon()
     layout = RaceLayout(window, 2)
     faster = parseArgs().faster
     players, riders = createRiders(layout.getUserFrame(), faster)
@@ -127,9 +128,6 @@ def clear(frame):
     for widget in frame.winfo_children():
         widget.destroy()
 
-def createTrack():
-    return [(5, "start"), (8, "normal"), (6, "ascent"), (4, "descent"), (32, "normal"), (5, "end")]
-
 def rouleurDeck():
     deck = []
     for i in range(3):
@@ -142,8 +140,5 @@ def sprinteurDeck():
         deck += [2, 3, 4, 5, 9]
     return deck
 
-
 main()
-
-
 
