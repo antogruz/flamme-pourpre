@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 
 from frames import Frames
-from unittests import Tester
+from visualtests import VisualTester
 from track import Track
 from obstacles import Obstacles
 from riderDisplay import rouleurShade
 from display import RoadDisplay
 from logger import Logger
 
-class VisualTester(Tester):
-    def __init__(self, frames):
-        self.frames = frames
-
+class AnimateTester(VisualTester):
     def __before__(self):
+        VisualTester.__before__(self)
         self.frame = self.frames.new()
         self.track = Track([(10, "normal")])
         self.logger = Logger()
@@ -95,4 +93,4 @@ class Animation:
 import tkinter as tk
 if __name__ == "__main__":
     window = tk.Tk()
-    VisualTester(Frames(window)).runTests()
+    AnimateTester(Frames(window)).runTests()

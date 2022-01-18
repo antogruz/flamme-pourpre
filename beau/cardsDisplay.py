@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
 
-from unittests import Tester
+from visualtests import VisualTester
 import tkinter as tk
 from frames import Frames
 from cards import Cards
 
-class VisualTester(Tester):
-    def __init__(self, frames):
-        self.frames = frames
-
-    def __before__(self):
-        self.frame = self.frames.new()
-
+class CardsTester(VisualTester):
     def testEmpty(self):
         displayCards(self.frame, Rider(), 0, [], [])
 
@@ -78,7 +72,7 @@ if __name__ == "__main__":
     window = tk.Tk()
     window.title("Visual tests")
     window.bind("<space>", lambda e: window.destroy())
-    VisualTester(Frames(window)).runTests()
+    CardsTester(Frames(window)).runTests()
     window.mainloop()
 
 

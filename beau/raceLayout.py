@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
 
-from unittests import Tester
+from visualtests import VisualTester
 import tkinter as tk
 from frames import Frames
 
-class VisualTester(Tester):
-    def __init__(self, frames):
-        self.frames = frames
-
-    def __before__(self):
-        self.frame = self.frames.new()
-
+class RaceTester(VisualTester):
     def testLayout(self):
         layout = RaceLayout(self.frame, 2)
         labels = ["User Frame", "Track Frame", "Deck1", "Deck2"]
@@ -38,6 +32,6 @@ if __name__ == "__main__":
     window = tk.Tk()
     window.title("Race Layout")
     window.bind("<space>", lambda e: window.destroy())
-    VisualTester(Frames(window)).runTests()
+    RaceTester(Frames(window)).runTests()
     window.mainloop()
 

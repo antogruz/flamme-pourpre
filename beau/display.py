@@ -1,20 +1,13 @@
 #!/usr/bin/env python3
 
-from unittests import *
+from visualtests import VisualTester
 from trackDisplay import displayTrack, empty
 from track import Track
 import tkinter as tk
 from frames import Frames
 from riderDisplay import *
 
-class VisualTester(Tester):
-    def __init__(self, frames):
-        self.frames = frames
-
-    def __before__(self):
-        self.frame = self.frames.new()
-
-
+class DisplayTester(VisualTester):
     def testTrack(self):
         track = Track([(1, "start"), (1, "normal"), (1, "ascent"), (1, "descent"), (1, "end")])
         RoadDisplay(self.frame, track)
@@ -117,5 +110,5 @@ if __name__ == "__main__":
     window = tk.Tk()
     window.title("Visual tests")
     window.bind("<space>", lambda e: window.destroy())
-    VisualTester(Frames(window)).runTests()
+    DisplayTester(Frames(window)).runTests()
     window.mainloop()
