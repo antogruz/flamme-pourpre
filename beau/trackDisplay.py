@@ -52,8 +52,7 @@ def empty(widget):
     widget.config(text = "", fg = "black")
 
 
-from visualtests import VisualTester
-from frames import Frames
+from visualtests import *
 from tracks import *
 
 class TrackTester(VisualTester):
@@ -81,8 +80,4 @@ class TrackTester(VisualTester):
 
 
 if __name__ == "__main__":
-    window = tk.Tk()
-    window.title("Tracks")
-    window.bind("<space>", lambda e: window.destroy())
-    TrackTester(Frames(window)).runTests()
-    window.mainloop()
+    runVisualTestsInWindow(TrackTester)

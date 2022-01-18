@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-from visualtests import VisualTester
+from visualtests import *
 from trackDisplay import displayTrack, empty
 from track import Track
 import tkinter as tk
-from frames import Frames
 from riderDisplay import *
 
 class DisplayTester(VisualTester):
@@ -107,8 +106,4 @@ def displayRanking(boardWidgets, riders):
 
 
 if __name__ == "__main__":
-    window = tk.Tk()
-    window.title("Visual tests")
-    window.bind("<space>", lambda e: window.destroy())
-    DisplayTester(Frames(window)).runTests()
-    window.mainloop()
+    runVisualTestsInWindow(DisplayTester)

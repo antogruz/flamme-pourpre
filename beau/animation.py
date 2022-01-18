@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from frames import Frames
 from visualtests import VisualTester
 from track import Track
 from obstacles import Obstacles
@@ -92,5 +91,4 @@ class Animation:
 
 import tkinter as tk
 if __name__ == "__main__":
-    window = tk.Tk()
-    AnimateTester(Frames(window)).runTests()
+    AnimateTester(tk.Tk()).runTests()

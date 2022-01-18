@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from visualtests import VisualTester
+from visualtests import VisualTester, runVisualTestsInWindow
 import tkinter as tk
 from frames import Frames
 from cards import Cards
@@ -69,10 +69,6 @@ def resize(label, n):
     label.config(width = n, height = n)
 
 if __name__ == "__main__":
-    window = tk.Tk()
-    window.title("Visual tests")
-    window.bind("<space>", lambda e: window.destroy())
-    CardsTester(Frames(window)).runTests()
-    window.mainloop()
+    runVisualTestsInWindow(CardsTester)
 
 

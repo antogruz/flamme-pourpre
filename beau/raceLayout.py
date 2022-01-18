@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from visualtests import VisualTester
+from visualtests import *
 import tkinter as tk
 from frames import Frames
 
@@ -29,9 +29,5 @@ class RaceLayout():
         return self.decks
 
 if __name__ == "__main__":
-    window = tk.Tk()
-    window.title("Race Layout")
-    window.bind("<space>", lambda e: window.destroy())
-    RaceTester(Frames(window)).runTests()
-    window.mainloop()
+    runVisualTestsInWindow(RaceTester)
 
