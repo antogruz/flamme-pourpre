@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-from unittests import assert_equals, Tester
+from unittests import assert_equals, runTests
 from riderMove import Rider
 from track import Track, streamable
 
 def tests():
-    SlipstremingTester().runTests()
+    runTests(SlipstremingTester())
 
-class SlipstremingTester(Tester):
+class SlipstremingTester():
     def __before__(self):
         self.rider = Rider(0, 0)
         self.track = Track([(10, "normal")])

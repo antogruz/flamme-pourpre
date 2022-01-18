@@ -61,9 +61,9 @@ def previous(slot):
     return (slot[0] - 1, 0)
 
 
-from unittests import Tester, assert_equals
+from unittests import runTests, assert_equals
 
-class RiderTest(Tester):
+class RiderTest():
     def __before__(self):
         self.rider = Rider(0, 0)
         self.race = Race()
@@ -149,4 +149,4 @@ class Race():
 
 
 if __name__ == "__main__":
-    RiderTest().runTests()
+    runTests(RiderTest())

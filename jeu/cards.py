@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from unittests import assert_equals, Tester, assert_similars
+from unittests import assert_equals, runTests, assert_similars
 
 def tests():
-    CardsTester().runTests()
+    runTests(CardsTester())
 
-class CardsTester(Tester):
+class CardsTester():
     def testDrawAllDeck(self):
         cards = Cards(deck(4), noop)
         cards.draw()

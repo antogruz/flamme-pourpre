@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from unittests import Tester, assert_equals, assert_similars
+from unittests import runTests, assert_equals, assert_similars
 from track import Track
 from rider import Rider
 from cards import Cards
@@ -8,9 +8,9 @@ import riderMove
 from logger import Logger
 
 def tests():
-    RaceTest().runTests()
+    runTests(RaceTest())
 
-class RaceTest(Tester):
+class RaceTest():
     def __before__(self):
         self.track = Track([(5, "normal"), (3, "end")])
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from unittests import Tester, assert_equals
+from unittests import runTests, assert_equals
 
 def tests():
-    ExhaustTester().runTests()
+    runTests(ExhaustTester())
 
-class ExhaustTester(Tester):
+class ExhaustTester():
     def testSolo(self):
         rider = Rider(0)
         exhaust([rider])

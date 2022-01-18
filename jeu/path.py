@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-from unittests import Tester, assert_equals
+from unittests import runTests, assert_equals
 from rider import Rider
 from track import Track
 from obstacles import Obstacles
 from riderMove import Rider as RiderToken
 
-class PathTester(Tester):
+class PathTester():
     def __before__(self):
         self.track = Track([(5, "normal")])
 
@@ -48,4 +48,4 @@ def findNextEmpty(obstacles, start, end):
 
 
 if __name__ == "__main__":
-    PathTester().runTests()
+    runTests(PathTester())

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from unittests import Tester, assert_equals, assert_similars
+from unittests import runTests, assert_equals, assert_similars
 
 def tests():
-    PlayerTest().runTests()
+    runTests(PlayerTest())
 
-class PlayerTest(Tester):
+class PlayerTest():
     def testChoiceBetweenRiders(self):
         choices = ChoiceLogger()
         p = Player(choices, [createRouleur(), createSprinteur()])

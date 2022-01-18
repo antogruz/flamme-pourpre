@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from visualtests import VisualTester
+from unittests import runTests
 from track import Track
 from obstacles import Obstacles
 from riderDisplay import rouleurShade
@@ -91,4 +92,4 @@ class Animation:
 
 import tkinter as tk
 if __name__ == "__main__":
-    AnimateTester(tk.Tk()).runTests()
+    runTests(AnimateTester(tk.Tk()))

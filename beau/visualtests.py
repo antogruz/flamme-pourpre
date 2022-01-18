@@ -1,7 +1,7 @@
-from unittests import Tester
+from unittests import runTests
 from frames import Frames
 
-class VisualTester(Tester):
+class VisualTester():
     def __init__(self, window):
         self.frames = Frames(window)
         window.bind("<space>", lambda e: window.destroy())
@@ -13,7 +13,7 @@ class VisualTester(Tester):
 import tkinter as tk
 def runVisualTestsInWindow(testerClass):
     window = tk.Tk()
-    testerClass(window).runTests()
+    runTests(testerClass(window))
     window.mainloop()
 
 

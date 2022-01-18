@@ -16,12 +16,12 @@ class Track():
 def streamable(road):
     return not road in ["end", "ascent"]
 
-from unittests import Tester, assert_equals
+from unittests import runTests, assert_equals
 
 def tests():
-    TrackTest().runTests()
+    runTests(TrackTest())
 
-class TrackTest(Tester):
+class TrackTest():
     def testEmpty(self):
         track = Track([])
         assert_equals("out", track.getRoadType(0))
