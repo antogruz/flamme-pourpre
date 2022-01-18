@@ -20,17 +20,14 @@ class Tester:
 
 def assert_equals(expected, actual):
     if expected != actual:
-        print("Expected", expected, "got", actual)
-        raise Exception("Error in test")
+        raise Exception("Expected", expected, "got", actual)
 
 def assert_contains(expected, collection):
     if expected not in collection:
-        print("Expected", expected, "to be in", collection)
-        raise Exception("Error in test")
+        raise Exception("Expected", expected, "to be in", collection)
 
 def assert_similars(expected, actual):
     if not len(expected) == len(actual):
-        print("Expected size of", expected, "(", len(expected), ") to be", len(actual), "the size of", actual)
-        raise Exception("Error in test")
+        raise Exception("Expected size of {}, but got {}. So actual {} is not similar to expected {}".format(len(expected), len(actual), actual, expected))
     for e in expected:
         assert_contains(e, actual)
