@@ -13,15 +13,16 @@ from display import RoadDisplay
 from animation import Logger, Animation
 from raceLayout import RaceLayout
 from cardsDisplay import displayCards
+from menu import *
 
 
 def main():
     window = tk.Tk()
     window.title("flamme rouge")
 
-    track = colDuBallon()
-    layout = RaceLayout(window, 2)
     faster = parseArgs().faster
+    track = colDuBallon() if faster else pickTrack(window)
+    layout = RaceLayout(window, 2)
     players, riders = createRiders(layout.getUserFrame(), faster)
     onCardsDisplay = riders[0:2]
     clock = 0.3
@@ -46,6 +47,11 @@ def main():
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
+
+def pickTrack(window):
+    trackCreator = createMenu(window, [("Corso Paseo", corsoPaseo), ("Col du ballon", colDuBallon), ("Haute Montagne", hauteMontagne), ("Classicissima", classicissima), ("Ronde Van Wevelgem", rondeVanWevelgem), ("Firenze-Milano", firenzeMilano)])
+    return trackCreator()
+
 
 def displayRiderCards(frame, rider):
     displayCards(frame, rider, rider.cards.inDeck(), rider.cards.discard, rider.cards.played)
@@ -104,29 +110,6 @@ def animate(rider, display):
 class FirstOracle():
     def pick(self, any):
         return 0
-
-from functools import partial
-class PlayerChoice():
-    def __init__(self, frame):
-        self.frame = frame
-
-    def pick(self, choices):
-        answer = tk.IntVar()
-        def setChoice(n):
-            answer.set(n)
-
-        for i, choice in enumerate(choices):
-            tk.Button(self.frame, text = choice, command = partial(setChoice, i)).pack(side = "left")
-
-        self.frame.update()
-        self.frame.wait_variable(answer)
-
-        clear(self.frame)
-        return answer.get()
-
-def clear(frame):
-    for widget in frame.winfo_children():
-        widget.destroy()
 
 def rouleurDeck():
     deck = []
