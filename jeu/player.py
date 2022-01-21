@@ -97,16 +97,17 @@ class Player():
 
     def pickOneMove(self, riders):
         rider = self.pickRider(riders)
-        rider.play(self.pickCard(rider))
+        cards = rider.draw()
+        if not cards:
+            rider.nextMove = 2
+        else:
+            rider.play(self.pickCard(cards))
 
     def pickRider(self, riders):
         choice = self.pick([r.name for r in riders])
         return riders.pop(choice)
 
-    def pickCard(self, rider):
-        cards = rider.draw()
-        if not cards:
-            return 2
+    def pickCard(self, cards):
         return cards[self.pick(cards)]
 
     def pick(self, list):

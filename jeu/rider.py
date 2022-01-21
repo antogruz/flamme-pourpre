@@ -31,3 +31,19 @@ class Rider():
     def exhaust(self):
         self.cards.discard.append("f")
 
+
+from unittests import *
+from player import Player, ChoiceDoer
+from cards import Cards
+
+class IntegrationTester():
+    def testEmptyDeck(self):
+        rider = Rider("exhausted", Cards([]), None)
+        player = Player(ChoiceDoer([0, 0, 0]), [rider])
+        player.pickNextMoves()
+        assert_equals(2, rider.nextMove)
+
+
+if __name__ == "__main__":
+    runTests(IntegrationTester())
+
