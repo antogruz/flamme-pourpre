@@ -7,16 +7,16 @@ def tests():
 
 class CardsTester():
     def testDrawAllDeck(self):
-        cards = Cards(deck(4), noop)
+        cards = Cards(deck(4))
         cards.draw()
         assert_equals(0, cards.inDeck())
 
     def testNoDraw(self):
-        cards = Cards(deck(4), noop)
+        cards = Cards(deck(4))
         assert_equals(4, cards.inDeck())
 
     def testDrawGet4Cards(self):
-        cards = Cards(deck(6), noop)
+        cards = Cards(deck(6))
         drawn = cards.draw()
         assert_equals(4, len(drawn))
         assert_equals(2, cards.inDeck())
@@ -26,7 +26,7 @@ class CardsTester():
         assert_similars([1, 2, 3, 4], cards.draw())
 
     def testCardPlayedIsOut(self):
-        cards = Cards(deck(4), noop)
+        cards = Cards(deck(4))
         cards.draw()
         cards.play(1)
         assert_similars([2, 3, 4], cards.draw())
@@ -67,7 +67,7 @@ class CardsTester():
         assert_similars([3, 4, 6], cards.draw())
 
     def test1card(self):
-        cards = Cards(deck(1), noop)
+        cards = Cards(deck(1))
         cards.draw()
         cards.play(1)
         assert_similars([], cards.draw())
@@ -123,8 +123,6 @@ class Cards():
             self.played.append(card)
         self.discard += self.hand
 
-def noop(a):
-    pass
 
 if __name__ == "__main__":
     tests()

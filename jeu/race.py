@@ -64,11 +64,8 @@ class RaceTest():
 def copy(list):
     return [l for l in list]
 
-def noop(x):
-    pass
-
 def createRider(square, lane):
-    return Rider("Tac", Cards([], noop), riderMove.Rider(square, lane))
+    return Rider("Tac", Cards([]), riderMove.Rider(square, lane))
 
 class SimplePlayer():
     def __init__(self, riders, move):
