@@ -43,7 +43,12 @@ def main():
         animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
         roadDisplay.displayRiders(race.riders)
         roadDisplay.ranking(race.ranking())
+        #tour.checkNewArrivals(race.ranking())
         window.update()
+
+    #tour.endRace(race.ranking())
+    #tour.scores()
+    #tour.times()
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
