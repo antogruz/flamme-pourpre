@@ -35,6 +35,7 @@ def main():
     race = Race(track, riders, players)
 
     window.update()
+    #tour = Tour()
     while not race.isOver():
         for rider, frame in zip(onCardsDisplay, layout.getDecksFrames()):
             displayRiderCards(frame, rider)

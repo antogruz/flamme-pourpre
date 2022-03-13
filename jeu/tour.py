@@ -7,35 +7,72 @@ class Tour:
         self.teams = teams
         for t in teams:
             t.score = 0
+        self.bounty = 3
+        self.alreadyArrived = []
 
     def scores(self):
-        return [(team.color, team.score) for team in self.teams]
+        return [(team.color, team.score) for team in sorted(self.teams, key = getScore, reverse = True)]
 
     def checkNewArrivals(self, ranking):
-        for rider in ranking:
-            self.findTeam(rider).score += 3
+        newArrivals = self.extractNew(ranking)
+        for rider in newArrivals:
+            self.findTeam(rider).score += self.claimBounty()
 
     def findTeam(self, rider):
         for team in self.teams:
             if rider in team.riders:
                 return team
 
+    def claimBounty(self):
+        if self.bounty == 0:
+            return 0
+        self.bounty -= 1
+        return self.bounty + 1
 
+    def extractNew(self, ranking):
+        newOnes = [rider for rider in ranking if rider not in self.alreadyArrived]
+        self.alreadyArrived = ranking
+        return newOnes
+
+
+def getScore(team):
+    return team.score
 
 class TourTest:
+    def __before__(self):
+        self.a, self.b, self.c, self.d = Rider(), Rider(), Rider(), Rider()
+        self.green = Team("green", [self.a, self.b])
+        self.blue = Team("blue", [self.c, self.d])
+
     def testScoreAtBeginning(self):
-        tour = Tour([Team("green", [])])
+        tour = Tour([self.green])
         assert_equals([("green", 0)], tour.scores())
 
     def testMultipleTeamsScore(self):
-        tour = Tour([Team("green"), Team("blue")])
+        tour = Tour([self.green, self.blue])
         assert_similars([("green", 0), ("blue", 0)], tour.scores())
 
-    def testScoresAfterARace(self):
-        rider = Rider()
-        tour = Tour([Team("green", [rider])])
-        tour.checkNewArrivals([rider])
+    def testFirstGets3Points(self):
+        tour = Tour([self.green])
+        tour.checkNewArrivals([self.a])
         assert_similars([("green", 3)], tour.scores())
+
+    def testScoresAfterARace(self):
+        tour = Tour([self.green, self.blue])
+        tour.checkNewArrivals([self.a, self.b, self.c, self.d])
+        assert_similars([("green", 5), ("blue", 1)], tour.scores())
+
+    def testArrivalsInDifferentTurns(self):
+        tour = Tour([self.green, self.blue])
+        tour.checkNewArrivals([self.a])
+        tour.checkNewArrivals([self.a, self.c, self.b])
+        tour.checkNewArrivals([self.a, self.c, self.b, self.d])
+        assert_similars([("green", 4), ("blue", 2)], tour.scores())
+
+    def testScoresInDescendingOrder(self):
+        tour = Tour([self.green, self.blue])
+        tour.checkNewArrivals([self.c, self.d, self.a, self.b])
+        assert_equals([("blue", 5), ("green", 1)], tour.scores())
 
 
 class Team:
