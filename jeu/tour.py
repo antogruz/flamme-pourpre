@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
 
 from unittests import *
+from timer import Timer
 
 class Tour:
     def __init__(self, teams):
         self.teams = teams
         for t in teams:
             t.score = 0
-        self.bounty = 3
-        self.alreadyArrived = []
+        self.newRace()
 
     def scores(self):
         return [(team.color, team.score) for team in sorted(self.teams, key = getScore, reverse = True)]
+
+    def times(self):
+        riders = sorted([rider for team in self.teams for rider in team.riders], key = getTime)
+        return [(self.findTeam(rider).color + " " + rider.name, rider.time) for rider in riders]
 
     def checkNewArrivals(self, ranking):
         newArrivals = self.extractNew(ranking)
         for rider in newArrivals:
             self.findTeam(rider).score += self.claimBounty()
+        self.timer.arrive(newArrivals)
 
     def findTeam(self, rider):
         for team in self.teams:
@@ -34,13 +39,22 @@ class Tour:
         self.alreadyArrived = ranking
         return newOnes
 
+    def newRace(self):
+        self.bounty = 3
+        self.alreadyArrived = []
+        self.timer = Timer()
+
 
 def getScore(team):
     return team.score
 
+def getTime(rider):
+    return rider.time
+
+
 class TourTest:
     def __before__(self):
-        self.a, self.b, self.c, self.d = Rider(), Rider(), Rider(), Rider()
+        self.a, self.b, self.c, self.d = Rider("a"), Rider("b"), Rider("c"), Rider("d")
         self.green = Team("green", [self.a, self.b])
         self.blue = Team("blue", [self.c, self.d])
 
@@ -74,6 +88,22 @@ class TourTest:
         tour.checkNewArrivals([self.c, self.d, self.a, self.b])
         assert_equals([("blue", 5), ("green", 1)], tour.scores())
 
+    def testTwoRaces(self):
+        tour = Tour([self.green])
+        tour.checkNewArrivals([self.a])
+        tour.newRace()
+        tour.checkNewArrivals([self.a])
+        assert_equals([("green", 6)], tour.scores())
+
+    def testTimes(self):
+        tour = Tour([self.green, self.blue])
+        self.c.pos = 1
+        self.b.pos = 2
+        tour.checkNewArrivals([self.a])
+        tour.checkNewArrivals([self.c, self.d])
+        tour.checkNewArrivals([self.b])
+        assert_equals([("green a", 0), ("blue c", 50), ("blue d", 60), ("green b", 100)], tour.times())
+
 
 class Team:
     def __init__(self, color, riders = []):
@@ -81,7 +111,13 @@ class Team:
         self.riders = riders
 
 class Rider:
-    pass
+    def __init__(self, name, position = 0):
+        self.name = name
+        self.pos = position
+        self.time = 0
+
+    def position(self):
+        return self.pos, 0
 
 if __name__ == "__main__":
     runTests(TourTest())
