@@ -14,6 +14,7 @@ from animation import Logger, Animation
 from raceLayout import RaceLayout
 from cardsDisplay import displayCards
 from menu import *
+from tour import Tour, Team
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
     faster = parseArgs().faster
     track = colDuBallon() if faster else pickTrack(window)
     layout = RaceLayout(window, 2)
-    players, riders = createRiders(layout.getUserFrame(), faster)
+    players, riders, teams = createRiders(layout.getUserFrame(), faster)
     onCardsDisplay = riders[0:2]
     clock = 0.3
     if faster:
@@ -35,7 +36,7 @@ def main():
     race = Race(track, riders, players)
 
     window.update()
-    #tour = Tour()
+    tour = Tour(teams)
     while not race.isOver():
         for rider, frame in zip(onCardsDisplay, layout.getDecksFrames()):
             displayRiderCards(frame, rider)
@@ -44,12 +45,11 @@ def main():
         animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
         roadDisplay.displayRiders(race.riders)
         roadDisplay.ranking(race.ranking())
-        #tour.checkNewArrivals(race.ranking())
+        tour.checkNewArrivals(race.ranking())
         window.update()
 
-    #tour.endRace(race.ranking())
-    #tour.scores()
-    #tour.times()
+    print(tour.scores())
+    print(tour.times())
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
@@ -72,6 +72,7 @@ from rider import Rider
 def createRiders(choicesFrame, fast):
     players = []
     riders = []
+    teams = []
     square = 0
     if fast:
         oracle = FirstOracle()
@@ -80,11 +81,12 @@ def createRiders(choicesFrame, fast):
 
     for color in ["green", "red", "blue", "black"]:
         player, group = createPlayer(color, oracle, square)
+        teams.append(Team(color, group))
         oracle = FirstOracle()
         square += 1
         players.append(player)
         riders += group
-    return players, riders
+    return players, riders, teams
 
 def createPlayer(color, oracle, square):
         rouleur = createRider(color, square, 0, createRouleur())

@@ -34,7 +34,7 @@ class Tour:
 
     def extractNew(self, ranking):
         newOnes = [rider for rider in ranking if rider not in self.alreadyArrived]
-        self.alreadyArrived = ranking
+        self.alreadyArrived = copy(ranking)
         return newOnes
 
     def newRace(self):
@@ -49,6 +49,9 @@ class Tour:
     def getRiders(self):
         return [rider for team in self.teams for rider in team.riders]
 
+
+def copy(l):
+    return [e for e in l]
 
 def getScore(team):
     return team.score
@@ -108,6 +111,14 @@ class TourTest:
         tour.checkNewArrivals([self.c, self.d])
         tour.checkNewArrivals([self.b])
         assert_equals([("green a", 0), ("blue c", 50), ("blue d", 60), ("green b", 100)], tour.times())
+
+    def testArrivalsIsCopied(self):
+        tour = Tour([self.green])
+        arrivals = [self.a]
+        tour.checkNewArrivals(arrivals)
+        arrivals.append(self.b)
+        tour.checkNewArrivals(arrivals)
+        assert_equals([("green", 5)], tour.scores())
 
 
 class Team:
