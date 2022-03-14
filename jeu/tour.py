@@ -8,14 +8,12 @@ class Tour:
         self.teams = teams
         for t in teams:
             t.score = 0
+            for r in t.riders:
+                r.time = 0
         self.newRace()
 
     def scores(self):
         return [(team.color, team.score) for team in sorted(self.teams, key = getScore, reverse = True)]
-
-    def times(self):
-        riders = sorted([rider for team in self.teams for rider in team.riders], key = getTime)
-        return [(self.findTeam(rider).color + " " + rider.name, rider.time) for rider in riders]
 
     def checkNewArrivals(self, ranking):
         newArrivals = self.extractNew(ranking)
@@ -43,6 +41,13 @@ class Tour:
         self.bounty = 3
         self.alreadyArrived = []
         self.timer = Timer()
+
+    def times(self):
+        riders = sorted(self.getRiders(), key = getTime)
+        return [(self.findTeam(rider).color + " " + rider.name, rider.time) for rider in riders]
+
+    def getRiders(self):
+        return [rider for team in self.teams for rider in team.riders]
 
 
 def getScore(team):
@@ -114,7 +119,6 @@ class Rider:
     def __init__(self, name, position = 0):
         self.name = name
         self.pos = position
-        self.time = 0
 
     def position(self):
         return self.pos, 0
