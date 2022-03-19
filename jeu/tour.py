@@ -125,6 +125,8 @@ class Team:
     def __init__(self, color, riders = []):
         self.color = color
         self.riders = riders
+        for r in self.riders:
+            r.color = color
 
 class Rider:
     def __init__(self, name, position = 0):

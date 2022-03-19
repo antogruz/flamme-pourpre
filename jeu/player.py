@@ -88,7 +88,7 @@ def createSprinteur():
 class Player():
     def __init__(self, oracle, riders):
         self.oracle = oracle
-        self.riders = riders
+        self.riders = copy(riders)
 
     def pickNextMoves(self):
         ridersToPick = [r for r in self.riders]
@@ -116,6 +116,8 @@ class Player():
             return 0
         return choice
 
+def copy(l):
+    return [e for e in l]
 
 if __name__ == "__main__":
     tests()

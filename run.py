@@ -21,10 +21,15 @@ def main():
     window = tk.Tk()
     window.title("flamme rouge")
 
+    teams = createTeams()
+    tour = Tour(teams)
+
     faster = parseArgs().faster
     track = colDuBallon() if faster else pickTrack(window)
     layout = RaceLayout(window, 2)
-    players, riders, teams = createRiders(layout.getUserFrame(), faster)
+    players = createPlayers(teams, layout.getUserFrame(), faster)
+
+    riders = tour.getRiders()
     onCardsDisplay = riders[0:2]
     clock = 0.3
     if faster:
@@ -37,7 +42,6 @@ def main():
     race = Race(track, riders, players)
 
     window.update()
-    tour = Tour(teams)
     while not race.isOver():
         for rider, frame in zip(onCardsDisplay, layout.getDecksFrames()):
             displayRiderCards(frame, rider)
@@ -81,40 +85,36 @@ def parseArgs():
     parser.add_argument('--faster', type=int)
     return parser.parse_args()
 
+def createTeams():
+    return [ Team(color, [createRider(createRouleur()), createRider(createSprinteur())])
+            for color in ["green", "red", "blue", "black"] ]
+
+
+def createRider(specialist):
+    rider = Rider(specialist.name, Cards(specialist.deck, random.shuffle))
+    rider.shade = specialist.shade
+    return rider
+
 from rider import Rider
-def createRiders(choicesFrame, fast):
+def createPlayers(teams, choicesFrame, fast):
     players = []
-    riders = []
-    teams = []
     if fast:
         oracle = FirstOracle()
     else:
         oracle = PlayerChoice(choicesFrame)
 
-    for color in ["green", "red", "blue", "black"]:
-        player, group = createPlayer(color, oracle)
-        teams.append(Team(color, group))
+    for team in teams:
+        player = Player(oracle, team.riders)
         oracle = FirstOracle()
         players.append(player)
-        riders += group
-    return players, riders, teams
+    return players
 
-def createPlayer(color, oracle):
-        rouleur = createRider(color, createRouleur())
-        sprinteur = createRider(color, createSprinteur())
-        return Player(oracle, [rouleur, sprinteur]), [rouleur, sprinteur]
 
 class Specialist:
     def __init__(self, name, deck, shade):
         self.name = name
         self.deck = deck
         self.shade = shade
-
-def createRider(color, specialist):
-    rider = Rider(specialist.name, Cards(specialist.deck, random.shuffle))
-    rider.shade = specialist.shade
-    rider.color = color
-    return rider
 
 def createRouleur():
     return Specialist("Rouleur", rouleurDeck(), rouleurShade)
