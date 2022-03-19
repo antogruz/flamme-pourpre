@@ -44,10 +44,15 @@ class Tour:
 
     def times(self):
         riders = sorted(self.getRiders(), key = getTime)
+        removeTime(riders[0].time, riders)
         return [(self.findTeam(rider).color + " " + rider.name, rider.time) for rider in riders]
 
     def getRiders(self):
         return [rider for team in self.teams for rider in team.riders]
+
+def removeTime(delta, riders):
+    for r in riders:
+        r.time -= delta
 
 
 def copy(l):
@@ -111,6 +116,15 @@ class TourTest:
         tour.checkNewArrivals([self.c, self.d])
         tour.checkNewArrivals([self.b])
         assert_equals([("green a", 0), ("blue c", 50), ("blue d", 60), ("green b", 100)], tour.times())
+
+    def testTwoRacesTimes(self):
+        tour = Tour([self.green, self.blue])
+        tour.checkNewArrivals([self.a])
+        tour.checkNewArrivals([self.b, self.c, self.d])
+        tour.newRace()
+        tour.checkNewArrivals([self.b])
+        tour.checkNewArrivals([self.a, self.c, self.d])
+        assert_similars([("green a", 0), ("green b", 0), ("blue c", 60), ("blue d", 60)], tour.times())
 
     def testArrivalsIsCopied(self):
         tour = Tour([self.green])
