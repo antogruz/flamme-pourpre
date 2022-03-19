@@ -131,16 +131,12 @@ class FirstOracle():
         return 0
 
 def rouleurDeck():
-    deck = []
-    for i in range(3):
-        deck += [3, 4, 5, 6, 7]
-    return deck
+    return threeTimes([3, 4, 5, 6, 7])
 
 def sprinteurDeck():
-    deck = []
-    for i in range(3):
-        deck += [2, 3, 4, 5, 9]
-    return deck
+    return threeTimes([2, 3, 4, 5, 9])
 
+def threeTimes(five):
+    return [ card for card in five for i in range(3) ]
 main()
 
