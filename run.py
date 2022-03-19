@@ -24,10 +24,21 @@ def main():
     teams = createTeams()
     tour = Tour(teams)
 
+    for i in range(1):
+        tour.newRace()
+        playRace(window, tour)
+
+    print(tour.scores())
+    print(tour.times())
+
+    window.bind("<Escape>", lambda e: window.destroy())
+    window.mainloop()
+
+def playRace(window, tour):
     faster = parseArgs().faster
     track = colDuBallon() if faster else pickTrack(window)
     layout = RaceLayout(window, 2)
-    players = createPlayers(teams, layout.getUserFrame(), faster)
+    players = createPlayers(tour.teams, layout.getUserFrame(), faster)
 
     riders = tour.getRiders()
     onCardsDisplay = riders[0:2]
@@ -42,6 +53,7 @@ def main():
     race = Race(track, riders, players)
 
     window.update()
+
     while not race.isOver():
         for rider, frame in zip(onCardsDisplay, layout.getDecksFrames()):
             displayRiderCards(frame, rider)
@@ -52,12 +64,6 @@ def main():
         roadDisplay.ranking(race.ranking())
         tour.checkNewArrivals(race.ranking())
         window.update()
-
-    print(tour.scores())
-    print(tour.times())
-
-    window.bind("<Escape>", lambda e: window.destroy())
-    window.mainloop()
 
 def setRidersOnStart(riders):
     random.shuffle(riders)
