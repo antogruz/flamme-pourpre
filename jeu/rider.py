@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 class Rider():
-    def __init__(self, name, cards, riderMove):
+    def __init__(self, name, cards, riderMove = None):
         self.name = name
         self.cards = cards
         self.riderMove = riderMove
@@ -38,7 +38,7 @@ from cards import Cards
 
 class IntegrationTester():
     def testEmptyDeck(self):
-        rider = Rider("exhausted", Cards([]), None)
+        rider = Rider("exhausted", Cards([]))
         player = Player(ChoiceDoer([0, 0, 0]), [rider])
         player.pickNextMoves()
         assert_equals(2, rider.nextMove)

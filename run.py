@@ -30,6 +30,7 @@ def main():
     if faster:
         clock /= faster
     roadDisplay = RoadDisplay(layout.getTrackFrame(), track)
+    setRidersOnStart(riders)
     roadDisplay.displayRiders(riders)
     animation = Animation(roadDisplay, clock)
 
@@ -54,6 +55,18 @@ def main():
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
 
+def setRidersOnStart(riders):
+    random.shuffle(riders)
+    square, lane = 0, 0
+    for r in riders:
+        r.riderMove = riderMove.Rider(square, lane)
+        square, lane = next(square, lane)
+
+def next(square, lane):
+    if lane == 0:
+        return square, lane + 1
+    return square + 1, 0
+
 def pickTrack(window):
     trackCreator = createMenu(window, [("Corso Paseo", corsoPaseo), ("Col du ballon", colDuBallon), ("Haute Montagne", hauteMontagne), ("Classicissima", classicissima), ("Ronde Van Wevelgem", rondeVanWevelgem), ("Firenze-Milano", firenzeMilano)])
     return trackCreator()
@@ -73,24 +86,22 @@ def createRiders(choicesFrame, fast):
     players = []
     riders = []
     teams = []
-    square = 0
     if fast:
         oracle = FirstOracle()
     else:
         oracle = PlayerChoice(choicesFrame)
 
     for color in ["green", "red", "blue", "black"]:
-        player, group = createPlayer(color, oracle, square)
+        player, group = createPlayer(color, oracle)
         teams.append(Team(color, group))
         oracle = FirstOracle()
-        square += 1
         players.append(player)
         riders += group
     return players, riders, teams
 
-def createPlayer(color, oracle, square):
-        rouleur = createRider(color, square, 0, createRouleur())
-        sprinteur = createRider(color, square, 1, createSprinteur())
+def createPlayer(color, oracle):
+        rouleur = createRider(color, createRouleur())
+        sprinteur = createRider(color, createSprinteur())
         return Player(oracle, [rouleur, sprinteur]), [rouleur, sprinteur]
 
 class Specialist:
@@ -99,8 +110,8 @@ class Specialist:
         self.deck = deck
         self.shade = shade
 
-def createRider(color, square, lane, specialist):
-    rider = Rider(specialist.name, Cards(specialist.deck, random.shuffle), riderMove.Rider(square, lane))
+def createRider(color, specialist):
+    rider = Rider(specialist.name, Cards(specialist.deck, random.shuffle))
     rider.shade = specialist.shade
     rider.color = color
     return rider
