@@ -80,13 +80,26 @@ class CardsTester():
         assert_similars([], cards.played)
 
     def testCardsAreRestoredAfterRace(self):
-        cards = Cards(deck(4))
+        cards = Cards(deck(4), noop, reshuffleAll)
         cards.draw()
         cards.play(1)
         cards.newRace()
         assert_similars([], cards.played)
         assert_similars(deck(4), cards.deck)
         assert_similars([], cards.discard)
+
+    def testExhaustRemoved(self):
+        cards = Cards(["f", 3, 4, 5, "f", "f"], noop, fullRecovery)
+        cards.draw()
+        cards.play(3)
+        cards.newRace()
+        assert_similars([3, 4, 5], cards.deck)
+
+    def testHalfRecovery(self):
+        cards = Cards(["f", 3, 4, 5, "f", "f"], noop, halfRecovery)
+        cards.newRace()
+        assert_similars(["f", "f", 3, 4, 5], cards.deck)
+
 
 def deck(n):
     return [ i for i in reversed(range(1, n + 1)) ]
@@ -98,12 +111,34 @@ def noop(list):
 def increasingOrder(list):
     list.sort()
 
+def reshuffleAll(cards):
+    cards.deck = cards.deck + cards.discard + cards.played
+    cards.discard = []
+    cards.played = []
+
+def fullRecovery(cards):
+    reshuffleAll(cards)
+    removeExhausts(cards.deck, countExhaust(cards.deck))
+
+def halfRecovery(cards):
+    reshuffleAll(cards)
+    removeExhausts(cards.deck, int(countExhaust(cards.deck) / 2))
+
+def removeExhausts(deck, count):
+    for i in range(count):
+        deck.remove("f")
+
+def countExhaust(deck):
+    return deck.count("f")
+
+
 class Cards():
-    def __init__(self, deck, shuffle = noop):
+    def __init__(self, deck, shuffle = noop, newDeck = reshuffleAll):
         self.deck = deck
         self.discard = []
         self.played = []
         self.shuffle = shuffle
+        self.newDeck = newDeck
         shuffle(self.deck)
 
     def inDeck(self):
@@ -133,9 +168,7 @@ class Cards():
         self.discard += self.hand
 
     def newRace(self):
-        self.deck = self.deck + self.discard + self.played
-        self.discard = []
-        self.played = []
+        self.newDeck(self)
         self.shuffle(self.deck)
 
 

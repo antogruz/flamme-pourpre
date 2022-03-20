@@ -24,8 +24,10 @@ def main():
     teams = createTeams()
     tour = Tour(teams)
 
-    for i in range(1):
+    for i in range(2):
         tour.newRace()
+        for rider in tour.getRiders():
+            rider.cards.newRace()
         playRace(window, tour)
         clear(window)
 
