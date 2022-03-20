@@ -79,6 +79,15 @@ class CardsTester():
         cards.play("f")
         assert_similars([], cards.played)
 
+    def testCardsAreRestoredAfterRace(self):
+        cards = Cards(deck(4))
+        cards.draw()
+        cards.play(1)
+        cards.newRace()
+        assert_similars([], cards.played)
+        assert_similars(deck(4), cards.deck)
+        assert_similars([], cards.discard)
+
 def deck(n):
     return [ i for i in reversed(range(1, n + 1)) ]
 
@@ -122,6 +131,12 @@ class Cards():
         if card != "f":
             self.played.append(card)
         self.discard += self.hand
+
+    def newRace(self):
+        self.deck = self.deck + self.discard + self.played
+        self.discard = []
+        self.played = []
+        self.shuffle(self.deck)
 
 
 if __name__ == "__main__":
