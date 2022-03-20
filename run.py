@@ -14,7 +14,7 @@ from raceLayout import RaceLayout
 from cardsDisplay import displayCards
 from menu import *
 from tour import Tour, Team
-from ridersFactory import createHumanRider, createBotRider, createRouleur, createSprinteur
+from ridersFactory import createHumanRider, createBotRider, rouleurSpecialist, sprinteurSpecialist
 
 
 def main():
@@ -108,7 +108,7 @@ def createTeamsByGroups(groups):
     return teams
 
 def duo(create):
-    return [create(createRouleur()), create(createSprinteur())]
+    return [create(rouleurSpecialist()), create(sprinteurSpecialist())]
 
 from rider import Rider
 def createPlayers(teams, choicesFrame, fast):

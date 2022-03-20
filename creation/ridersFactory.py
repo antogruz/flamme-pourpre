@@ -22,10 +22,10 @@ def createRider(specialist, cardsBetweenRaces):
     rider.shade = specialist.shade
     return rider
 
-def createRouleur():
+def rouleurSpecialist():
     return Specialist("Rouleur", rouleurDeck(), rouleurShade)
 
-def createSprinteur():
+def sprinteurSpecialist():
     return Specialist("Sprinteur", sprinteurDeck(), sprinteurShade)
 
 def rouleurDeck():
