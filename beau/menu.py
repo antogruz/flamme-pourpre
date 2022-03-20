@@ -2,6 +2,7 @@
 
 from visualtests import VisualTester, runVisualTestsInWindow
 import tkinter as tk
+from frames import clear
 
 def createSimpleMenu(frame, choices):
     optionsSelector = UserChoice(frame)
@@ -32,10 +33,6 @@ class UserChoice():
 
         clear(self.frame)
         return answer.get()
-
-def clear(frame):
-    for widget in frame.winfo_children():
-        widget.destroy()
 
 class MenuTester(VisualTester):
     def testSimpleMenu(self):

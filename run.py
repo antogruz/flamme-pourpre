@@ -27,6 +27,7 @@ def main():
     for i in range(1):
         tour.newRace()
         playRace(window, tour)
+        clear(window)
 
     print(tour.scores())
     print(tour.times())
