@@ -106,7 +106,7 @@ def createPlayers(teams, choicesFrame, fast):
     if fast:
         oracle = FirstOracle()
     else:
-        oracle = PlayerChoice(choicesFrame)
+        oracle = UserChoice(choicesFrame)
 
     for team in teams:
         player = Player(oracle, team.riders)

@@ -4,18 +4,18 @@ from visualtests import VisualTester, runVisualTestsInWindow
 import tkinter as tk
 
 def createSimpleMenu(frame, choices):
-    optionsSelector = PlayerChoice(frame)
+    optionsSelector = UserChoice(frame)
     i = optionsSelector.pick(choices)
     return choices[i]
 
 def createMenu(frame, choices):
-    optionsSelector = PlayerChoice(frame)
+    optionsSelector = UserChoice(frame)
     i = optionsSelector.pick([c[0] for c in choices])
     return choices[i][1]
 
 
 from functools import partial
-class PlayerChoice():
+class UserChoice():
     def __init__(self, frame):
         self.frame = frame
 
