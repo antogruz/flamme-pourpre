@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from riderDisplay import *
 from track import Track
 from tracks import *
 from player import Player
@@ -15,6 +14,7 @@ from raceLayout import RaceLayout
 from cardsDisplay import displayCards
 from menu import *
 from tour import Tour, Team
+from ridersFactory import createHumanRider, createBotRider, createRouleur, createSprinteur
 
 
 def main():
@@ -95,14 +95,20 @@ def parseArgs():
     return parser.parse_args()
 
 def createTeams():
-    return [ Team(color, [createRider(createRouleur()), createRider(createSprinteur())])
-            for color in ["green", "red", "blue", "black"] ]
+    groups = []
+    groups.append((["green"], createHumanRider))
+    groups.append((["red", "blue", "black"], createBotRider))
+    return createTeamsByGroups(groups)
 
 
-def createRider(specialist):
-    rider = Rider(specialist.name, Cards(specialist.deck, random.shuffle))
-    rider.shade = specialist.shade
-    return rider
+def createTeamsByGroups(groups):
+    teams = []
+    for colors, create in groups:
+        teams += [Team(color, duo(create)) for color in colors]
+    return teams
+
+def duo(create):
+    return [create(createRouleur()), create(createSprinteur())]
 
 from rider import Rider
 def createPlayers(teams, choicesFrame, fast):
@@ -119,30 +125,9 @@ def createPlayers(teams, choicesFrame, fast):
     return players
 
 
-class Specialist:
-    def __init__(self, name, deck, shade):
-        self.name = name
-        self.deck = deck
-        self.shade = shade
-
-def createRouleur():
-    return Specialist("Rouleur", rouleurDeck(), rouleurShade)
-
-def createSprinteur():
-    return Specialist("Sprinteur", sprinteurDeck(), sprinteurShade)
-
-
 class FirstOracle():
     def pick(self, any):
         return 0
 
-def rouleurDeck():
-    return threeTimes([3, 4, 5, 6, 7])
-
-def sprinteurDeck():
-    return threeTimes([2, 3, 4, 5, 9])
-
-def threeTimes(five):
-    return [ card for card in five for i in range(3) ]
 main()
 
