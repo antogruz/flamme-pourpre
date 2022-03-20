@@ -60,7 +60,6 @@ def playRace(window, tour):
         logger = Logger()
         race.newTurn(logger)
         animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
-        roadDisplay.displayRiders(race.riders)
         roadDisplay.ranking(race.ranking())
         tour.checkNewArrivals(race.ranking())
         window.update()
