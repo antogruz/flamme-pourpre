@@ -132,9 +132,6 @@ def createSprinteur():
     return Specialist("Sprinteur", sprinteurDeck(), sprinteurShade)
 
 
-def animate(rider, display):
-    rider.display = display
-
 class FirstOracle():
     def pick(self, any):
         return 0
