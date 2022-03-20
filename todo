@@ -2,3 +2,7 @@
 - Pouvoir jouer un grand tour
 - Ajouter les règles de peloton (Ravitaillement, Rangées de 3 cases, Pavés)
 - Merge objects strategy
+- Afficher un nombre de cartes pour la défausse
+- Afficher la carte jouée de chaque coureur en direct
+- Afficher les résultats d'une course avant la suivante
+- Mettre des bots plus forts
