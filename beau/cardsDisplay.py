@@ -23,8 +23,9 @@ def displayCards(frame, rider, deckSize, discard, played):
     subFrames = Frames(frame)
     displayRider(subFrames.new(), rider)
     framesLine = subFrames.newLine(3)
+    fullDiscard = subFrames.new()
     displayDeck(framesLine[0], deckSize)
-    displayDiscard(framesLine[1], discard, rider.color)
+    displayDiscard(framesLine[1], fullDiscard, discard, rider.color)
     displayPlayed(framesLine[2], sorted(played), rider.color)
 
 
@@ -32,11 +33,22 @@ def displayRider(window, rider):
     tk.Label(window, text = rider.name + " " + rider.shade, fg = rider.color).pack()
 
 def displayDeck(window, cardsCount):
-    bigCard(window, cardsCount, "snow4", "raised", "se").pack()
+    deck(window, cardsCount).pack()
 
-def displayDiscard(window, cards, color):
-    if cards:
-        bigCard(window, str(cards[-1]), color, "raised").pack()
+def displayDiscard(deckWindow, fullWindow, cards, color):
+    if not cards:
+        return
+    discardDeck = deck(deckWindow, len(cards))
+    discardDeck.pack()
+    allCardsDiscarded = [smallCard(fullWindow, card, color) for card in cards]
+    discardDeck.bind("<Button-1>", lambda e:toggleDiscard(allCardsDiscarded, displayed))
+
+def toggleDiscard(cardLabels, displayed):
+    for label in cardLabels:
+        if label.winfo_ismapped():
+            label.pack_forget()
+        else:
+            label.pack(side="left")
 
 
 def displayPlayed(window, cards, color):
@@ -51,6 +63,9 @@ def displayPlayed(window, cards, color):
             col += 1
         last = c
         smallCard(window, str(c), color).grid(row = row, column = col, padx = 1, pady = 1)
+
+def deck(window, text):
+    return bigCard(window, text, "snow4", "raised", "se")
 
 def bigCard(window, text, color = "black", relief = "flat", anchor = "center"):
     label = cardLabel(window, text, color, relief, anchor)
