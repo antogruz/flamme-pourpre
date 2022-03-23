@@ -25,7 +25,7 @@ def displayCards(frame, rider, deckSize, discard, played):
     framesLine = subFrames.newLine(3)
     displayDeck(framesLine[0], deckSize)
     displayDiscard(framesLine[1], discard, rider.color)
-    displayPlayed(framesLine[2], sorted(played))
+    displayPlayed(framesLine[2], sorted(played), rider.color)
 
 
 def displayRider(window, rider):
@@ -39,7 +39,7 @@ def displayDiscard(window, cards, color):
         bigCard(window, str(cards[-1]), color, "raised").pack()
 
 
-def displayPlayed(window, cards):
+def displayPlayed(window, cards, color):
     last = -1
     row = 0
     col = -1
@@ -50,7 +50,7 @@ def displayPlayed(window, cards):
             row = 0
             col += 1
         last = c
-        smallCard(window, str(c)).grid(row = row, column = col, padx = 1, pady = 1)
+        smallCard(window, str(c), color).grid(row = row, column = col, padx = 1, pady = 1)
 
 def bigCard(window, text, color = "black", relief = "flat", anchor = "center"):
     label = cardLabel(window, text, color, relief, anchor)
