@@ -39,10 +39,11 @@ def main():
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
 
+
 def playRace(window, tour):
     faster = parseArgs().faster
     track = colDuBallon() if faster else pickTrack(window)
-    layout = RaceLayout(window, 2)
+    layout = RaceLayout(window, decksCount=2)
     players = createPlayers(tour.teams, layout.getUserFrame(), faster)
 
     riders = tour.getRiders()
