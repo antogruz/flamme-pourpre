@@ -1,7 +1,9 @@
 - Afficher la carte jouée de chaque coureur en direct
+- Pouvoir quitter le jeu en cours sans stall le terminal
 - Le jeu fonctionne sur le nouveau mac
 - Pouvoir jouer un grand tour
 - Ajouter les règles de peloton (Ravitaillement, Rangées de 3 cases, Pavés)
 - Merge objects strategy
 - Afficher les résultats d'une course avant la suivante
 - Mettre des bots plus forts
+- Créer des menus avec des titres
