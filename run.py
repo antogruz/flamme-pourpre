@@ -21,10 +21,12 @@ def main():
     window = tk.Tk()
     window.title("flamme rouge")
 
+    racesCount = createSimpleMenu(window, range(1, 6))
+
     teams = createTeams()
     tour = Tour(teams)
 
-    for i in range(2):
+    for i in range(racesCount):
         tour.newRace()
         for rider in tour.getRiders():
             rider.cards.newRace()
