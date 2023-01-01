@@ -21,8 +21,12 @@ from eventDisplay import EventDisplay
 def main():
     window = tk.Tk()
     window.title("flamme rouge")
+    single = parseArgs().single
 
-    racesCount = createSimpleMenu(window, range(1, 6))
+    if single:
+        racesCount = 1
+    else:
+        racesCount = createSimpleMenu(window, range(1, 6))
 
     teams = createTeams()
     tour = Tour(teams)
@@ -97,6 +101,7 @@ import argparse
 def parseArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument('--faster', type=int)
+    parser.add_argument('--single', action="store_true")
     return parser.parse_args()
 
 def createTeams():
