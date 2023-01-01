@@ -101,7 +101,7 @@ class Race():
         for r in headToTail(self.riders):
             start = r.position()
             r.move(self.track, self.obstacles)
-            logger.logMove(r, start, r.position(), self.obstacles)
+            logger.logMove(r, r.nextMove, start, r.position(), self.obstacles)
 
         slipstreaming(self.riders, self.track, logger)
         self.checkArrivals()

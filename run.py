@@ -15,6 +15,7 @@ from cardsDisplay import displayCards
 from menu import *
 from tour import Tour, Team
 from ridersFactory import createHumanRider, createBotRider, rouleurSpecialist, sprinteurSpecialist
+from eventDisplay import EventDisplay
 
 
 def main():
@@ -52,9 +53,10 @@ def playRace(window, tour):
     if faster:
         clock /= faster
     roadDisplay = RoadDisplay(layout.getTrackFrame(), track)
+    eventDisplay = EventDisplay(layout.getEventFrame())
     setRidersOnStart(riders)
     roadDisplay.displayRiders(riders)
-    animation = Animation(roadDisplay, clock)
+    animation = Animation(roadDisplay, eventDisplay, clock)
 
     race = Race(track, riders, players)
 

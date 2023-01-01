@@ -8,9 +8,9 @@ class Logger():
         self.groups = []
         self.exhausted = []
 
-    def logMove(self, rider, start, end, obstacles):
+    def logMove(self, rider, card, start, end, obstacles):
         path = findPath(obstacles, start, end)
-        self.moves.append((rider, path))
+        self.moves.append((rider, card, path))
 
     def logGroup(self, riders):
         self.groups.append([(rider, rider.position()) for rider in riders])
