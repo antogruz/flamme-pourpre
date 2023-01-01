@@ -11,10 +11,10 @@ from logger import Logger
 class AnimateTester(VisualTester):
     def __before__(self):
         VisualTester.__before__(self)
-        self.frame = self.frames.new()
-        self.track = Track([(10, "normal")])
+        frame = self.frames.new()
+        track = Track([(10, "normal")])
         self.logger = Logger()
-        self.display = RoadDisplay(self.frame, self.track)
+        self.display = RoadDisplay(frame, track)
         self.animation = Animation(self.display)
 
 
