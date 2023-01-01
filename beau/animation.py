@@ -9,19 +9,18 @@ from display import RoadDisplay
 from eventDisplay import EventDisplay
 from logger import Logger
 
-# Je me dis que pour chaque évènement, on pourrait appeler tous les animateurs à la suite dans les différentes frames
-class AnimateTester(VisualTester):
+class AnimateMovesTester(VisualTester):
     def __before__(self):
         VisualTester.__before__(self)
         frames = self.frames.newLine(2)
         track = Track([(10, "normal")])
         self.logger = Logger()
         self.roadDisplay = RoadDisplay(frames[0], track)
-        self.eventDisplay = EventDisplay(frames[1])
-        self.animation = Animation(self.roadDisplay, self.eventDisplay)
+        eventDisplay = EventDisplay(frames[1])
+        self.animation = Animation([EventAnimator(eventDisplay), RoadAnimator(self.roadDisplay)])
 
     def animate(self):
-        self.animation.animate(self.logger.getMoves(), self.logger.getGroups(), self.logger.getExhausted())
+        self.animation.animate(self.logger.getMoves(), [], [])
 
     def testMove(self):
         rouleur = Rider(rouleurShade, "green")
@@ -30,6 +29,18 @@ class AnimateTester(VisualTester):
         self.logger.logMove(rouleur, "3", (0, 0), (3, 1), Obstacles([]))
         self.roadDisplay.displayRiders([rouleur, sprinteur])
         self.animate()
+
+class AnimateRoadTester(VisualTester):
+    def __before__(self):
+        VisualTester.__before__(self)
+        frame = self.frames.new()
+        track = Track([(10, "normal")])
+        self.logger = Logger()
+        self.roadDisplay = RoadDisplay(frame, track)
+        self.animation = Animation([RoadAnimator(self.roadDisplay)])
+
+    def animate(self):
+        self.animation.animate(self.logger.getMoves(), self.logger.getGroups(), self.logger.getExhausted())
 
     def testGroup(self):
         a = Rider(rouleurShade, "green", (0, 0))
@@ -63,29 +74,32 @@ class Rider:
 
 from time import sleep
 class Animation:
-    def __init__(self, roadDisplay, eventDisplay, clock = 0.3):
-        self.display = roadDisplay
-        self.eventDisplay = eventDisplay
+    def __init__(self, animators, clock = 0.3):
+        self.animators = animators
         self.clock = clock
 
     def animate(self, moves, groups, exhausted):
         for (rider, card, path) in moves:
-            self.eventDisplay.displayEvent(rider, card)
-            self.animateMove(rider, path)
+            for a in self.animators:
+                a.animateMove(rider, card, path)
 
         sleep(self.clock * 2)
         for group in groups:
             sleep(self.clock * 2)
-            self.animateGroup(group)
+            for a in self.animators:
+                a.animateGroup(group)
 
-        for color in ["yellow", "red", "default"]:
-            for rider in exhausted:
-                self.display.setBackground(rider, color)
-            self.display.update()
-            sleep(self.clock)
+        sleep(self.clock * 2)
+        for a in self.animators:
+            a.animateExhaust(exhausted)
 
 
-    def animateMove(self, rider, path):
+class RoadAnimator:
+    def __init__(self, display, clock = 0.3):
+        self.display = display
+        self.clock = clock
+
+    def animateMove(self, rider, card, path):
         for i in range(len(path) - 1):
             sleep(self.clock)
             self.display.move(rider, path[i], path[i + 1])
@@ -97,6 +111,30 @@ class Animation:
             self.display.move(rider, start, end)
         self.display.update()
 
+    def animateExhaust(self, exhausted):
+        for color in ["yellow", "red", "default"]:
+            for rider in exhausted:
+                self.display.setBackground(rider, color)
+            self.display.update()
+            sleep(self.clock)
+
+class EventAnimator:
+    def __init__(self, display):
+        self.display = display
+
+    def animateMove(self, rider, card, path):
+        self.display.displayEvent(rider, card)
+
+    def animateGroup(self, group):
+        pass
+
+    def animateExhaust(self, exhausted):
+        pass
+
+from frames import clear
 import tkinter as tk
 if __name__ == "__main__":
-    runTests(AnimateTester(tk.Tk()))
+    window = tk.Tk()
+    runTests(AnimateRoadTester(window))
+    clear(window)
+    runTests(AnimateMovesTester(window))

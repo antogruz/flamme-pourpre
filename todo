@@ -1,6 +1,5 @@
 * Afficher la carte jouée de chaque coureur en direct
  - Afficher "f" pour une carte fatigue (et "" pour pas de carte)
- - Séparer les animateurs selon leur frame d'animation
 - Pouvoir quitter le jeu en cours sans stall le terminal
 - Le jeu fonctionne sur le nouveau mac
 - Pouvoir jouer un grand tour

@@ -9,7 +9,7 @@ from cards import Cards
 import riderMove
 import random
 from display import RoadDisplay
-from animation import Logger, Animation
+from animation import Logger, Animation, EventAnimator, RoadAnimator
 from raceLayout import RaceLayout
 from cardsDisplay import displayCards
 from menu import *
@@ -60,7 +60,7 @@ def playRace(window, tour):
     eventDisplay = EventDisplay(layout.getEventFrame())
     setRidersOnStart(riders)
     roadDisplay.displayRiders(riders)
-    animation = Animation(roadDisplay, eventDisplay, clock)
+    animation = Animation([EventAnimator(eventDisplay), RoadAnimator(roadDisplay, clock)], clock)
 
     race = Race(track, riders, players)
 
