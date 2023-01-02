@@ -162,6 +162,8 @@ class Cards():
         self.hand.append(self.deck.pop(0))
 
     def play(self, card):
+        if not card:
+            return
         self.hand.remove(card)
         if card != "f":
             self.played.append(card)

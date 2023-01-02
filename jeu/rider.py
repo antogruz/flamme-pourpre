@@ -11,7 +11,7 @@ class Rider():
 
     def play(self, card):
         self.cards.play(card)
-        if card == "f":
+        if card == "f" or card == "":
             self.nextMove = 2
         else:
             self.nextMove = card
