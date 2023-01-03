@@ -44,7 +44,6 @@ class PlayerTest():
         p.pickNextMoves()
         assert_equals(7, rider.nextMove)
 
-
 class ChoiceLogger():
     def __init__(self):
         self.choices = []
@@ -80,17 +79,21 @@ def createRouleur():
 def createSprinteur():
     return Rider("Sprinteur", [2, 9, 4, 5])
 
+class StubLogger:
+    def cardPlayed(self, rider, card):
+        pass
+
 class Player():
     def __init__(self, oracle, riders):
         self.oracle = oracle
         self.riders = copy(riders)
 
-    def pickNextMoves(self):
+    def pickNextMoves(self, logger = StubLogger()):
         ridersToPick = [r for r in self.riders]
         while (ridersToPick):
-            self.pickOneMove(ridersToPick)
+            self.pickOneMove(ridersToPick, logger)
 
-    def pickOneMove(self, riders):
+    def pickOneMove(self, riders, logger):
         rider = self.pickRider(riders)
         cards = rider.draw()
         if not cards:
@@ -98,6 +101,7 @@ class Player():
         else:
             card = self.pickCard(cards)
         rider.play(card)
+        logger.cardPlayed(rider, card)
 
     def pickRider(self, riders):
         choice = self.pick([r.name for r in riders])

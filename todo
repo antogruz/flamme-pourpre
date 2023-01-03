@@ -1,5 +1,3 @@
-* Afficher la carte jouée de chaque coureur en direct
- - Afficher "f" pour une carte fatigue (et "" pour pas de carte)
 - Pouvoir quitter le jeu en cours sans stall le terminal
 - Le jeu fonctionne sur le nouveau mac
 - Pouvoir jouer un grand tour
@@ -8,3 +6,5 @@
 - Afficher les résultats d'une course avant la suivante
 - Mettre des bots plus forts
 - Créer des menus avec des titres
+- Afficher dans la case de chaque vélo la carte jouée
+- Écrire les "acteurs", les raisons de changer et les responsabilités des différentes classes

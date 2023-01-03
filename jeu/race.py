@@ -72,7 +72,7 @@ class SimplePlayer():
         self.riders = riders
         self.move = move
 
-    def pickNextMoves(self):
+    def pickNextMoves(self, logger):
         for r in self.riders:
             r.nextMove = self.move
 
@@ -96,12 +96,12 @@ class Race():
 
     def newTurn(self, logger):
         for p in self.players:
-            p.pickNextMoves()
+            p.pickNextMoves(logger)
 
         for r in headToTail(self.riders):
             start = r.position()
             r.move(self.track, self.obstacles)
-            logger.logMove(r, r.nextMove, start, r.position(), self.obstacles)
+            logger.logMove(r, start, r.position(), self.obstacles)
 
         slipstreaming(self.riders, self.track, logger)
         self.checkArrivals()

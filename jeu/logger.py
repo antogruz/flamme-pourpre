@@ -1,15 +1,33 @@
 #!/usr/bin/env python3
 
+from unittests import runTests, assert_equals, assert_similars
+from obstacles import Obstacles
+
+class LoggerTest:
+    def testCardPlayed(self):
+        logger = Logger()
+        rider = Rider()
+        logger.cardPlayed(rider, 3)
+        logger.logMove(rider, (0, 0), (1, 0), Obstacles([]))
+        assert_equals(3, logger.getMoves()[0][1])
+
+class Rider:
+    pass
 from path import findPath
 
-class Logger():
+class Logger:
     def __init__(self):
         self.moves = []
         self.groups = []
         self.exhausted = []
+        self.cardsPlayed = []
 
-    def logMove(self, rider, card, start, end, obstacles):
+    def logMove(self, rider, start, end, obstacles):
         path = findPath(obstacles, start, end)
+        try:
+            card = rider.logCardPlayed
+        except:
+            card = ""
         self.moves.append((rider, card, path))
 
     def logGroup(self, riders):
@@ -17,6 +35,9 @@ class Logger():
 
     def logExhaust(self, rider):
         self.exhausted.append(rider)
+
+    def cardPlayed(self, rider, card):
+        rider.logCardPlayed = card
 
     def getMoves(self):
         return self.moves
@@ -28,3 +49,5 @@ class Logger():
         return self.exhausted
 
 
+if __name__ == "__main__":
+    runTests(LoggerTest())
