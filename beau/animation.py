@@ -25,8 +25,10 @@ class AnimateMovesTester(VisualTester):
     def testMove(self):
         rouleur = Rider(rouleurShade, "green")
         sprinteur = Rider(sprinteurShade, "red", (1, 0))
-        self.logger.logMove(sprinteur, "f", (1, 0), (3, 0), Obstacles([]))
-        self.logger.logMove(rouleur, "3", (0, 0), (3, 1), Obstacles([]))
+        self.logger.cardPlayed(sprinteur, "f")
+        self.logger.cardPlayed(rouleur, 3)
+        self.logger.logMove(sprinteur, (1, 0), (3, 0), Obstacles([]))
+        self.logger.logMove(rouleur, (0, 0), (3, 1), Obstacles([]))
         self.roadDisplay.displayRiders([rouleur, sprinteur])
         self.animate()
 
