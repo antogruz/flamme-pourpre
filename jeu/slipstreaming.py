@@ -125,22 +125,25 @@ class Logger():
 def slipstreaming(riders, track, logger = No()):
     candidates = tailToHead(riders)
     while candidates:
-        group, candidates = popBackTrackGroup(candidates)
+        group, others = splitByGroupBehind(candidates)
 
-        if someCanSlipstream(group, candidates, track):
-            streamedRiders = group.getSlipstream(track)
-            logger.logGroup(headTotail(streamedRiders))
-            candidates = tailToHead(streamedRiders) + candidates
+        if not someCanSlipstream(group, others, track):
+            candidates = others
+            continue
+
+        streamedRiders = group.getSlipstream(track)
+        logger.logGroup(headTotail(streamedRiders))
+        candidates = tailToHead(streamedRiders) + others
 
 
-def popBackTrackGroup(orderedRiders):
+def splitByGroupBehind(orderedRiders):
     group = Group()
     group.append(orderedRiders[0])
-    for rider in removeFirsts(orderedRiders, 1):
+    for rider in firstsRemoved(orderedRiders, 1):
         if partOf(rider, group):
             group.append(rider)
 
-    return group, removeFirsts(orderedRiders, len(group.riders))
+    return group, firstsRemoved(orderedRiders, len(group.riders))
 
 def partOf(rider, group):
     return rider.position()[0] <= group.head + 1
@@ -174,19 +177,19 @@ def headTotail(riders):
 def square(rider):
     return rider.position()[0]
 
-def removeFirsts(l, count):
+def firstsRemoved(l, count):
     return l[count:]
 
 def keepFirsts(l, count):
     return l[0:count]
 
-def someCanSlipstream(group, allRiders, track):
-    for rider in allRiders:
-        if canSlipstream(group.head, rider, track):
+def someCanSlipstream(group, otherRiders, track):
+    for rider in otherRiders:
+        if couldSlipstream(group.head, rider, track):
             return True
     return False
 
-def canSlipstream(square, rider, track):
+def couldSlipstream(square, rider, track):
     if not streamable(track.getRoadType(rider.getSquare())):
         return False
 
