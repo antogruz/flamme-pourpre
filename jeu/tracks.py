@@ -22,12 +22,13 @@ def firenzeMilano():
     return createTrack("abcgiDHqntmKOLrepJsfu")
 
 def createTrack(letters):
+    pieces = getPieces()
     roads = []
     for l in letters:
-        roads += getRoad(l)
+        roads += getRoad(pieces[l])
     return Track(roads)
 
-def getRoad(letter):
+def getPieces():
     d = {}
     d['a'] = "5s1n"
     for l in "bcdflmn":
@@ -50,9 +51,9 @@ def getRoad(letter):
         d[l] = "2n"
     for l in "HP":
         d[l] = "2d"
-    return decode(d[letter])
+    return d
 
-def decode(s):
+def getRoad(s):
     return [decodeCouple(couple) for couple in divide(s)]
 
 def decodeCouple(couple):
@@ -72,4 +73,17 @@ def getLand(l):
 
 def divide(s):
     return [s[i:i+2] for i in range(0, len(s), 2)]
+
+from unittests import assert_equals, runTests
+
+class TrackCreationTest():
+    def testSimpleTrack(self):
+        track = createTrack("aC")
+        assert_equals("start", track.getRoadType(4))
+        assert_equals("normal", track.getRoadType(5))
+        assert_equals("normal", track.getRoadType(6))
+        assert_equals("ascent", track.getRoadType(10))
+
+if __name__ == "__main__":
+    runTests(TrackCreationTest())
 
