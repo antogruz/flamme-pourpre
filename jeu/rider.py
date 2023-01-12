@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Cette classe est une fusion des différentes interfaces du rider utilisées par toutes les classes et fonctions utilisant un Rider dans le package jeu.
+# Elle est un peu lourde et on pourrait sûrement utiliser une autre méthode (merge object?), mais faire l'assemblage ici permet de garder un scope minimal pour chaque "sous-classe" (riderMove, cards, ...)
+
 class Rider():
     def __init__(self, name, cards, riderMove = None):
         self.name = name

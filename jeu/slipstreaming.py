@@ -4,8 +4,9 @@ from unittests import assert_equals, runTests
 from riderMove import Rider
 from track import Track, streamable
 
-def tests():
-    runTests(SlipstremingTester())
+# Cette fonction (slipstreaming) gère les régles d'aspiration.
+# Elle doit être modifiée si les règles changent.
+# Dans l'état actuel des choses, elle devra aussi être modifiée si certains coureurs ont leurs propres règles d'aspiration, mais il faudra sûrement ajouter des tests pour vérifier cela. Il faudra travailler à définir de nouvelles méthodes à l'interface du rider pour ne pas toucher à cette classe lorsque de nouveaux pouvoirs liés à l'aspiration apparaissent TODO
 
 class SlipstremingTester():
     def __before__(self):
@@ -198,4 +199,4 @@ def display(groups):
             print (rider.position())
 
 if __name__ == "__main__":
-    tests()
+    runTests(SlipstremingTester())

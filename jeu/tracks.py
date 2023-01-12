@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from track import Track
 
+# Cette classe permet de créer des courses en utilisant la correspondance Lettres/tuiles
+
 def corsoPaseo():
     return createTrack("abcdefghijklmnopqrstu")
 

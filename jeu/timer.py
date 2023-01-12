@@ -2,6 +2,9 @@
 from unittests import *
 from race import headToTail
 
+# Cette classe gère les temps des coureurs. On lui déclare les arrivées à chaque tour, et en fonction des positions des coureurs, elle met à jour leur temps général
+# Cette classe est amenée à changer si les règles du chrono changent.
+
 class Timer:
     def __init__(self):
         self.turnsAfterFirst = 0

@@ -7,6 +7,11 @@ from cards import Cards
 import riderMove
 from logger import Logger
 
+# Cette classe respecte la procédure du jeu flamme rouge pour une course entière, jusqu'à ce que tous les coureurs soient arrivés.
+# Elle donne le classement de la course. Ce n'est pas sa responsabilité de connaître les règles (de mouvement, d'aspiration, de fatigue...) mais elle connait la procédure.
+# Elle sera amenée à changer si de nouvelles étapes sont décrites dans la procédure, par exemple la phase d'enchères du mode de jeu "échappée" ou l'activation de pouvoirs uniques avant de révéler les cartes, etc.
+
+
 class RaceTest():
     def __before__(self):
         self.track = Track([(5, "normal"), (3, "end")])

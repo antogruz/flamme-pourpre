@@ -8,3 +8,4 @@
 - Créer des menus avec des titres
 - Afficher dans la case de chaque vélo la carte jouée
 - Écrire les "acteurs", les raisons de changer et les responsabilités des différentes classes
+- Sortir le logger et ses dépendences qui ne servent pas à jouer une partie sans UI/informations sortantes

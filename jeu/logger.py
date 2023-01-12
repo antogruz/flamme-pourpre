@@ -2,6 +2,8 @@
 
 from unittests import runTests, assert_equals, assert_similars
 from obstacles import Obstacles
+# Cette classe choisit les informations qui doivent être retenues quand un coureur joue une carte et se déplace, un groupe est aspiré, ou les coureurs sont fatigués.
+# Le logger change si quelqu'un a besoin de connaître une information interne sur les évènements qui se sont produits pendant un tour de jeu (phase de résolution), et qui ne sont plus disponibles à la fin du tour (chemin précis parcouru par un coureur, carte qu'il a jouée à ce tour...).
 
 class LoggerTest:
     def testCardPlayed(self):

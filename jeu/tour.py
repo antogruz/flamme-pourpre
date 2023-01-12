@@ -3,6 +3,8 @@
 from unittests import *
 from timer import Timer
 
+# Cette classe implémente les règles du grand tour. Elle sera changée si l'on ajoute des points pour les meilleurs grimpeurs par exemple, ou si on change la répartition des gains pour les gagnants d'une étape.
+
 class Tour:
     def __init__(self, teams):
         self.teams = teams

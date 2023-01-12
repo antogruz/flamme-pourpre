@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 from unittests import assert_equals, runTests, assert_similars
+# La classe des cartes doit changer si les règles de manipulations des cartes d'une équipe changent.
+# Par exemple, si un coureur pioche les cartes par 6, peut rejouer certaines cartes, ou ne se débarasse plus de ses cartes fatigue.
+# Si on ne doit plus mélanger le deck, ou si on doit le mélanger après chaque coup.
 
 def tests():
     runTests(CardsTester())

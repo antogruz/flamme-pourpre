@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
 from unittests import runTests, assert_equals
-from rider import Rider
 from track import Track
 from obstacles import Obstacles
 from riderMove import Rider as RiderToken
+
+# Cette fonction détermine le chemin précis suivi par un coureur lors de son déplacement.
+# Elle doit changer si la route change (plus de lanes), ou si l'afficheur ne veut plus voir le coureur passer pas ce même chemin arbitraire
+
 
 class PathTester():
     def __before__(self):

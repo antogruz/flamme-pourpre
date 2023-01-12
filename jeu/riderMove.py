@@ -2,6 +2,11 @@
 
 from track import streamable
 
+# Cette classe regroupe les méthodes permettant à un coureur de se déplacer sur un circuit.
+# Elle est responsable de toutes les règles de déplacement (terrain, aspiration).
+# Elle doit être modifiée si les règles de déplacement changent, et les instances doivent être modifiées si un coureur ne suit plus les règles de déplacement de base (aspiré en montagne, avance de 6 en descente, peut dépasser les coureurs, etc.
+# TODO La responsabilité de l'aspiration est pour le moment un peu partagée avec slipstream : il serait facile de faire qu'un coureur soit capable d'être aspiré en montagne, mais difficile de le faire être aspiré à 2 cases ou bien qu'il aspire ses co-équipiers de plus loin
+
 class Rider():
     def __init__(self, square, lane):
         self.square = square

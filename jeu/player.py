@@ -1,9 +1,20 @@
 #!/usr/bin/env python3
 
 from unittests import runTests, assert_equals, assert_similars
+# La classe du joueur doit changer quand la façon dont le joueur intéragit avec les decks de cartes de ses coureurs change.
+# Des dérivés peuvent voir le jour si une équipe de coureur n'est plus gérée de la même façon que ce que fait un humain.
+# Des modifications peuvent être apportées si le joueur peut voir les cartes de tous ses coureurs en même temps, s'il peut choisir d'activer une capacité, ou si de nouveaux choix s'offrent à lui (autres que de piocher les cartes d'un paquet et de sélectionner une carte).
 
-def tests():
-    runTests(PlayerTest())
+class Rider():
+    def __init__(self, name, cards):
+        self.name = name
+        self.cards = cards
+
+    def draw(self):
+        return self.cards
+
+    def play(self, card):
+        self.nextMove = card
 
 class PlayerTest():
     def testChoiceBetweenRiders(self):
@@ -62,17 +73,6 @@ class ChoiceDoer():
     def pick(self, possibilities):
         return self.future.pop(0)
 
-class Rider():
-    def __init__(self, name, cards):
-        self.name = name
-        self.cards = cards
-
-    def draw(self):
-        return self.cards
-
-    def play(self, card):
-        self.nextMove = card
-
 def createRouleur():
     return Rider("Rouleur", [3, 4, 7, 6])
 
@@ -120,4 +120,4 @@ def copy(l):
     return [e for e in l]
 
 if __name__ == "__main__":
-    tests()
+    runTests(PlayerTest())
