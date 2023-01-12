@@ -92,7 +92,7 @@ class SlipstremingTester():
         assert_equals((2, 0), rouleur.position())
 
     def testNoSlipstreamingAfterEnd(self):
-        self.track = Track([(5, "end")])
+        self.track = Track([(1, "normal"), (5, "end")])
         self.addRider(2)
         self.slipstream()
         self.assertPosition(0)
