@@ -7,9 +7,6 @@ from cards import Cards
 import riderMove
 from logger import Logger
 
-def tests():
-    runTests(RaceTest())
-
 class RaceTest():
     def __before__(self):
         self.track = Track([(5, "normal"), (3, "end")])
@@ -45,10 +42,9 @@ class RaceTest():
 
     def testDontPlayForArrivedRiders(self):
         rider = createRider(5, 0)
-        rider.nextMove = 100
         race = self.createRace([rider])
         race.newTurn(Logger())
-        assert_equals(100, rider.nextMove)
+        assert_equals((5, 0), rider.position())
 
     def testRanking(self):
         first = createRider(5, 0)
@@ -135,4 +131,4 @@ def absolutePosition(rider):
     return 2*square + 1 - lane
 
 if __name__ == "__main__":
-    tests()
+    runTests(RaceTest())
