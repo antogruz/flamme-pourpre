@@ -12,4 +12,5 @@ There are 3 entry points
  
 The engine of the game is in **jeu/**. This directory has no dependency.
 The display of the game is in **beau/**. It depends on **jeu/** and on tkinter
+The animations are in **animate/**. It depends on **beau/**
 In **tk/**, there are some examples of tkinter usages, but not related to Flamme Rouge.

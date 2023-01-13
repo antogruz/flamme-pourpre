@@ -5,7 +5,6 @@ from track import Track
 from rider import Rider
 from cards import Cards
 import riderMove
-from logger import Logger
 
 # Cette classe respecte la procédure du jeu flamme rouge pour une course entière, jusqu'à ce que tous les coureurs soient arrivés.
 # Elle donne le classement de la course. Ce n'est pas sa responsabilité de connaître les règles (de mouvement, d'aspiration, de fatigue...) mais elle connait la procédure.
@@ -61,6 +60,16 @@ class RaceTest():
             race.newTurn(Logger())
         assert_equals([first, second, third, fourth], race.ranking())
 
+
+class Logger:
+    def logMove(self, rider, start, end, obstacles):
+        pass
+
+    def logGroup(self, riders):
+        pass
+
+    def logExhaust(self, rider):
+        pass
 
 def copy(list):
     return [l for l in list]
