@@ -16,6 +16,7 @@ from menu import *
 from tour import Tour, Team
 from ridersFactory import createHumanRider, createBotRider, rouleurSpecialist, sprinteurSpecialist
 from eventDisplay import EventDisplay
+from results import displayResults
 
 
 def main():
@@ -37,9 +38,7 @@ def main():
             rider.cards.newRace()
         playRace(window, tour)
         clear(window)
-
-    print(tour.scores())
-    print(tour.times())
+        displayResults(window, tour.scores(), tour.times())
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
