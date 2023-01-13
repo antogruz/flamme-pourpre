@@ -20,14 +20,13 @@ class EventDisplay:
         names = subFrames.newLine(2)
         cards = subFrames.newLine(2)
         for frame in names + cards:
-            frame.config(width = 80, height = 50)
+            frame.config(width = 100, height = 60)
         self.currentRider = tk.Label(names[0])
         self.previousRider = tk.Label(names[1])
         self.currentCard = bigCard(cards[0], "")
         self.previousCard = smallCard(cards[1], "")
         for label in [self.currentRider, self.previousRider, self.currentCard, self.previousCard]:
             label.place(relx=.5, rely=.5, anchor="c")
-            #label.pack(side="left")
 
         self.current = None
 
