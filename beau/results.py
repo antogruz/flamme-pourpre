@@ -9,21 +9,27 @@ class ResultsTester(VisualTester):
         displayResults(self.frame, [("green", 3), ("blue", 1), ("red", 0)], [("green rouleur", 0), ("blue sprinteur", 50), ("red rouleur", 60), ("green sprinteur", 60), ("blue rouleur", 100), ("red sprinteur", 700)])
 
 def displayResults(window, scores, times):
-    subFrames = Frames(window)
-    title = subFrames.new()
-    tk.Label(title, text = "Tour ranking").pack()
-    for (team, score) in scores:
-        (name, points) = subFrames.newLine(2)
-        tk.Label(name, text = team, fg = team).pack()
-        tk.Label(points, text = score, fg = "white", bg = team).pack()
+    frames = Frames(window)
+    packArray(frames, "Tour ranking", scores, parseTeamScore)
+    packArray(frames, "Times ranking", times, parseRiderTime)
 
-    subtitle = subFrames.new()
-    tk.Label(subtitle, text = "Times ranking").pack()
-    for (rider, time) in times:
-        (name, points) = subFrames.newLine(2)
-        color, riderName = rider.split()
-        tk.Label(name, text = riderName, fg = color).pack()
-        tk.Label(points, text = secondsToMinutes(time), fg = "white", bg = color).pack()
+
+def packArray(frames, title, lines, parse):
+    tk.Label(frames.new(), text = title).pack()
+    for line in lines:
+        key, value, color = parse(line)
+        keyFrame, valueFrame = frames.newLine(2)
+        tk.Label(keyFrame, text = key, fg = color).pack()
+        tk.Label(valueFrame, text = value, fg = "white", bg = color).pack()
+
+
+def parseTeamScore(line):
+    return line[0], line[1], line[0]
+
+def parseRiderTime(line):
+    rider, time = line
+    color, name = rider.split()
+    return name, secondsToMinutes(time), color
 
 
 def secondsToMinutes(n):
