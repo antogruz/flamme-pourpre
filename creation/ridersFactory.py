@@ -36,3 +36,20 @@ def sprinteurDeck():
 
 def threeTimes(five):
     return [ card for card in five for i in range(3) ]
+
+
+# Idée de formation des riders
+#
+#def createRider(deck, shade, color, name):
+#    rider = Rider(Cards(deck, random.shuffle))
+#    giveDisplay(rider, shade, color, name)
+#    giveMovement(rider)
+#
+#def giveDisplay(rider, shade, color, name):
+#    rider.shade = shade
+#    rider.color = color
+#    rider.name = name
+#
+#def giveMovement(rider):
+#    rider.riderMove = riderMove.Rider(0, 0)
+
