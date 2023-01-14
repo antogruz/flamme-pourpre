@@ -19,11 +19,64 @@ from eventDisplay import EventDisplay
 from results import displayResults
 from frames import Frames
 
+def integrationTests():
+    integrationSingle()
+    twoRacesSprinteursOnly()
+
+def integrationSingle():
+    teamsColors = [(["green", "red", "blue", "black", "magenta"], createBotRider)]
+    teams = createTeamsByGroups(teamsColors)
+    players = [ Player(FirstOracle(), team.riders) for team in teams ]
+    track = colDuBallon()
+    riders = allRiders(teams)
+    singleRace(track, riders, players, 0.003)
+
+def allRiders(teams):
+    return [rider for team in teams for rider in team.riders]
+
+def singleRace(track, riders, players, clock):
+    window = tk.Tk()
+    window.title("Single Race")
+    decksDisplayed = 4
+    layout = RaceLayout(window, decksCount = decksDisplayed)
+    setRidersOnStart(riders)
+    displays, animation = createDisplays(track, layout, clock, window, riders[0:decksDisplayed])
+    race = Race(track, riders, players)
+    displays.update(riders, race)
+
+    while not race.isOver():
+        logger = Logger()
+        race.newTurn(logger)
+        animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
+        displays.update(riders, race)
+
+def twoRacesSprinteurOnly():
+    pass
+
+class Displays:
+    def __init__(self, window, layout, roadDisplay, onCardsDisplay):
+        self.window = window
+        self.layout = layout
+        self.roadDisplay = roadDisplay
+        self.onCardsDisplay = onCardsDisplay
+
+    def update(self, riders, race):
+        self.roadDisplay.displayRiders(riders)
+        self.roadDisplay.ranking(race.ranking())
+        for rider, frame in zip(self.onCardsDisplay, self.layout.getDecksFrames()):
+            displayRiderCards(frame, rider)
+        self.window.update()
+
+
 
 def main():
+    args = parseArgs()
+    if args.integration:
+        return integrationTests()
+
     window = tk.Tk()
     window.title("flamme rouge")
-    single = parseArgs().single
+    single = args.single
 
     if single:
         racesCount = 1
@@ -59,26 +112,25 @@ def playRace(window, tour):
     clock = 0.3
     if faster:
         clock /= faster
-    roadDisplay = RoadDisplay(layout.getTrackFrame(), track)
-    eventDisplay = EventDisplay(layout.getEventFrame())
+    displays, animation = createDisplays(track, layout, clock, window, onCardsDisplay)
     setRidersOnStart(riders)
-    roadDisplay.displayRiders(riders)
-    animation = Animation([EventAnimator(eventDisplay), RoadAnimator(roadDisplay, clock)], clock)
 
     race = Race(track, riders, players)
-
-    window.update()
+    displays.update(riders, race)
 
     while not race.isOver():
-        for rider, frame in zip(onCardsDisplay, layout.getDecksFrames()):
-            displayRiderCards(frame, rider)
         logger = Logger()
         race.newTurn(logger)
         animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
-        roadDisplay.displayRiders(riders)
-        roadDisplay.ranking(race.ranking())
         tour.checkNewArrivals(race.ranking())
-        window.update()
+        displays.update(riders, race)
+
+def createDisplays(track, layout, clock, window, onCardsDisplay):
+    roadDisplay = RoadDisplay(layout.getTrackFrame(), track)
+    eventDisplay = EventDisplay(layout.getEventFrame())
+    animation = Animation([EventAnimator(eventDisplay), RoadAnimator(roadDisplay, clock)], clock)
+    displays = Displays(window, layout, roadDisplay, onCardsDisplay)
+    return displays, animation
 
 def setRidersOnStart(riders):
     random.shuffle(riders)
@@ -105,6 +157,7 @@ def parseArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument('--faster', type=int)
     parser.add_argument('--single', action="store_true")
+    parser.add_argument('--integration', action="store_true")
     return parser.parse_args()
 
 def createTeams():
@@ -142,5 +195,6 @@ class FirstOracle():
     def pick(self, any):
         return 0
 
-main()
+if __name__ == "__main__":
+    main()
 
