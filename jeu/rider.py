@@ -4,7 +4,7 @@
 # Elle est un peu lourde et on pourrait sûrement utiliser une autre méthode (merge object?), mais faire l'assemblage ici permet de garder un scope minimal pour chaque "sous-classe" (riderMove, cards, ...)
 
 class Rider():
-    def __init__(self, name, cards, riderMove = None):
+    def __init__(self, name, cards, riderMove):
         self.name = name
         self.cards = cards
         self.riderMove = riderMove
@@ -41,7 +41,7 @@ from cards import Cards
 
 class IntegrationTester():
     def testEmptyDeck(self):
-        rider = Rider("exhausted", Cards([]))
+        rider = Rider("exhausted", Cards([]), None)
         player = Player(ChoiceDoer([0, 0, 0]), [rider])
         player.pickNextMoves()
         assert_equals(2, rider.nextMove)

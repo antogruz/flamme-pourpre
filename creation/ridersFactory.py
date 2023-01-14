@@ -18,7 +18,7 @@ class Specialist:
         self.shade = shade
 
 def createRider(specialist, cardsBetweenRaces):
-    rider = Rider(specialist.name, Cards(specialist.deck, random.shuffle, cardsBetweenRaces))
+    rider = Rider(specialist.name, Cards(specialist.deck, random.shuffle, cardsBetweenRaces), None)
     rider.shade = specialist.shade
     return rider
 
