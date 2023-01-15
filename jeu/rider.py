@@ -23,7 +23,8 @@ class Rider():
         return self.riderMove.position()
 
     def move(self, track, obstacles):
-        return self.riderMove.move(self.nextMove, track, obstacles)
+        self.riderMove.move(self.nextMove, track, obstacles)
+        self.nextMove = None
 
     def getSlipstream(self, track):
         return self.riderMove.getSlipstream(track)

@@ -20,24 +20,28 @@ from results import displayResults
 from frames import Frames
 
 def integrationTests():
-    integrationSingle()
-    twoRacesSprinteursOnly()
+    window = tk.Tk()
+    integrationSingle(window)
+    clear(window)
+    twoRacesSprinteursOnly(window)
+    window.mainloop()
 
-def integrationSingle():
+def integrationSingle(window):
     teamsColors = [(["green", "red", "blue", "black", "magenta"], createBotRider)]
     teams = createTeamsByGroups(teamsColors)
     players = [ Player(FirstOracle(), team.riders) for team in teams ]
     track = colDuBallon()
     riders = allRiders(teams)
-    singleRace(track, riders, players, 0.003)
+    singleRace(window, track, riders, players, 0.003)
 
 def allRiders(teams):
     return [rider for team in teams for rider in team.riders]
 
-def singleRace(track, riders, players, clock):
-    window = tk.Tk()
-    window.title("Single Race")
-    decksDisplayed = 4
+def noLog(ranking):
+    pass
+
+def singleRace(window, track, riders, players, clock, logRanking = noLog):
+    decksDisplayed = 0
     layout = RaceLayout(window, decksCount = decksDisplayed)
     setRidersOnStart(riders)
     displays, animation = createDisplays(track, layout, clock, window, riders[0:decksDisplayed])
@@ -48,10 +52,30 @@ def singleRace(track, riders, players, clock):
         logger = Logger()
         race.newTurn(logger)
         animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
+        logRanking(race.ranking())
         displays.update(riders, race)
 
-def twoRacesSprinteurOnly():
-    pass
+def twoRacesSprinteursOnly(window):
+    teams = [ sprinteurOnlyTeam(color) for color in ["blue", "red", "black"] ]
+    tour = Tour(teams)
+    for track in [corsoPaseo(), firenzeMilano()]:
+        players = [ Player(FirstOracle(), team.riders) for team in teams ]
+        tour.newRace()
+        for rider in tour.getRiders():
+            rider.cards.newRace()
+        singleRace(window, track, tour.getRiders(), players, 0.003, tour.checkNewArrivals)
+        clear(window)
+        frames = Frames(window)
+        displayResults(frames.new(), tour.scores(), tour.times())
+        createSimpleMenu(frames.new(), ["Next Race!"])
+        clear(window)
+
+
+from ridersFactory import createRider
+from cards import fullRecovery
+def sprinteurOnlyTeam(color):
+    sprinteur = createRider(sprinteurSpecialist(), fullRecovery)
+    return Team(color, [sprinteur])
 
 class Displays:
     def __init__(self, window, layout, roadDisplay, onCardsDisplay):
@@ -66,7 +90,6 @@ class Displays:
         for rider, frame in zip(self.onCardsDisplay, self.layout.getDecksFrames()):
             displayRiderCards(frame, rider)
         self.window.update()
-
 
 
 def main():

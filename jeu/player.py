@@ -4,6 +4,7 @@ from unittests import runTests, assert_equals, assert_similars
 # La classe du joueur doit changer quand la façon dont le joueur intéragit avec les decks de cartes de ses coureurs change.
 # Des dérivés peuvent voir le jour si une équipe de coureur n'est plus gérée de la même façon que ce que fait un humain.
 # Des modifications peuvent être apportées si le joueur peut voir les cartes de tous ses coureurs en même temps, s'il peut choisir d'activer une capacité, ou si de nouveaux choix s'offrent à lui (autres que de piocher les cartes d'un paquet et de sélectionner une carte).
+# Le player est actuellement lié à une course en particulier, car on supprime ses riders au fur et à mesure qu'ils arrivent. À chaque course on doit recréer les players et leur attribuer des coureurs
 
 class Rider():
     def __init__(self, name, cards):
