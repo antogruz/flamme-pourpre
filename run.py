@@ -11,7 +11,7 @@ import random
 from display import RoadDisplay
 from animation import Logger, Animation, EventAnimator, RoadAnimator
 from raceLayout import RaceLayout
-from cardsDisplay import displayCards
+from cardsDisplay import CardsDisplay
 from menu import *
 from tour import Tour, Team
 from ridersFactory import createHumanRider, createBotRider, rouleurSpecialist, sprinteurSpecialist
@@ -41,7 +41,7 @@ def noLog(ranking):
     pass
 
 def singleRace(window, track, riders, players, clock, logRanking = noLog):
-    decksDisplayed = 0
+    decksDisplayed = 4
     layout = RaceLayout(window, decksCount = decksDisplayed)
     setRidersOnStart(riders)
     displays, animation = createDisplays(track, layout, clock, window, riders[0:decksDisplayed])
@@ -80,15 +80,14 @@ def sprinteurOnlyTeam(color):
 class Displays:
     def __init__(self, window, layout, roadDisplay, onCardsDisplay):
         self.window = window
-        self.layout = layout
         self.roadDisplay = roadDisplay
-        self.onCardsDisplay = onCardsDisplay
+        self.cardsDisplays = [CardsDisplay(frame, rider) for rider, frame in zip(onCardsDisplay, layout.getDecksFrames())]
 
     def update(self, riders, race):
         self.roadDisplay.displayRiders(riders)
         self.roadDisplay.ranking(race.ranking())
-        for rider, frame in zip(self.onCardsDisplay, self.layout.getDecksFrames()):
-            displayRiderCards(frame, rider)
+        for display in self.cardsDisplays:
+            display.displayCards(display.rider.cards.inDeck(), display.rider.cards.discard, display.rider.cards.played)
         self.window.update()
 
 
@@ -170,10 +169,6 @@ def next(square, lane):
 def pickTrack(window):
     trackCreator = createMenu(window, [("Corso Paseo", corsoPaseo), ("Col du ballon", colDuBallon), ("Haute Montagne", hauteMontagne), ("Classicissima", classicissima), ("Ronde Van Wevelgem", rondeVanWevelgem), ("Firenze-Milano", firenzeMilano)])
     return trackCreator()
-
-
-def displayRiderCards(frame, rider):
-    displayCards(frame, rider, rider.cards.inDeck(), rider.cards.discard, rider.cards.played)
 
 import argparse
 def parseArgs():

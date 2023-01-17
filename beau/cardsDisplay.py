@@ -2,15 +2,17 @@
 
 from visualtests import VisualTester, runVisualTestsInWindow
 import tkinter as tk
-from frames import Frames
+from frames import Frames, clear
 from cards import Cards
 
 class CardsTester(VisualTester):
     def testEmpty(self):
-        displayCards(self.frame, Rider(), 0, [], [])
+        display = CardsDisplay(self.frame, Rider())
+        display.displayCards(0, [], [])
 
     def testAfterFirstRound(self):
-        displayCards(self.frame, Rider(), 7, [2, 4, 5], [9, 3, 2, 3, 5, 3, 5])
+        display = CardsDisplay(self.frame, Rider())
+        display.displayCards(7, [2, 4, 5], [9, 3, 2, 3, 5, 3, 5])
 
 from display import rouleurShade
 class Rider:
@@ -19,39 +21,52 @@ class Rider:
         self.name = "Rouleur"
         self.color = "green"
 
-def displayCards(frame, rider, deckSize, discard, played):
-    subFrames = Frames(frame)
-    displayRider(subFrames.new(), rider)
-    framesLine = subFrames.newLine(3)
-    fullDiscard = subFrames.new()
-    displayDeck(framesLine[0], deckSize)
-    displayDiscard(framesLine[1], fullDiscard, discard, rider.color)
-    displayPlayed(framesLine[2], sorted(played), rider.color)
+class CardsDisplay:
+    def __init__(self, frame, rider):
+        self.frame = frame
+        subFrames = Frames(frame)
+        self.riderFrame = subFrames.new()
+        self.deckFrame, self.discardFrame, self.playedFrame = subFrames.newLine(3)
+        self.fullDiscardFrame = subFrames.new()
+        self.rider = rider
+        self.color = rider.color
+        self.prepareWidgets()
+
+    def prepareWidgets(self):
+        displayRider(self.riderFrame, self.rider)
+        self.deck = deck(self.deckFrame, "")
+        self.deck.pack()
+        self.discard = deck(self.discardFrame, "")
+        self.allCardsDiscarded = []
+        self.discard.bind("<Button-1>", lambda e:toggleDiscard(self.allCardsDiscarded))
+
+    def displayCards(self, deckSize, discard, played):
+        self.deck.config(text = deckSize)
+        self.discard.config(text = len(discard))
+        if discard:
+            self.discard.pack()
+        else:
+            hide(self.discard)
+        self.allCardsDiscarded = [smallCard(self.fullDiscardFrame, card, self.color) for card in discard]
+        displayPlayed(self.playedFrame, sorted(played), self.color)
+
 
 
 def displayRider(window, rider):
     tk.Label(window, text = rider.name + " " + rider.shade, fg = rider.color).pack()
 
-def displayDeck(window, cardsCount):
-    deck(window, cardsCount).pack()
-
-def displayDiscard(deckWindow, fullWindow, cards, color):
-    if not cards:
-        return
-    discardDeck = deck(deckWindow, len(cards))
-    discardDeck.pack()
-    allCardsDiscarded = [smallCard(fullWindow, card, color) for card in cards]
-    discardDeck.bind("<Button-1>", lambda e:toggleDiscard(allCardsDiscarded))
-
 def toggleDiscard(cardLabels):
     for label in cardLabels:
         if label.winfo_ismapped():
-            label.pack_forget()
+            hide(label)
         else:
             label.pack(side="left")
 
+def hide(label):
+    label.pack_forget()
 
 def displayPlayed(window, cards, color):
+    clear(window)
     last = -1
     row = 0
     col = -1
