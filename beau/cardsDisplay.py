@@ -41,9 +41,9 @@ def displayDiscard(deckWindow, fullWindow, cards, color):
     discardDeck = deck(deckWindow, len(cards))
     discardDeck.pack()
     allCardsDiscarded = [smallCard(fullWindow, card, color) for card in cards]
-    discardDeck.bind("<Button-1>", lambda e:toggleDiscard(allCardsDiscarded, displayed))
+    discardDeck.bind("<Button-1>", lambda e:toggleDiscard(allCardsDiscarded))
 
-def toggleDiscard(cardLabels, displayed):
+def toggleDiscard(cardLabels):
     for label in cardLabels:
         if label.winfo_ismapped():
             label.pack_forget()
