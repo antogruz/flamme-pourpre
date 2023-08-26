@@ -19,20 +19,24 @@ from functools import partial
 class UserChoice():
     def __init__(self, frame):
         self.frame = frame
+        self.answer = tk.IntVar()
 
     def pick(self, choices):
-        answer = tk.IntVar()
         def setChoice(n):
-            answer.set(n)
+            self.answer.set(n)
 
         for i, choice in enumerate(choices):
             tk.Button(self.frame, text = choice, command = partial(setChoice, i)).pack(side = "left")
 
         self.frame.update()
-        self.frame.wait_variable(answer)
+        self.frame.wait_variable(self.answer)
 
         clear(self.frame)
-        return answer.get()
+        return self.answer.get()
+
+    def dontWait(self):
+        self.answer.set(-1)
+
 
 class MenuTester(VisualTester):
     def testSimpleMenu(self):

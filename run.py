@@ -127,7 +127,7 @@ def playRace(window, tour):
     faster = parseArgs().faster
     track = colDuBallon() if faster else pickTrack(window)
     layout = RaceLayout(window, decksCount=2)
-    players = createPlayers(tour.teams, layout.getUserFrame(), faster)
+    players = createPlayers(window, tour.teams, layout.getUserFrame(), faster)
 
     riders = tour.getRiders()
     onCardsDisplay = riders[0:2]
@@ -195,12 +195,16 @@ def duo(create):
     return [create(rouleurSpecialist()), create(sprinteurSpecialist())]
 
 from rider import Rider
-def createPlayers(teams, choicesFrame, fast):
+def createPlayers(rootWindow, teams, choicesFrame, fast):
     players = []
     if fast:
         oracle = FirstOracle()
     else:
         oracle = UserChoice(choicesFrame)
+        def onExit(oracle, rootWindow):
+            oracle.dontWait()
+            rootWindow.destroy()
+        rootWindow.protocol("WM_DELETE_WINDOW", partial(onExit, oracle, rootWindow))
 
     for team in teams:
         player = Player(oracle, team.riders)
