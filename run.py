@@ -27,20 +27,25 @@ def integrationTests():
     window.mainloop()
 
 def integrationSingle(window):
-    teamsColors = [(["green", "red", "blue", "black", "magenta"], createBotRider)]
-    teams = createTeamsByGroups(teamsColors)
-    players = [ Player(FirstOracle(), team.riders) for team in teams ]
+    teams = [ createBot(color) for color in ["green", "red", "blue", "black", "magenta"] ]
     track = colDuBallon()
-    riders = allRiders(teams)
-    singleRace(window, track, riders, players, 0.003)
+    singleRace(window, track, teams, 0.003)
 
 def allRiders(teams):
     return [rider for team in teams for rider in team.riders]
 
+def allPlayers(teams):
+    return [team.player for team in teams]
+
 def noLog(ranking):
     pass
 
-def singleRace(window, track, riders, players, clock, logRanking = noLog):
+def singleRace(window, track, teams, clock, logRanking = noLog):
+    for team in teams:
+        team.player.resetRiders(team.riders)
+    riders = allRiders(teams)
+    players = allPlayers(teams)
+
     decksDisplayed = 4
     layout = RaceLayout(window, decksCount = decksDisplayed)
     setRidersOnStart(riders)
@@ -57,13 +62,14 @@ def singleRace(window, track, riders, players, clock, logRanking = noLog):
 
 def twoRacesSprinteursOnly(window):
     teams = [ sprinteurOnlyTeam(color) for color in ["blue", "red", "black"] ]
+    for team in teams:
+        team.player = Player(FirstOracle(), team.riders)
     tour = Tour(teams)
     for track in [corsoPaseo(), firenzeMilano()]:
-        players = [ Player(FirstOracle(), team.riders) for team in teams ]
         tour.newRace()
         for rider in tour.getRiders():
             rider.cards.newRace()
-        singleRace(window, track, tour.getRiders(), players, 0.003, tour.checkNewArrivals)
+        singleRace(window, track, tour.teams, 0.003, tour.checkNewArrivals)
         clear(window)
         frames = Frames(window)
         displayResults(frames.new(), tour.scores(), tour.times())
@@ -96,8 +102,10 @@ def main():
     if args.integration:
         return integrationTests()
 
-    window = tk.Tk()
-    window.title("flamme rouge")
+    root = tk.Tk()
+    root.title("flamme rouge")
+    window = tk.Frame(root)
+    window.grid()
     single = args.single
 
     if single:
@@ -105,7 +113,10 @@ def main():
     else:
         racesCount = createSimpleMenu(window, range(1, 6))
 
-    teams = createTeams()
+
+    teams = [ createBot("green") if args.faster else createHuman(root, "green") ]
+    for color in ["blue", "red", "black"]:
+        teams.append(createBot(color))
     tour = Tour(teams)
 
     for i in range(racesCount):
@@ -124,10 +135,12 @@ def main():
 
 
 def playRace(window, tour):
+    for team in tour.teams:
+        team.player.resetRiders(team.riders)
+
     faster = parseArgs().faster
     track = colDuBallon() if faster else pickTrack(window)
     layout = RaceLayout(window, decksCount=2)
-    players = createPlayers(window, tour.teams, layout.getUserFrame(), faster)
 
     riders = tour.getRiders()
     onCardsDisplay = riders[0:2]
@@ -137,7 +150,7 @@ def playRace(window, tour):
     displays, animation = createDisplays(track, layout, clock, window, onCardsDisplay)
     setRidersOnStart(riders)
 
-    race = Race(track, riders, players)
+    race = Race(track, riders, [ team.player for team in tour.teams ])
     displays.update(riders, race)
 
     while not race.isOver():
@@ -178,39 +191,32 @@ def parseArgs():
     parser.add_argument('--integration', action="store_true")
     return parser.parse_args()
 
-def createTeams():
-    groups = []
-    groups.append((["green"], createHumanRider))
-    groups.append((["red", "blue", "black"], createBotRider))
-    return createTeamsByGroups(groups)
+def createHuman(rootWindow, color):
+    team = Team(color, duo(createHumanRider))
+    window = tk.Toplevel(rootWindow)
+    player = createHumanPlayer(rootWindow, window, team)
+    team.player = player
+    return team
 
-
-def createTeamsByGroups(groups):
-    teams = []
-    for colors, create in groups:
-        teams += [Team(color, duo(create)) for color in colors]
-    return teams
+def createBot(color):
+    team = Team(color, duo(createBotRider))
+    player = createBotPlayer(team)
+    team.player = player
+    return team
 
 def duo(create):
     return [create(rouleurSpecialist()), create(sprinteurSpecialist())]
 
-def createPlayers(rootWindow, teams, choicesFrame, fast):
-    players = []
-    if fast:
-        oracle = FirstOracle()
-    else:
-        oracle = UserChoice(choicesFrame)
-        def onExit(oracle, rootWindow):
-            oracle.dontWait()
-            rootWindow.destroy()
-        rootWindow.protocol("WM_DELETE_WINDOW", partial(onExit, oracle, rootWindow))
+def createHumanPlayer(rootWindow, choicesFrame, team):
+    oracle = UserChoice(choicesFrame)
+    def onExit(oracle, rootWindow):
+        oracle.dontWait()
+        rootWindow.destroy()
+    rootWindow.protocol("WM_DELETE_WINDOW", partial(onExit, oracle, rootWindow))
+    return Player(oracle, team.riders)
 
-    for team in teams:
-        player = Player(oracle, team.riders)
-        oracle = FirstOracle()
-        players.append(player)
-    return players
-
+def createBotPlayer(team):
+    return Player(FirstOracle(), team.riders)
 
 class FirstOracle():
     def pick(self, any):

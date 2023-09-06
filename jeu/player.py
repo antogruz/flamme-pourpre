@@ -87,6 +87,9 @@ class StubLogger:
 class Player():
     def __init__(self, oracle, riders):
         self.oracle = oracle
+        self.resetRiders(riders)
+
+    def resetRiders(self, riders):
         self.riders = copy(riders)
 
     def pickNextMoves(self, logger = StubLogger()):
