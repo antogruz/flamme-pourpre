@@ -194,7 +194,6 @@ def createTeamsByGroups(groups):
 def duo(create):
     return [create(rouleurSpecialist()), create(sprinteurSpecialist())]
 
-from rider import Rider
 def createPlayers(rootWindow, teams, choicesFrame, fast):
     players = []
     if fast:
