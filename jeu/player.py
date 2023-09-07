@@ -80,24 +80,21 @@ def createRouleur():
 def createSprinteur():
     return Rider("Sprinteur", [2, 9, 4, 5])
 
-class StubLogger:
-    def cardPlayed(self, rider, card):
-        pass
-
 class Player():
-    def __init__(self, oracle, riders):
+    def __init__(self, oracle, riders, cardObservers = []):
         self.oracle = oracle
+        self.cardObservers = cardObservers
         self.resetRiders(riders)
 
     def resetRiders(self, riders):
         self.riders = copy(riders)
 
-    def pickNextMoves(self, logger = StubLogger()):
+    def pickNextMoves(self):
         ridersToPick = [r for r in self.riders]
         while (ridersToPick):
-            self.pickOneMove(ridersToPick, logger)
+            self.pickOneMove(ridersToPick)
 
-    def pickOneMove(self, riders, logger):
+    def pickOneMove(self, riders):
         rider = self.pickRider(riders)
         cards = rider.draw()
         if not cards:
@@ -105,7 +102,8 @@ class Player():
         else:
             card = self.pickCard(cards)
         rider.play(card)
-        logger.cardPlayed(rider, card)
+        for observer in self.cardObservers:
+            observer.cardPlayed(rider, card)
 
     def pickRider(self, riders):
         choice = self.pick([r.name for r in riders])

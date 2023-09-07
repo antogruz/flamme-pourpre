@@ -9,7 +9,7 @@ from cards import Cards
 import riderMove
 import random
 from display import RoadDisplay
-from animation import Logger, Animation, EventAnimator, RoadAnimator
+from animation import Logger, CardDecorator, Animation, EventAnimator, RoadAnimator
 from raceLayout import RaceLayout
 from cardsDisplay import CardsDisplay
 from menu import *
@@ -52,19 +52,21 @@ def singleRace(window, track, teams, clock, decksDisplayed = 2, logRanking = noL
     displays, animation = createDisplays(track, layout, clock, window, riders[0:decksDisplayed])
     setRidersOnStart(riders)
     race = Race(track, riders, players)
+    logger = Logger()
+    race.addObserver(logger)
     displays.update(riders, race)
 
     while not race.isOver():
-        logger = Logger()
-        race.newTurn(logger)
+        race.newTurn()
         animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
         logRanking(race.ranking())
         displays.update(riders, race)
+        logger.__init__()
 
 def twoRacesSprinteursOnly(window):
     teams = [ sprinteurOnlyTeam(color) for color in ["blue", "red", "black"] ]
     for team in teams:
-        team.player = Player(FirstOracle(), team.riders)
+        team.player = createBotPlayer(team)
     tour = Tour(teams)
     for track in [corsoPaseo(), firenzeMilano()]:
         tour.newRace()
@@ -188,10 +190,10 @@ def createHumanPlayer(rootWindow, choicesFrame, team):
         oracle.dontWait()
         rootWindow.destroy()
     rootWindow.protocol("WM_DELETE_WINDOW", partial(onExit, oracle, rootWindow))
-    return Player(oracle, team.riders)
+    return Player(oracle, team.riders, [CardDecorator()])
 
 def createBotPlayer(team):
-    return Player(FirstOracle(), team.riders)
+    return Player(FirstOracle(), team.riders, [CardDecorator()])
 
 class FirstOracle():
     def pick(self, any):

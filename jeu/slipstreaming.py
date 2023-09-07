@@ -106,12 +106,9 @@ class SlipstremingTester():
         self.addRider(6)
         riders = [self.rider] + self.others
         logger = Logger()
-        slipstreaming(riders, self.track, logger)
+        slipstreaming(riders, self.track, [logger])
         assert_equals([[2, 1], [5, 4, 3, 2]], logger.groups)
 
-class No:
-    def logGroup(self, riders):
-        pass
 
 class Logger():
     def __init__(self):
@@ -122,7 +119,7 @@ class Logger():
 
 
 
-def slipstreaming(riders, track, logger = No()):
+def slipstreaming(riders, track, observers = []):
     candidates = tailToHead(riders)
     while candidates:
         group, others = splitByGroupBehind(candidates)
@@ -132,7 +129,8 @@ def slipstreaming(riders, track, logger = No()):
             continue
 
         streamedRiders = group.getSlipstream(track)
-        logger.logGroup(headTotail(streamedRiders))
+        for observer in observers:
+            observer.logGroup(headTotail(streamedRiders))
         candidates = tailToHead(streamedRiders) + others
 
 

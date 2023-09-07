@@ -42,15 +42,12 @@ class Rider():
     def getSquare(self):
         return self.square
 
-class NoLogger():
-    def logExhaust(self, r):
-        pass
-
-def exhaust(riders, logger = NoLogger()):
+def exhaust(riders, observers = []):
     for r in riders:
         if not riderAtPosition(r.getSquare() + 1, riders):
             r.exhaust()
-            logger.logExhaust(r)
+            for observer in observers:
+                observer.logExhaust(r)
 
 def riderAtPosition(square, riders):
     for r in riders:

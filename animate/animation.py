@@ -7,7 +7,7 @@ from obstacles import Obstacles
 from riderDisplay import rouleurShade, sprinteurShade
 from display import RoadDisplay
 from eventDisplay import EventDisplay
-from logger import Logger
+from logger import Logger, CardDecorator
 
 class AnimateMovesTester(VisualTester):
     def __before__(self):
@@ -15,6 +15,7 @@ class AnimateMovesTester(VisualTester):
         frames = self.frames.newLine(2)
         track = Track([(10, "normal")])
         self.logger = Logger()
+        self.cardDecorator = CardDecorator()
         self.roadDisplay = RoadDisplay(frames[0], track)
         eventDisplay = EventDisplay(frames[1])
         self.animation = Animation([EventAnimator(eventDisplay), RoadAnimator(self.roadDisplay)])
@@ -25,8 +26,8 @@ class AnimateMovesTester(VisualTester):
     def testMove(self):
         rouleur = Rider(rouleurShade, "green")
         sprinteur = Rider(sprinteurShade, "red", (1, 0))
-        self.logger.cardPlayed(sprinteur, "f")
-        self.logger.cardPlayed(rouleur, 3)
+        self.cardDecorator.cardPlayed(sprinteur, "f")
+        self.cardDecorator.cardPlayed(rouleur, 3)
         self.logger.logMove(sprinteur, (1, 0), (3, 0), Obstacles([]))
         self.logger.logMove(rouleur, (0, 0), (3, 1), Obstacles([]))
         self.roadDisplay.displayRiders([rouleur, sprinteur])

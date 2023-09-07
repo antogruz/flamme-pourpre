@@ -9,7 +9,7 @@ class LoggerTest:
     def testCardPlayed(self):
         logger = Logger()
         rider = Rider()
-        logger.cardPlayed(rider, 3)
+        CardDecorator().cardPlayed(rider, 3)
         logger.logMove(rider, (0, 0), (1, 0), Obstacles([]))
         assert_equals(3, logger.getMoves()[0][1])
 
@@ -22,7 +22,6 @@ class Logger:
         self.moves = []
         self.groups = []
         self.exhausted = []
-        self.cardsPlayed = []
 
     def logMove(self, rider, start, end, obstacles):
         path = findPath(obstacles, start, end)
@@ -38,9 +37,6 @@ class Logger:
     def logExhaust(self, rider):
         self.exhausted.append(rider)
 
-    def cardPlayed(self, rider, card):
-        rider.logCardPlayed = card
-
     def getMoves(self):
         return self.moves
 
@@ -50,6 +46,9 @@ class Logger:
     def getExhausted(self):
         return self.exhausted
 
+class CardDecorator:
+    def cardPlayed(self, rider, card):
+        rider.logCardPlayed = card
 
 if __name__ == "__main__":
     runTests(LoggerTest())

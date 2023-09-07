@@ -35,19 +35,19 @@ class RaceTest():
     def testRiderMovesAfterATurn(self):
         rider = createRider(0, 0)
         race = self.createRace([rider])
-        race.newTurn(Logger())
+        race.newTurn()
         assert_equals(2, rider.position()[0])
 
     def testArrival(self):
         rider = createRider(4, 0)
         race = self.createRace([rider, createRider(0, 0)])
-        race.newTurn(Logger())
+        race.newTurn()
         assert_similars([rider], race.ranking())
 
     def testDontPlayForArrivedRiders(self):
         rider = createRider(5, 0)
         race = self.createRace([rider])
-        race.newTurn(Logger())
+        race.newTurn()
         assert_equals((5, 0), rider.position())
 
     def testRanking(self):
@@ -57,19 +57,9 @@ class RaceTest():
         fourth = createRider(0, 0)
         race = self.createRace([fourth, second, third, first])
         while not race.isOver():
-            race.newTurn(Logger())
+            race.newTurn()
         assert_equals([first, second, third, fourth], race.ranking())
 
-
-class Logger:
-    def logMove(self, rider, start, end, obstacles):
-        pass
-
-    def logGroup(self, riders):
-        pass
-
-    def logExhaust(self, rider):
-        pass
 
 def copy(list):
     return [l for l in list]
@@ -82,7 +72,7 @@ class SimplePlayer():
         self.riders = riders
         self.move = move
 
-    def pickNextMoves(self, logger):
+    def pickNextMoves(self):
         for r in self.riders:
             r.nextMove = self.move
 
@@ -94,6 +84,7 @@ from exhaust import exhaust
 
 class Race():
     def __init__(self, track, riders, players):
+        self.observers = []
         self.track = track
         self.riders = riders
         self.obstacles = Obstacles(riders)
@@ -101,22 +92,26 @@ class Race():
         self.arrivals = []
         self.checkArrivals()
 
+    def addObserver(self, observer):
+        self.observers.append(observer)
+
     def isOver(self):
         return not self.riders
 
-    def newTurn(self, logger):
+    def newTurn(self):
         for p in self.players:
-            p.pickNextMoves(logger)
+            p.pickNextMoves()
 
         for r in headToTail(self.riders):
             start = r.position()
             r.move(self.track, self.obstacles)
-            logger.logMove(r, start, r.position(), self.obstacles)
+            for observer in self.observers:
+                observer.logMove(r, start, r.position(), self.obstacles)
 
-        slipstreaming(self.riders, self.track, logger)
+        slipstreaming(self.riders, self.track, self.observers)
         self.checkArrivals()
 
-        exhaust(headToTail(self.riders), logger)
+        exhaust(headToTail(self.riders), self.observers)
 
     def ranking(self):
         return self.arrivals
