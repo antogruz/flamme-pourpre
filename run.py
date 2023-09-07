@@ -21,15 +21,15 @@ from frames import Frames
 
 def integrationTests():
     window = tk.Tk()
-    integrationSingle(window)
+    runner = Runner(window, 0.003, 6)
+    integrationSingle(runner)
     clear(window)
-    twoRacesSprinteursOnly(window)
+    twoRacesSprinteursOnly(runner)
     window.mainloop()
 
-def integrationSingle(window):
+def integrationSingle(runner):
     teams = [ createBot(color) for color in ["green", "red", "blue", "black", "magenta"] ]
-    track = colDuBallon()
-    singleRace(window, track, teams, 0.003, 6)
+    runner.runSingleRace(colDuBallon(), teams)
 
 def allRiders(teams):
     return [rider for team in teams for rider in team.riders]
@@ -40,42 +40,53 @@ def allPlayers(teams):
 def noLog(ranking):
     pass
 
-def singleRace(window, track, teams, clock, decksDisplayed = 2, logRanking = noLog):
-    for team in teams:
-        team.player.resetRiders(team.riders)
-    riders = allRiders(teams)
-    players = allPlayers(teams)
-    for rider in riders:
-        rider.cards.newRace()
-
-    layout = RaceLayout(window, decksCount = decksDisplayed)
-    displays, animation = createDisplays(track, layout, clock, window, riders[0:decksDisplayed])
-    setRidersOnStart(riders)
-    race = Race(track, riders, players)
-    logger = Logger()
-    race.addObserver(logger)
-    displays.update(riders, race)
-
-    while not race.isOver():
-        race.newTurn()
-        animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
-        logRanking(race.ranking())
-        displays.update(riders, race)
-        logger.__init__()
-
-def twoRacesSprinteursOnly(window):
+def twoRacesSprinteursOnly(runner):
     teams = [ sprinteurOnlyTeam(color) for color in ["blue", "red", "black"] ]
     for team in teams:
         team.player = createBotPlayer(team)
     tour = Tour(teams)
-    for track in [corsoPaseo(), firenzeMilano()]:
-        tour.newRace()
-        singleRace(window, track, tour.teams, 0.003, 3, tour.checkNewArrivals)
-        clear(window)
-        frames = Frames(window)
-        displayResults(frames.new(), tour.scores(), tour.times())
-        createSimpleMenu(frames.new(), ["Next Race!"])
-        clear(window)
+    runner.runTour(tour, [corsoPaseo(), firenzeMilano()])
+
+class Runner:
+    def __init__(self, window, clock, decksDisplayed):
+        self.window = window
+        self.clock = clock
+        self.decksDisplayed = decksDisplayed
+
+    def runTour(self, tour, tracks):
+        for track in tracks:
+            tour.newRace()
+            self.runSingleRace(track, tour.teams, tour.checkNewArrivals)
+            clear(self.window)
+            frames = Frames(self.window)
+            displayResults(frames.new(), tour.scores(), tour.times())
+            createSimpleMenu(frames.new(), ["Next Race!"])
+            clear(self.window)
+
+    def runSingleRace(self, track, teams, logRanking = noLog):
+        for team in teams:
+            team.player.resetRiders(team.riders)
+        riders = allRiders(teams)
+        players = allPlayers(teams)
+        for rider in riders:
+            rider.cards.newRace()
+
+        layout = RaceLayout(self.window, decksCount = self.decksDisplayed)
+        displays, animation = createDisplays(track, layout, self.clock, self.window, riders[0:self.decksDisplayed])
+        setRidersOnStart(riders)
+        race = Race(track, riders, players)
+        logger = Logger()
+        race.addObserver(logger)
+        displays.update(riders, race)
+
+        while not race.isOver():
+            race.newTurn()
+            animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
+            logRanking(race.ranking())
+            displays.update(riders, race)
+            logger.__init__()
+
+
 
 
 from ridersFactory import createRider
@@ -118,20 +129,13 @@ def main():
     if args.faster:
         clock /= args.faster
 
+    runner = Runner(window, clock, 2)
     teams = [ createBot("green") if args.faster else createHuman(root, "green") ]
     for color in ["blue", "red", "black"]:
         teams.append(createBot(color))
     tour = Tour(teams)
-
-    for i in range(racesCount):
-        tour.newRace()
-        track = randomPresetTrack()
-        singleRace(window, track, tour.teams, clock, 2, tour.checkNewArrivals)
-        clear(window)
-        frames = Frames(window)
-        displayResults(frames.new(), tour.scores(), tour.times())
-        createSimpleMenu(frames.new(), ["Next Race!"])
-        clear(window)
+    tracks = [ randomPresetTrack() for i in range(racesCount) ]
+    runner.runTour(tour, tracks)
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
