@@ -21,6 +21,12 @@ def rondeVanWevelgem():
 def firenzeMilano():
     return createTrack("abcgiDHqntmKOLrepJsfu")
 
+
+import random
+def randomPresetTrack():
+    return random.choice([corsoPaseo, colDuBallon, hauteMontagne, classicissima, rondeVanWevelgem, firenzeMilano])()
+
+
 def createTrack(letters):
     pieces = getPieces()
     roads = []

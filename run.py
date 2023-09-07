@@ -29,7 +29,7 @@ def integrationTests():
 def integrationSingle(window):
     teams = [ createBot(color) for color in ["green", "red", "blue", "black", "magenta"] ]
     track = colDuBallon()
-    singleRace(window, track, teams, 0.003)
+    singleRace(window, track, teams, 0.003, 6)
 
 def allRiders(teams):
     return [rider for team in teams for rider in team.riders]
@@ -40,16 +40,17 @@ def allPlayers(teams):
 def noLog(ranking):
     pass
 
-def singleRace(window, track, teams, clock, logRanking = noLog):
+def singleRace(window, track, teams, clock, decksDisplayed = 2, logRanking = noLog):
     for team in teams:
         team.player.resetRiders(team.riders)
     riders = allRiders(teams)
     players = allPlayers(teams)
+    for rider in riders:
+        rider.cards.newRace()
 
-    decksDisplayed = 4
     layout = RaceLayout(window, decksCount = decksDisplayed)
-    setRidersOnStart(riders)
     displays, animation = createDisplays(track, layout, clock, window, riders[0:decksDisplayed])
+    setRidersOnStart(riders)
     race = Race(track, riders, players)
     displays.update(riders, race)
 
@@ -67,9 +68,7 @@ def twoRacesSprinteursOnly(window):
     tour = Tour(teams)
     for track in [corsoPaseo(), firenzeMilano()]:
         tour.newRace()
-        for rider in tour.getRiders():
-            rider.cards.newRace()
-        singleRace(window, track, tour.teams, 0.003, tour.checkNewArrivals)
+        singleRace(window, track, tour.teams, 0.003, 3, tour.checkNewArrivals)
         clear(window)
         frames = Frames(window)
         displayResults(frames.new(), tour.scores(), tour.times())
@@ -113,6 +112,9 @@ def main():
     else:
         racesCount = createSimpleMenu(window, range(1, 6))
 
+    clock = 0.3
+    if args.faster:
+        clock /= args.faster
 
     teams = [ createBot("green") if args.faster else createHuman(root, "green") ]
     for color in ["blue", "red", "black"]:
@@ -121,9 +123,8 @@ def main():
 
     for i in range(racesCount):
         tour.newRace()
-        for rider in tour.getRiders():
-            rider.cards.newRace()
-        playRace(window, tour)
+        track = randomPresetTrack()
+        singleRace(window, track, tour.teams, clock, 2, tour.checkNewArrivals)
         clear(window)
         frames = Frames(window)
         displayResults(frames.new(), tour.scores(), tour.times())
@@ -133,32 +134,6 @@ def main():
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
 
-
-def playRace(window, tour):
-    for team in tour.teams:
-        team.player.resetRiders(team.riders)
-
-    faster = parseArgs().faster
-    track = colDuBallon() if faster else pickTrack(window)
-    layout = RaceLayout(window, decksCount=2)
-
-    riders = tour.getRiders()
-    onCardsDisplay = riders[0:2]
-    clock = 0.3
-    if faster:
-        clock /= faster
-    displays, animation = createDisplays(track, layout, clock, window, onCardsDisplay)
-    setRidersOnStart(riders)
-
-    race = Race(track, riders, [ team.player for team in tour.teams ])
-    displays.update(riders, race)
-
-    while not race.isOver():
-        logger = Logger()
-        race.newTurn(logger)
-        animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
-        tour.checkNewArrivals(race.ranking())
-        displays.update(riders, race)
 
 def createDisplays(track, layout, clock, window, onCardsDisplay):
     roadDisplay = RoadDisplay(layout.getTrackFrame(), track)
