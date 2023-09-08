@@ -4,6 +4,7 @@ from unittests import runTests, assert_equals, assert_similars
 from track import Track
 from rider import Rider
 from cards import Cards
+from positions import headToTail
 import riderMove
 
 # Cette classe respecte la procédure du jeu flamme rouge pour une course entière, jusqu'à ce que tous les coureurs soient arrivés.
@@ -131,13 +132,6 @@ class Race():
 
 def arrived(rider, track):
     return track.getRoadType(rider.getSquare()) == "end"
-
-def headToTail(riders):
-    return sorted(riders, key = absolutePosition, reverse = True)
-
-def absolutePosition(rider):
-    square, lane = rider.position()
-    return 2*square + 1 - lane
 
 if __name__ == "__main__":
     runTests(RaceTest())

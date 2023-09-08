@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from unittests import *
-from race import headToTail
+from positions import headToTail
 
 # Cette classe gère les temps des coureurs. On lui déclare les arrivées à chaque tour, et en fonction des positions des coureurs, elle met à jour leur temps général
 # Cette classe est amenée à changer si les règles du chrono changent.
