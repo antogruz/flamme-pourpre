@@ -12,6 +12,7 @@ class Tour:
             t.score = 0
             for r in t.riders:
                 r.time = 0
+                r.climberPoints = 0
         self.newRace()
 
     def scores(self):
@@ -49,6 +50,10 @@ class Tour:
         removeTime(riders[0].time, riders)
         return [(self.findTeam(rider).color + " " + rider.name, rider.time) for rider in riders]
 
+    def climberPoints(self):
+        riders = sorted(self.getRiders(), key = getClimberPoints, reverse = True)
+        return [(self.findTeam(rider).color + " " + rider.name, getClimberPoints(rider)) for rider in riders if getClimberPoints(rider) > 0]
+
     def getRiders(self):
         return [rider for team in self.teams for rider in team.riders]
 
@@ -65,6 +70,10 @@ def getScore(team):
 
 def getTime(rider):
     return rider.time
+
+def getClimberPoints(rider):
+    return rider.climberPoints
+
 
 
 class TourTest:

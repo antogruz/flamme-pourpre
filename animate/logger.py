@@ -46,6 +46,9 @@ class Logger:
     def getExhausted(self):
         return self.exhausted
 
+    def endTurn(self):
+        pass
+
 class CardDecorator:
     def cardPlayed(self, rider, card):
         rider.logCardPlayed = card

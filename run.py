@@ -18,10 +18,12 @@ from ridersFactory import createHumanRider, createBotRider, rouleurSpecialist, s
 from eventDisplay import EventDisplay
 from results import displayResults
 from frames import Frames
+from cols import getPointsForClimbs
+from meilleurGrimpeurObserver import ClimberObserver
 
 def integrationTests():
     window = tk.Tk()
-    runner = Runner(window, 0.003, 6)
+    runner = Runner(window, 0.003, 0)
     integrationSingle(runner)
     clear(window)
     twoRacesSprinteursOnly(runner)
@@ -56,14 +58,14 @@ class Runner:
     def runTour(self, tour, tracks):
         for track in tracks:
             tour.newRace()
-            self.runSingleRace(track, tour.teams, tour.checkNewArrivals)
+            self.runRace(track, tour.teams, tour.checkNewArrivals)
             clear(self.window)
             frames = Frames(self.window)
-            displayResults(frames.new(), tour.scores(), tour.times())
+            displayResults(frames.new(), tour.scores(), tour.times(), tour.climberPoints())
             createSimpleMenu(frames.new(), ["Next Race!"])
             clear(self.window)
 
-    def runSingleRace(self, track, teams, logRanking = noLog):
+    def runRace(self, track, teams, logRanking = noLog, climberMode = True):
         for team in teams:
             team.player.resetRiders(team.riders)
         riders = allRiders(teams)
@@ -77,6 +79,10 @@ class Runner:
         race = Race(track, riders, players)
         logger = Logger()
         race.addObserver(logger)
+        if climberMode:
+            for climberObserver in createClimbsObservers(track):
+                race.addObserver(climberObserver)
+                #displays.createClimbDisplayer(climberObserver)
         displays.update(riders, race)
 
         while not race.isOver():
@@ -86,7 +92,13 @@ class Runner:
             displays.update(riders, race)
             logger.__init__()
 
+    def runSingleRace(self, track, teams):
+        self.runRace(track, teams, noLog, False)
 
+
+
+def createClimbsObservers(track):
+    return [ ClimberObserver(lastAscentSquare, points) for (points, lastAscentSquare) in getPointsForClimbs(track) ]
 
 
 from ridersFactory import createRider

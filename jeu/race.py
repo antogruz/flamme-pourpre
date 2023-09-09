@@ -113,6 +113,8 @@ class Race():
         self.checkArrivals()
 
         exhaust(headToTail(self.riders), self.observers)
+        for observer in self.observers:
+            observer.endTurn()
 
     def ranking(self):
         return self.arrivals

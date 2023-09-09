@@ -6,12 +6,14 @@ from frames import Frames
 
 class ResultsTester(VisualTester):
     def testResults(self):
-        displayResults(self.frame, [("green", 3), ("blue", 1), ("red", 0)], [("green rouleur", 0), ("blue sprinteur", 50), ("red rouleur", 60), ("green sprinteur", 60), ("blue rouleur", 100), ("red sprinteur", 700)])
+        displayResults(self.frame, [("green", 3), ("blue", 1), ("red", 0)], [("green rouleur", 0), ("blue sprinteur", 50), ("red rouleur", 60), ("green sprinteur", 60), ("blue rouleur", 100), ("red sprinteur", 700)], [("green rouleur", 6), ("red grimpeur", 5)])
 
-def displayResults(window, scores, times):
+def displayResults(window, scores, times, climberPoints):
     frames = Frames(window)
     packArray(frames, "Tour ranking", scores, parseTeamScore)
     packArray(frames, "Times ranking", times, parseRiderTime)
+    if climberPoints:
+        packArray(frames, "Climbers ranking", climberPoints, parseClimberPoints)
 
 
 def packArray(frames, title, lines, parse):
@@ -30,6 +32,11 @@ def parseRiderTime(line):
     rider, time = line
     color, name = rider.split()
     return name, secondsToMinutes(time), color
+
+def parseClimberPoints(line):
+    rider, score = line
+    color, name = rider.split()
+    return name, score, color
 
 
 def secondsToMinutes(n):
