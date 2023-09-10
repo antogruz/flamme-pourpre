@@ -39,8 +39,14 @@ class RoadDisplay():
     def empty(self, position):
         empty(self.trackWidgets[position[0]][position[1]])
 
+    def removeTokens(self):
+        for square in self.trackWidgets:
+            for lane in square:
+                empty(lane)
+
+
     def endOfTurnUpdate(self):
-        removeTokens(self.trackWidgets)
+        self.removeTokens()
         for decorator in self.decorators:
             for squareDisplay in decorator.displayOnTrack():
                 self.decorate(squareDisplay)
@@ -52,13 +58,6 @@ class RoadDisplay():
     def decorate(self, squareDisplay):
         widget = self.trackWidgets[squareDisplay.square][squareDisplay.lane]
         widget.config(fg = squareDisplay.color, text = squareDisplay.text)
-
-
-
-def removeTokens(trackWidgets):
-    for square in trackWidgets:
-        for lane in square:
-            empty(lane)
 
 
 class SquareDisplay:
