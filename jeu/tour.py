@@ -9,19 +9,19 @@ class Tour:
     def __init__(self, teams):
         self.teams = teams
         for t in teams:
-            t.score = 0
             for r in t.riders:
                 r.time = 0
+                r.score = 0
                 r.climberPoints = 0
         self.newRace()
 
     def scores(self):
-        return [(team.color, team.score) for team in sorted(self.teams, key = getScore, reverse = True)]
+        return [(team.color, team.score()) for team in sorted(self.teams, key = getScore, reverse = True)]
 
     def checkNewArrivals(self, ranking):
         newArrivals = self.extractNew(ranking)
         for rider in newArrivals:
-            self.findTeam(rider).score += self.claimBounty()
+            rider.score += self.claimBounty()
         self.timer.arrive(newArrivals)
 
     def findTeam(self, rider):
@@ -66,7 +66,7 @@ def copy(l):
     return [e for e in l]
 
 def getScore(team):
-    return team.score
+    return team.score()
 
 def getTime(rider):
     return rider.time
@@ -152,6 +152,9 @@ class Team:
         self.riders = riders
         for r in self.riders:
             r.color = color
+
+    def score(self):
+        return sum([r.score for r in self.riders])
 
 class Rider:
     def __init__(self, name, position = 0):
