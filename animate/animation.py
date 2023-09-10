@@ -8,6 +8,7 @@ from riderDisplay import rouleurShade, sprinteurShade
 from display import RoadDisplay
 from eventDisplay import EventDisplay
 from logger import Logger, CardDecorator
+from riderDisplay import RidersDisplay
 
 class AnimateMovesTester(VisualTester):
     def __before__(self):
@@ -20,6 +21,10 @@ class AnimateMovesTester(VisualTester):
         eventDisplay = EventDisplay(frames[1])
         self.animation = Animation([EventAnimator(eventDisplay), RoadAnimator(self.roadDisplay)])
 
+    def displayRiders(self, riders):
+        self.roadDisplay.addRoadDecorator(RidersDisplay(riders))
+        self.roadDisplay.endOfTurnUpdate()
+
     def animate(self):
         self.animation.animate(self.logger.getMoves(), [], [])
 
@@ -30,7 +35,7 @@ class AnimateMovesTester(VisualTester):
         self.cardDecorator.cardPlayed(rouleur, 3)
         self.logger.logMove(sprinteur, (1, 0), (3, 0), Obstacles([]))
         self.logger.logMove(rouleur, (0, 0), (3, 1), Obstacles([]))
-        self.roadDisplay.displayRiders([rouleur, sprinteur])
+        self.displayRiders([rouleur, sprinteur])
         self.animate()
 
 class AnimateRoadTester(VisualTester):
@@ -42,13 +47,17 @@ class AnimateRoadTester(VisualTester):
         self.roadDisplay = RoadDisplay(frame, track)
         self.animation = Animation([RoadAnimator(self.roadDisplay)])
 
+    def displayRiders(self, riders):
+        self.roadDisplay.addRoadDecorator(RidersDisplay(riders))
+        self.roadDisplay.endOfTurnUpdate()
+
     def animate(self):
         self.animation.animate(self.logger.getMoves(), self.logger.getGroups(), self.logger.getExhausted())
 
     def testGroup(self):
         a = Rider(rouleurShade, "green", (0, 0))
         b = Rider(rouleurShade, "blue", (2, 0))
-        self.roadDisplay.displayRiders([a, b])
+        self.displayRiders([a, b])
         a.pos = (1, 0)
         self.logger.logGroup([a])
         a.pos = (2, 0)
@@ -61,7 +70,7 @@ class AnimateRoadTester(VisualTester):
         b = Rider(rouleurShade, "blue", (0, 1))
         self.logger.logExhaust(a)
         self.logger.logExhaust(b)
-        self.roadDisplay.displayRiders([a, b])
+        self.displayRiders([a, b])
         self.animate()
 
 

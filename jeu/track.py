@@ -12,6 +12,9 @@ class Track():
             return "out"
         return self.squares[square]
 
+    def lastSquare(self):
+        return len(self.squares) - 1
+
 
 def streamable(road):
     return not road in ["end", "ascent"]

@@ -4,42 +4,11 @@ from visualtests import *
 from trackDisplay import displayTrack, empty
 from track import Track
 import tkinter as tk
-from riderDisplay import *
 
-class DisplayTester(VisualTester):
-    def testTrack(self):
-        track = Track([(1, "start"), (1, "normal"), (1, "ascent"), (1, "descent"), (1, "end")])
-        RoadDisplay(self.frame, track)
-
-    def testRiders(self):
-        track = Track([(10, "normal")])
-        riders = [
-                Rider(rouleurShade, "green", (0, 0)),
-                Rider(rouleurShade, "black", (0, 1)),
-                Rider(rouleurShade, "red", (2, 0)),
-                Rider(rouleurShade, "blue", (9, 1)),
-                Rider(sprinteurShade, "green", (3, 1)),
-                Rider(sprinteurShade, "black", (4, 0)),
-                Rider(sprinteurShade, "red", (6, 2)),
-                Rider(sprinteurShade, "blue", (8, 0))
-            ]
-        RoadDisplay(self.frame, track).displayRiders(riders)
-
-
-    def testRanking(self):
-        track = Track([(10, "normal")])
-        riders = [
-                Rider(rouleurShade, "green", (0, 0)),
-                Rider(rouleurShade, "black", (0, 1)),
-                Rider(rouleurShade, "red", (2, 0)),
-                Rider(rouleurShade, "blue", (9, 1)),
-                Rider(sprinteurShade, "green", (3, 1)),
-                Rider(sprinteurShade, "black", (4, 0)),
-                Rider(sprinteurShade, "red", (6, 2)),
-                Rider(sprinteurShade, "blue", (8, 0))
-            ]
-        display = RoadDisplay(self.frame, track)
-        display.ranking(riders)
+def displayRiderAtPosition(boardWidgets, rider, position):
+    square, lane = position[0], position[1]
+    widget = boardWidgets[square][lane]
+    widget.config(text = rider.shade, fg = rider.color)
 
 
 from time import sleep
@@ -53,15 +22,6 @@ class RoadDisplay():
 
     def addRoadDecorator(self, decorator):
         self.decorators.append(decorator)
-
-    def ranking(self, ridersArrived):
-        displayRanking(self.trackWidgets, ridersArrived)
-
-    def displayRiders(self, riders):
-        removeTokens(self.trackWidgets)
-        for rider in riders:
-            displayRider(self.trackWidgets, rider)
-        self.update()
 
     def move(self, rider, start, end):
         self.empty(start)
@@ -79,10 +39,14 @@ class RoadDisplay():
     def empty(self, position):
         empty(self.trackWidgets[position[0]][position[1]])
 
-    def update(self):
+    def endOfTurnUpdate(self):
+        removeTokens(self.trackWidgets)
         for decorator in self.decorators:
             for squareDisplay in decorator.displayOnTrack():
                 self.decorate(squareDisplay)
+        self.frame.update()
+
+    def update(self):
         self.frame.update()
 
     def decorate(self, squareDisplay):
@@ -91,26 +55,11 @@ class RoadDisplay():
 
 
 
-
-
 def removeTokens(trackWidgets):
     for square in trackWidgets:
         for lane in square:
             empty(lane)
 
-class Rider:
-    def __init__(self, shade, color, pos):
-        self.shade = shade
-        self.color = color
-        self.pos = pos
-
-    def position(self):
-        return self.pos
-
-
-def displayRanking(boardWidgets, riders):
-    for i, r in enumerate(riders):
-        displayRiderAtPosition(boardWidgets, r, (len(boardWidgets) - 1 - i, 2))
 
 class SquareDisplay:
     def __init__(self, square, lane, color, text):
@@ -120,5 +69,3 @@ class SquareDisplay:
         self.text = text
 
 
-if __name__ == "__main__":
-    runVisualTestsInWindow(DisplayTester)

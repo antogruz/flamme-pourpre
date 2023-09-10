@@ -21,6 +21,8 @@ from frames import Frames
 from cols import getPointsForClimbs
 from meilleurGrimpeurObserver import ClimberObserver
 from climberPointsDisplay import ClimberPointsDisplay
+from riderDisplay import RidersDisplay
+from rankingDisplay import RankingDisplay
 
 def integrationTests():
     window = tk.Tk()
@@ -77,7 +79,9 @@ class Runner:
         layout = RaceLayout(self.window, decksCount = self.decksDisplayed)
         displays, animation = createDisplays(track, layout, self.clock, self.window, riders[0:self.decksDisplayed])
         setRidersOnStart(riders)
+        displays.roadDisplay.addRoadDecorator(RidersDisplay(riders))
         race = Race(track, riders, players)
+        displays.roadDisplay.addRoadDecorator(RankingDisplay(race))
         logger = Logger()
         race.addObserver(logger)
         if climberMode:
@@ -115,8 +119,7 @@ class Displays:
         self.cardsDisplays = [CardsDisplay(frame, rider) for rider, frame in zip(onCardsDisplay, layout.getDecksFrames())]
 
     def update(self, riders, race):
-        self.roadDisplay.displayRiders(riders)
-        self.roadDisplay.ranking(race.ranking())
+        self.roadDisplay.endOfTurnUpdate()
         for display in self.cardsDisplays:
             display.displayCards(display.rider.cards.inDeck(), display.rider.cards.discard, display.rider.cards.played)
         self.window.update()
