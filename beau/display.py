@@ -49,6 +49,10 @@ class RoadDisplay():
         self.trackWidgets = displayTrack(frame, track)
         self.frame.update()
         self.defaultBackground = self.trackWidgets[0][0].cget('bg')
+        self.decorators = []
+
+    def addRoadDecorator(self, decorator):
+        self.decorators.append(decorator)
 
     def ranking(self, ridersArrived):
         displayRanking(self.trackWidgets, ridersArrived)
@@ -76,7 +80,16 @@ class RoadDisplay():
         empty(self.trackWidgets[position[0]][position[1]])
 
     def update(self):
+        for decorator in self.decorators:
+            self.decorate(decorator.displayOnTrack())
         self.frame.update()
+
+    def decorate(self, squareDisplay):
+        widget = self.trackWidgets[squareDisplay.square][squareDisplay.lane]
+        widget.config(fg = squareDisplay.color, text = squareDisplay.text)
+
+
+
 
 
 def removeTokens(trackWidgets):
@@ -94,15 +107,16 @@ class Rider:
         return self.pos
 
 
-def displayBoard(window, road, riders):
-    trackWidgets = displayTrack(window, road)
-    displayRiders(trackWidgets, riders)
-    return trackWidgets
-
-
 def displayRanking(boardWidgets, riders):
     for i, r in enumerate(riders):
         displayRiderAtPosition(boardWidgets, r, (len(boardWidgets) - 1 - i, 2))
+
+class SquareDisplay:
+    def __init__(self, square, lane, color, text):
+        self.square = square
+        self.lane = lane
+        self.color = color
+        self.text = text
 
 
 if __name__ == "__main__":

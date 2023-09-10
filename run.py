@@ -20,6 +20,7 @@ from results import displayResults
 from frames import Frames
 from cols import getPointsForClimbs
 from meilleurGrimpeurObserver import ClimberObserver
+from climberPointsDisplay import ClimberPointsDisplay
 
 def integrationTests():
     window = tk.Tk()
@@ -82,7 +83,7 @@ class Runner:
         if climberMode:
             for climberObserver in createClimbsObservers(track):
                 race.addObserver(climberObserver)
-                #displays.createClimbDisplayer(climberObserver)
+                displays.roadDisplay.addRoadDecorator(ClimberPointsDisplay(climberObserver))
         displays.update(riders, race)
 
         while not race.isOver():
