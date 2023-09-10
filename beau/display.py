@@ -81,7 +81,8 @@ class RoadDisplay():
 
     def update(self):
         for decorator in self.decorators:
-            self.decorate(decorator.displayOnTrack())
+            for squareDisplay in decorator.displayOnTrack():
+                self.decorate(squareDisplay)
         self.frame.update()
 
     def decorate(self, squareDisplay):

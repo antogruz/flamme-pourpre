@@ -8,7 +8,8 @@ class ClimberPointsDisplay:
         self.co = climberObserver
 
     def displayOnTrack(self):
-        text = 0 if not self.co.points else self.co.points[0]
-        return SquareDisplay(self.co.mountainLastSpot, 2, "red", text)
+        if not self.co.points:
+            return []
+        return [SquareDisplay(self.co.mountainLastSpot, 2, "red", self.co.points[0])]
 
 
