@@ -28,9 +28,9 @@ from intermediateSprintObserver import createSprintObserver, getPointsForSprints
 def integrationTests():
     window = tk.Tk()
     runner = Runner(window, 0.003, 0)
-    integrationSingle(runner)
-    clear(window)
     twoRacesSprinteursOnly(runner)
+    clear(window)
+    integrationSingle(runner)
     window.mainloop()
 
 def integrationSingle(runner):
@@ -91,14 +91,9 @@ class Runner:
         logger = Logger()
         race.addObserver(logger)
         if modes.bestClimber:
-            for climberObserver in createClimbsObservers(track):
-                race.addObserver(climberObserver)
-                displays.roadDisplay.addRoadDecorator(MiniRacePointsDisplay(climberObserver, "red"))
-
+            createMiniRaces(displays.roadDisplay, race, createClimbsObservers(track), "red")
         if modes.intermediateSprint:
-            for sprintObserver in createSprintsObservers(track):
-                race.addObserver(sprintObserver)
-                displays.roadDisplay.addRoadDecorator(MiniRacePointsDisplay(sprintObserver, "green"))
+            createMiniRaces(displays.roadDisplay, race, createSprintsObservers(track), "green")
 
         displays.update(riders, race)
 
@@ -109,6 +104,11 @@ class Runner:
             displays.update(riders, race)
             logger.__init__()
 
+
+def createMiniRaces(roadDisplay, race, observers, decoratorColor):
+    for observer in observers:
+        race.addObserver(observer)
+        roadDisplay.addRoadDecorator(MiniRacePointsDisplay(observer, decoratorColor))
 
 def createClimbsObservers(track):
     return [ createClimberObserver(lastAscentSquare, points) for (points, lastAscentSquare) in getPointsForClimbs(track) ]
