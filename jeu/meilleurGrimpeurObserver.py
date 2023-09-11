@@ -5,7 +5,7 @@ from unittests import runTests, assert_equals, assert_similars
 finDeCol = 6
 class OneRiderTest:
     def __before__(self):
-        self.observer = ClimberObserver(finDeCol, [1, 1])
+        self.observer = createClimberObserver(finDeCol, [1, 1])
         self.rider = Rider()
 
     def logMoveAndEndTurn(self, start, end):
@@ -38,7 +38,7 @@ class OneRiderTest:
 
 class SeveralRidersTest:
     def __before__(self):
-        self.observer = ClimberObserver(finDeCol, [2, 1])
+        self.observer = createClimberObserver(finDeCol, [2, 1])
 
     def logAndMove(self, rider, start, end):
         rider.pos = end
@@ -62,38 +62,20 @@ class Rider:
         return self.pos
 
 
-from positions import headToTail
+from miniraceObserver import MiniraceObserver
+def createClimberObserver(mountainLastSpot, points):
+    return MiniraceObserver(mountainLastSpot, ClimberReward(points))
 
-class ClimberObserver:
-    def __init__(self, mountainLastSpot, points):
-        self.mountainLastSpot = mountainLastSpot
+
+class ClimberReward:
+    def __init__(self, points):
         self.points = points
-        self.ridersThatClimbedThisTurn = []
 
-    def logMove(self, rider, start, end, *_):
-        if not self.points:
-            return
-        if start[0] <= self.mountainLastSpot and end[0] > self.mountainLastSpot:
-            self.saveRider(rider)
+    def finished(self):
+        return not self.points
 
-    def saveRider(self, rider):
-        self.ridersThatClimbedThisTurn.append(rider)
-
-    def endTurn(self):
-        for rider in headToTail(self.ridersThatClimbedThisTurn):
-            self.givePoints(rider)
-        self.ridersThatClimbedThisTurn = []
-
-    def givePoints(self, rider):
-        if not self.points:
-            return
+    def reward(self, rider):
         rider.climberPoints += self.points.pop(0)
-
-    def logGroup(*_):
-        pass
-
-    def logExhaust(*_):
-        pass
 
 
 if __name__ == "__main__":

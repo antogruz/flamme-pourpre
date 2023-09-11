@@ -1,35 +1,12 @@
 #!/usr/bin/env python3
 
 from tracks import *
+from trackAnalysis import getSections
 
 def getPointsForClimbs(track):
-    mountains = findMountainsSections(track)
+    mountains = getSections(track, ["ascent"])
     allClimbs = [ (getClimbPoints(last + 1 - first), last) for (first, last) in mountains ]
     return [ climb for climb in allClimbs if climb[0]]
-
-def findMountainsSections(track):
-    sections = []
-    i = 0
-    while True:
-        sectionStart = findNextMountain(track, i)
-        if sectionStart == -1:
-            return sections
-        sectionEnd = findLastMountain(track, sectionStart)
-        sections.append((sectionStart, sectionEnd))
-        i = sectionEnd + 1
-
-def findNextMountain(track, i):
-    while track.getRoadType(i) not in ["ascent", "out"]:
-        i += 1
-    if track.getRoadType(i) == "out":
-        return -1
-    return i
-
-def findLastMountain(track, i):
-    while track.getRoadType(i) == "ascent":
-        i += 1
-    return i - 1
-
 
 def getClimbPoints(length):
     if length <= 4:

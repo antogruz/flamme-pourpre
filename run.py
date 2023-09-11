@@ -19,10 +19,11 @@ from eventDisplay import EventDisplay
 from results import displayResults
 from frames import Frames
 from cols import getPointsForClimbs
-from meilleurGrimpeurObserver import ClimberObserver
-from climberPointsDisplay import ClimberPointsDisplay
+from meilleurGrimpeurObserver import createClimberObserver
+from miniracePointsDisplay import MiniRacePointsDisplay
 from riderDisplay import RidersDisplay
 from rankingDisplay import RankingDisplay
+from intermediateSprintObserver import createSprintObserver, getPointsForSprints
 
 def integrationTests():
     window = tk.Tk()
@@ -34,7 +35,7 @@ def integrationTests():
 
 def integrationSingle(runner):
     teams = [ createBot(color) for color in ["green", "red", "blue", "black", "magenta"] ]
-    runner.runSingleRace(colDuBallon(), teams)
+    runner.runRace(colDuBallon(), teams)
 
 def allRiders(teams):
     return [rider for team in teams for rider in team.riders]
@@ -52,6 +53,11 @@ def twoRacesSprinteursOnly(runner):
     tour = Tour(teams)
     runner.runTour(tour, [corsoPaseo(), firenzeMilano()])
 
+class SpecialModes:
+    def __init__(self, bestClimber, intermediateSprint):
+        self.bestClimber = bestClimber
+        self.intermediateSprint = intermediateSprint
+
 class Runner:
     def __init__(self, window, clock, decksDisplayed):
         self.window = window
@@ -61,14 +67,14 @@ class Runner:
     def runTour(self, tour, tracks):
         for track in tracks:
             tour.newRace()
-            self.runRace(track, tour.teams, tour.checkNewArrivals)
+            self.runRace(track, tour.teams, tour.checkNewArrivals, SpecialModes(True, True))
             clear(self.window)
             frames = Frames(self.window)
             displayResults(frames.new(), tour.scores(), tour.times(), tour.climberPoints())
             createSimpleMenu(frames.new(), ["Next Race!"])
             clear(self.window)
 
-    def runRace(self, track, teams, logRanking = noLog, climberMode = True):
+    def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes(False, False)):
         for team in teams:
             team.player.resetRiders(team.riders)
         riders = allRiders(teams)
@@ -84,10 +90,16 @@ class Runner:
         displays.roadDisplay.addRoadDecorator(RankingDisplay(race))
         logger = Logger()
         race.addObserver(logger)
-        if climberMode:
+        if modes.bestClimber:
             for climberObserver in createClimbsObservers(track):
                 race.addObserver(climberObserver)
-                displays.roadDisplay.addRoadDecorator(ClimberPointsDisplay(climberObserver))
+                displays.roadDisplay.addRoadDecorator(MiniRacePointsDisplay(climberObserver, "red"))
+
+        if modes.intermediateSprint:
+            for sprintObserver in createSprintsObservers(track):
+                race.addObserver(sprintObserver)
+                displays.roadDisplay.addRoadDecorator(MiniRacePointsDisplay(sprintObserver, "green"))
+
         displays.update(riders, race)
 
         while not race.isOver():
@@ -97,14 +109,12 @@ class Runner:
             displays.update(riders, race)
             logger.__init__()
 
-    def runSingleRace(self, track, teams):
-        self.runRace(track, teams, noLog, False)
-
-
 
 def createClimbsObservers(track):
-    return [ ClimberObserver(lastAscentSquare, points) for (points, lastAscentSquare) in getPointsForClimbs(track) ]
+    return [ createClimberObserver(lastAscentSquare, points) for (points, lastAscentSquare) in getPointsForClimbs(track) ]
 
+def createSprintsObservers(track):
+    return [ createSprintObserver(lastSquare, points) for (lastSquare, points) in getPointsForSprints(track) ]
 
 from ridersFactory import createRider
 from cards import fullRecovery
