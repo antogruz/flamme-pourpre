@@ -2,6 +2,7 @@
 
 rouleurShade = "o±ỏ"
 sprinteurShade = "o/ỏ"
+grimpeurShade = "o|ỏ"
 
 from display import SquareDisplay
 

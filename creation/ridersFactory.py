@@ -28,11 +28,17 @@ def rouleurSpecialist():
 def sprinteurSpecialist():
     return Specialist("Sprinteur", sprinteurDeck(), sprinteurShade)
 
+def grimpeurSpecialist():
+    return Specialist("Grimpeur", grimpeurDeck(), grimpeurShade)
+
 def rouleurDeck():
     return threeTimes([3, 4, 5, 6, 7])
 
 def sprinteurDeck():
     return threeTimes([2, 3, 4, 5, 9])
+
+def grimpeurDeck():
+    return [3, 3, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 7, 7]
 
 def threeTimes(five):
     return [ card for card in five for i in range(3) ]

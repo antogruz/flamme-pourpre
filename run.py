@@ -14,7 +14,7 @@ from raceLayout import RaceLayout
 from cardsDisplay import CardsDisplay
 from menu import *
 from tour import Tour, Team
-from ridersFactory import createHumanRider, createBotRider, rouleurSpecialist, sprinteurSpecialist
+from ridersFactory import *
 from eventDisplay import EventDisplay
 from results import displayResults
 from frames import Frames
@@ -155,16 +155,25 @@ def main():
     if args.faster:
         clock /= args.faster
 
-    runner = Runner(window, clock, 2)
-    teams = [ createBot("green") if args.faster else createHuman(root, "green") ]
+    if args.faster:
+        ridersKind = [ rouleurSpecialist(), sprinteurSpecialist() ]
+    else:
+        ridersKind = pickRiders(window)
+    teams = [ createBot("green") if args.faster else createHuman(root, "green", ridersKind) ]
     for color in ["blue", "red", "black"]:
         teams.append(createBot(color))
     tour = Tour(teams)
     tracks = [ randomPresetTrack() for i in range(racesCount) ]
+    runner = Runner(window, clock, len(ridersKind))
     runner.runTour(tour, tracks)
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
+
+
+def pickRiders(window):
+    number = createSimpleMenu(window, [1, 2, 3, 4])
+    return [ createMenu(window, [ (rider.name, rider) for rider in [ rouleurSpecialist(), sprinteurSpecialist(), grimpeurSpecialist() ]]) for i in range(number) ]
 
 
 def createDisplays(track, layout, clock, window, onCardsDisplay):
@@ -198,8 +207,8 @@ def parseArgs():
     parser.add_argument('--integration', action="store_true")
     return parser.parse_args()
 
-def createHuman(rootWindow, color):
-    team = Team(color, duo(createHumanRider))
+def createHuman(rootWindow, color, specialists):
+    team = Team(color, [createHumanRider(kind) for kind in specialists])
     window = tk.Toplevel(rootWindow)
     player = createHumanPlayer(rootWindow, window, team)
     team.player = player
