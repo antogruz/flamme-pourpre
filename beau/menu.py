@@ -4,14 +4,14 @@ from visualtests import VisualTester, runVisualTestsInWindow
 import tkinter as tk
 from frames import clear
 
-def createSimpleMenu(frame, choices):
+def createSimpleMenu(frame, choices, title = ""):
     optionsSelector = UserChoice(frame)
-    i = optionsSelector.pick(choices)
+    i = optionsSelector.pick(choices, title)
     return choices[i]
 
-def createMenu(frame, choices):
+def createMenu(frame, choices, title = ""):
     optionsSelector = UserChoice(frame)
-    i = optionsSelector.pick([c[0] for c in choices])
+    i = optionsSelector.pick([c[0] for c in choices], title)
     return choices[i][1]
 
 
@@ -21,9 +21,12 @@ class UserChoice():
         self.frame = frame
         self.answer = tk.IntVar()
 
-    def pick(self, choices):
+    def pick(self, choices, title = ""):
         def setChoice(n):
             self.answer.set(n)
+
+        if title:
+            tk.Label(self.frame, text = title).pack()
 
         for i, choice in enumerate(choices):
             tk.Button(self.frame, text = choice, command = partial(setChoice, i)).pack(side = "left")
@@ -40,7 +43,7 @@ class UserChoice():
 
 class MenuTester(VisualTester):
     def testSimpleMenu(self):
-        choice = createSimpleMenu(self.frame, ["Un choix", "Un autre", "Un dernier pour la route"])
+        choice = createSimpleMenu(self.frame, ["Un choix", "Un autre", "Un dernier pour la route"], "Quel choix faire ?")
         tk.Label(self.frame, text = choice).pack()
 
     def testMenu(self):

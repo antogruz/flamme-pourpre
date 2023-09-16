@@ -116,7 +116,7 @@ def main():
     window = tk.Frame(root)
     window.grid()
 
-    racesCount = createSimpleMenu(window, range(1, 6))
+    racesCount = createSimpleMenu(window, range(1, 6), "How many races to play?")
 
     clock = 0.3
     ridersKind = pickRiders(window)
@@ -131,8 +131,8 @@ def main():
 
 
 def pickRiders(window):
-    number = createSimpleMenu(window, [1, 2, 3, 4])
-    return [ createMenu(window, [ (rider.name, rider) for rider in [ rouleurSpecialist(), sprinteurSpecialist(), grimpeurSpecialist() ]]) for i in range(number) ]
+    number = createSimpleMenu(window, [1, 2, 3, 4], "How many riders in your team?")
+    return [ createMenu(window, [ (rider.name, rider) for rider in [ rouleurSpecialist(), sprinteurSpecialist(), grimpeurSpecialist() ]], "Add a rider to your team") for i in range(number) ]
 
 
 def createDisplays(track, layout, clock, window, onCardsDisplay):
@@ -187,7 +187,7 @@ def createBotPlayer(team):
     return Player(FirstOracle(), team.riders, [CardDecorator()])
 
 class FirstOracle():
-    def pick(self, any):
+    def pick(self, *_):
         return 0
 
 if __name__ == "__main__":

@@ -60,7 +60,7 @@ class ChoiceLogger():
     def __init__(self):
         self.choices = []
 
-    def pick(self, possibilities):
+    def pick(self, possibilities, *_):
         self.choices.append(possibilities)
         return 0
 
@@ -71,7 +71,7 @@ class ChoiceDoer():
     def __init__(self, future):
         self.future = future
 
-    def pick(self, possibilities):
+    def pick(self, possibilities, *_):
         return self.future.pop(0)
 
 def createRouleur():
@@ -106,14 +106,14 @@ class Player():
             observer.cardPlayed(rider, card)
 
     def pickRider(self, riders):
-        choice = self.pick([r.name for r in riders])
+        choice = self.pick([r.name for r in riders], "Pick a rider")
         return riders.pop(choice)
 
     def pickCard(self, cards):
-        return cards[self.pick(cards)]
+        return cards[self.pick(cards, "Play a card")]
 
-    def pick(self, list):
-        choice = self.oracle.pick(list)
+    def pick(self, list, instruction):
+        choice = self.oracle.pick(list, instruction)
         if choice < 0 or choice >= len(list):
             return 0
         return choice
