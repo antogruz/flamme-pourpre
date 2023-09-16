@@ -25,18 +25,6 @@ from riderDisplay import RidersDisplay
 from rankingDisplay import RankingDisplay
 from intermediateSprintObserver import createSprintObserver, getPointsForSprints
 
-def integrationTests():
-    window = tk.Tk()
-    runner = Runner(window, 0.003, 0)
-    twoRacesSprinteursOnly(runner)
-    clear(window)
-    integrationSingle(runner)
-    window.mainloop()
-
-def integrationSingle(runner):
-    teams = [ createBot(color) for color in ["green", "red", "blue", "black", "magenta"] ]
-    runner.runRace(colDuBallon(), teams)
-
 def allRiders(teams):
     return [rider for team in teams for rider in team.riders]
 
@@ -45,13 +33,6 @@ def allPlayers(teams):
 
 def noLog(ranking):
     pass
-
-def twoRacesSprinteursOnly(runner):
-    teams = [ sprinteurOnlyTeam(color) for color in ["blue", "red", "black"] ]
-    for team in teams:
-        team.player = createBotPlayer(team)
-    tour = Tour(teams)
-    runner.runTour(tour, [corsoPaseo(), firenzeMilano()])
 
 class SpecialModes:
     def __init__(self, bestClimber, intermediateSprint):
@@ -116,12 +97,6 @@ def createClimbsObservers(track):
 def createSprintsObservers(track):
     return [ createSprintObserver(lastSquare, points) for (lastSquare, points) in getPointsForSprints(track) ]
 
-from ridersFactory import createRider
-from cards import fullRecovery
-def sprinteurOnlyTeam(color):
-    sprinteur = createRider(sprinteurSpecialist(), fullRecovery)
-    return Team(color, [sprinteur])
-
 class Displays:
     def __init__(self, window, layout, roadDisplay, onCardsDisplay):
         self.window = window
@@ -136,32 +111,16 @@ class Displays:
 
 
 def main():
-    args = parseArgs()
-    if args.integration:
-        return integrationTests()
-
     root = tk.Tk()
     root.title("flamme rouge")
     window = tk.Frame(root)
     window.grid()
-    single = args.single
 
-    if single:
-        racesCount = 1
-    else:
-        racesCount = createSimpleMenu(window, range(1, 6))
+    racesCount = createSimpleMenu(window, range(1, 6))
 
     clock = 0.3
-    if args.faster:
-        clock /= args.faster
-
-    if args.faster:
-        ridersKind = [ rouleurSpecialist(), sprinteurSpecialist() ]
-    else:
-        ridersKind = pickRiders(window)
-    teams = [ createBot("green") if args.faster else createHuman(root, "green", ridersKind) ]
-    for color in ["blue", "red", "black"]:
-        teams.append(createBot(color))
+    ridersKind = pickRiders(window)
+    teams = [ createHuman(root, "green", ridersKind) ] + [createBot(color) for color in ["blue", "red", "black"]]
     tour = Tour(teams)
     tracks = [ randomPresetTrack() for i in range(racesCount) ]
     runner = Runner(window, clock, len(ridersKind))
@@ -199,13 +158,6 @@ def pickTrack(window):
     trackCreator = createMenu(window, [("Corso Paseo", corsoPaseo), ("Col du ballon", colDuBallon), ("Haute Montagne", hauteMontagne), ("Classicissima", classicissima), ("Ronde Van Wevelgem", rondeVanWevelgem), ("Firenze-Milano", firenzeMilano)])
     return trackCreator()
 
-import argparse
-def parseArgs():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--faster', type=int)
-    parser.add_argument('--single', action="store_true")
-    parser.add_argument('--integration', action="store_true")
-    return parser.parse_args()
 
 def createHuman(rootWindow, color, specialists):
     team = Team(color, [createHumanRider(kind) for kind in specialists])
