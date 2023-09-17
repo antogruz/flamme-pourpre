@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from run import Runner, createBotPlayer, createBot
+from runner import Runner
+from factory import *
 from tour import Team, Tour
 from tracks import *
 from frames import clear
@@ -14,31 +15,18 @@ def integrationTests():
     integrationSingle(runner)
     window.mainloop()
 
-
-def integrationTests():
-    window = tk.Tk()
-    runner = Runner(window, 0.003, 0)
-    twoRacesSprinteursOnly(runner)
-    clear(window)
-    integrationSingle(runner)
-    window.mainloop()
-
 def integrationSingle(runner):
-    teams = [ createBot(color) for color in ["green", "red", "blue", "black", "magenta"] ]
+    teams = createTeams(Bot(), ["green", "red", "blue", "black", "magenta"])
     runner.runRace(colDuBallon(), teams)
 
 def twoRacesSprinteursOnly(runner):
-    teams = [ sprinteurOnlyTeam(color) for color in ["blue", "red", "black"] ]
-    for team in teams:
-        team.player = createBotPlayer(team)
+    teams = createTeams(Bot(), ["blue", "red", "black"], [sprinteurSpecialist()])
     tour = Tour(teams)
     runner.runTour(tour, [corsoPaseo(), firenzeMilano()])
 
-from cards import fullRecovery
-from ridersFactory import *
-def sprinteurOnlyTeam(color):
-    sprinteur = createRider(sprinteurSpecialist(), fullRecovery)
-    return Team(color, [sprinteur])
+def createTeams(factory, colors, kinds = classicDuo()):
+    return [ factory.createTeam(color, kinds) for color in colors ]
+
 
 if __name__ == "__main__":
     integrationTests()

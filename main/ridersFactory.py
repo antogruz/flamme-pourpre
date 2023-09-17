@@ -5,12 +5,6 @@ from rider import *
 import random
 from cards import reshuffleAll, halfRecovery, fullRecovery
 
-def createHumanRider(specialist):
-    return createRider(specialist, reshuffleAll)
-
-def createBotRider(specialist):
-    return createRider(specialist, halfRecovery)
-
 class Specialist:
     def __init__(self, name, deck, shade):
         self.name = name
