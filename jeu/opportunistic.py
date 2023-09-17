@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 
 from unittests import *
-from rider import Rider
 from cards import Cards
 import random
 
-def createOpportunistic(baseCards, sets):
+def createOpportunisticCards(baseCards, sets):
     cards = Cards(createDeck(baseCards, sets), random.shuffle, shuffleOnlyBaseCards)
     cards.sets = sets
-    rider = Rider("Opportunistic", cards, None)
-    return rider
+    return cards
 
 def createDeck(baseCards, sets):
     return [ SpecialCard(value, "base") for value in baseCards ] * 2 + [ SpecialCard(value, specialSet) for value in baseCards for specialSet in sets ]
@@ -40,29 +38,29 @@ class SpecialCard:
 
 class OpportunisticTester():
     def testDeckAfterPlayingNormalCard(self):
-        rider = createOpportunistic([2, 3], ["magenta"])
-        forcePlayCard(rider, SpecialCard(2, "base"))
-        rider.cards.newRace()
-        assert_similars([2, 2, 2, 3, 3, 3], [c.value for c in rider.cards.deck])
+        cards = createOpportunisticCards([2, 3], ["magenta"])
+        forcePlayCard(cards, SpecialCard(2, "base"))
+        cards.newRace()
+        assert_similars([2, 2, 2, 3, 3, 3], [c.value for c in cards.deck])
 
     def testOnlyOneCardPlayedFromASet(self):
-        rider = createOpportunistic([2, 3], ["magenta", "yellow"])
-        forcePlayCard(rider, SpecialCard(2, "magenta"))
-        rider.cards.newRace()
-        assert_similars([2, 2, 2, 3, 3, 3, 3], [c.value for c in rider.cards.deck])
+        cards = createOpportunisticCards([2, 3], ["magenta", "yellow"])
+        forcePlayCard(cards, SpecialCard(2, "magenta"))
+        cards.newRace()
+        assert_similars([2, 2, 2, 3, 3, 3, 3], [c.value for c in cards.deck])
 
     def testAllCardsFromASetPlayed(self):
-        rider = createOpportunistic([2, 3], ["magenta", "yellow"])
-        forcePlayCard(rider, SpecialCard(2, "magenta"))
-        forcePlayCard(rider, SpecialCard(3, "magenta"))
-        rider.cards.newRace()
-        assert_similars([2, 2, 2, 2, 3, 3, 3, 3], [c.value for c in rider.cards.deck])
+        cards = createOpportunisticCards([2, 3], ["magenta", "yellow"])
+        forcePlayCard(cards, SpecialCard(2, "magenta"))
+        forcePlayCard(cards, SpecialCard(3, "magenta"))
+        cards.newRace()
+        assert_similars([2, 2, 2, 2, 3, 3, 3, 3], [c.value for c in cards.deck])
 
-def forcePlayCard(rider, cardToPlay):
-    for card in rider.cards.deck:
+def forcePlayCard(cards, cardToPlay):
+    for card in cards.deck:
         if card.value == cardToPlay.value and card.specialSet == cardToPlay.specialSet:
-            rider.cards.deck.remove(card)
-            rider.cards.played.append(card)
+            cards.deck.remove(card)
+            cards.played.append(card)
             return
 
 
