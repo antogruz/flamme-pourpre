@@ -1,13 +1,76 @@
 #!/usr/bin/env python3
 
-from unittests import assert_equals, runTests, assert_similars
 # La classe des cartes doit changer si les règles de manipulations des cartes d'une équipe changent.
 # Par exemple, si un coureur pioche les cartes par 6, peut rejouer certaines cartes, ou ne se débarasse plus de ses cartes fatigue.
 # Si on ne doit plus mélanger le deck, ou si on doit le mélanger après chaque coup.
 
-def tests():
-    runTests(CardsTester())
+def reshuffleAll(cards):
+    cards.deck = cards.deck + cards.discard + cards.played
+    cards.discard = []
+    cards.played = []
 
+def noop(list):
+    pass
+
+class Cards():
+    def __init__(self, deck, shuffle = noop, newDeck = reshuffleAll):
+        self.deck = deck
+        self.discard = []
+        self.played = []
+        self.shuffle = shuffle
+        self.newDeck = newDeck
+        shuffle(self.deck)
+
+    def inDeck(self):
+        return len(self.deck)
+
+    def draw(self):
+        self.hand = []
+        for i in range(4):
+            self.drawOne()
+        return self.hand
+
+    def drawOne(self):
+        if not self.deck:
+            self.deck = [ card for card in self.discard ]
+            self.shuffle(self.deck)
+            self.discard = []
+
+        if not self.deck:
+            return
+
+        self.hand.append(self.deck.pop(0))
+
+    def play(self, card):
+        if not card:
+            return
+        self.hand.remove(card)
+        if card != "f":
+            self.played.append(card)
+        self.discard += self.hand
+
+    def newRace(self):
+        self.newDeck(self)
+        self.shuffle(self.deck)
+
+
+def fullRecovery(cards):
+    reshuffleAll(cards)
+    removeExhausts(cards.deck, countExhaust(cards.deck))
+
+def halfRecovery(cards):
+    reshuffleAll(cards)
+    removeExhausts(cards.deck, int(countExhaust(cards.deck) / 2))
+
+def removeExhausts(deck, count):
+    for i in range(count):
+        deck.remove("f")
+
+def countExhaust(deck):
+    return deck.count("f")
+
+
+from unittests import assert_equals, runTests, assert_similars
 class CardsTester():
     def testDrawAllDeck(self):
         cards = Cards(deck(4))
@@ -108,74 +171,9 @@ def deck(n):
     return [ i for i in reversed(range(1, n + 1)) ]
 
 
-def noop(list):
-    pass
-
 def increasingOrder(list):
     list.sort()
 
-def reshuffleAll(cards):
-    cards.deck = cards.deck + cards.discard + cards.played
-    cards.discard = []
-    cards.played = []
-
-def fullRecovery(cards):
-    reshuffleAll(cards)
-    removeExhausts(cards.deck, countExhaust(cards.deck))
-
-def halfRecovery(cards):
-    reshuffleAll(cards)
-    removeExhausts(cards.deck, int(countExhaust(cards.deck) / 2))
-
-def removeExhausts(deck, count):
-    for i in range(count):
-        deck.remove("f")
-
-def countExhaust(deck):
-    return deck.count("f")
-
-
-class Cards():
-    def __init__(self, deck, shuffle = noop, newDeck = reshuffleAll):
-        self.deck = deck
-        self.discard = []
-        self.played = []
-        self.shuffle = shuffle
-        self.newDeck = newDeck
-        shuffle(self.deck)
-
-    def inDeck(self):
-        return len(self.deck)
-
-    def draw(self):
-        self.hand = []
-        for i in range(4):
-            self.drawOne()
-        return self.hand
-
-    def drawOne(self):
-        if not self.deck:
-            self.deck = [ card for card in self.discard ]
-            self.shuffle(self.deck)
-            self.discard = []
-
-        if not self.deck:
-            return
-
-        self.hand.append(self.deck.pop(0))
-
-    def play(self, card):
-        if not card:
-            return
-        self.hand.remove(card)
-        if card != "f":
-            self.played.append(card)
-        self.discard += self.hand
-
-    def newRace(self):
-        self.newDeck(self)
-        self.shuffle(self.deck)
-
 
 if __name__ == "__main__":
-    tests()
+    runTests(CardsTester())
