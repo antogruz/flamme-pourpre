@@ -4,21 +4,17 @@
 # Par exemple, si un coureur pioche les cartes par 6, peut rejouer certaines cartes, ou ne se débarasse plus de ses cartes fatigue.
 # Si on ne doit plus mélanger le deck, ou si on doit le mélanger après chaque coup.
 
-def reshuffleAll(cards):
-    cards.deck = cards.deck + cards.discard + cards.played
-    cards.discard = []
-    cards.played = []
 
 def noop(list):
     pass
 
-class Cards():
-    def __init__(self, deck, shuffle = noop, newDeck = reshuffleAll):
+class Cards:
+    def __init__(self, deck, shuffle = noop, endOfRaceDecksManagers = []):
         self.deck = deck
         self.discard = []
         self.played = []
         self.shuffle = shuffle
-        self.newDeck = newDeck
+        self.endOfRaceDecksManagers = endOfRaceDecksManagers
         shuffle(self.deck)
 
     def inDeck(self):
@@ -50,17 +46,24 @@ class Cards():
         self.discard += self.hand
 
     def newRace(self):
-        self.newDeck(self)
+        self.deck = self.deck + self.discard
+        self.discard = []
+        for deckManager in self.endOfRaceDecksManagers:
+            deckManager.modifyCards(self)
+        self.reshuffleAll()
+
+    def reshuffleAll(self):
+        self.deck = self.deck + self.played
+        self.played = []
         self.shuffle(self.deck)
 
 
-def fullRecovery(cards):
-    reshuffleAll(cards)
-    removeExhausts(cards.deck, countExhaust(cards.deck))
+class ExhaustRecovery:
+    def __init__(self, percentageToRemove):
+        self.percentageToRemove = percentageToRemove
 
-def halfRecovery(cards):
-    reshuffleAll(cards)
-    removeExhausts(cards.deck, int(countExhaust(cards.deck) / 2))
+    def modifyCards(self, cards):
+        removeExhausts(cards.deck, int(countExhaust(cards.deck) * self.percentageToRemove))
 
 def removeExhausts(deck, count):
     for i in range(count):
@@ -146,7 +149,7 @@ class CardsTester():
         assert_similars([], cards.played)
 
     def testCardsAreRestoredAfterRace(self):
-        cards = Cards(deck(4), noop, reshuffleAll)
+        cards = Cards(deck(4), noop)
         cards.draw()
         cards.play(1)
         cards.newRace()
@@ -155,14 +158,14 @@ class CardsTester():
         assert_similars([], cards.discard)
 
     def testExhaustRemoved(self):
-        cards = Cards(["f", 3, 4, 5, "f", "f"], noop, fullRecovery)
+        cards = Cards(["f", 3, 4, 5, "f", "f"], noop, [ExhaustRecovery(1)])
         cards.draw()
         cards.play(3)
         cards.newRace()
         assert_similars([3, 4, 5], cards.deck)
 
     def testHalfRecovery(self):
-        cards = Cards(["f", 3, 4, 5, "f", "f"], noop, halfRecovery)
+        cards = Cards(["f", 3, 4, 5, "f", "f"], noop, [ExhaustRecovery(0.5)])
         cards.newRace()
         assert_similars(["f", "f", 3, 4, 5], cards.deck)
 
