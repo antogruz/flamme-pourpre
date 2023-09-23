@@ -15,10 +15,7 @@ class Rider():
 
     def play(self, card):
         self.cards.play(card)
-        if card == "f" or card == "":
-            self.nextMove = 2
-        else:
-            self.nextMove = card
+        self.nextMove = getCardValue(card)
 
     def position(self):
         return self.riderMove.position()
@@ -36,10 +33,20 @@ class Rider():
     def exhaust(self):
         self.cards.discard.append("f")
 
+def getCardValue(card):
+    if card == "f" or card == "":
+        return 2
+    return extractNumberFrom(card)
+
+import re
+def extractNumberFrom(card):
+    return int(re.sub("[a-z]||[A-Z]", "", card))
+
 
 from unittests import *
 from player import Player, ChoiceDoer
 from cards import Cards
+from opportunistic import createOpportunisticCards
 
 class IntegrationTester():
     def testEmptyDeck(self):
@@ -48,6 +55,14 @@ class IntegrationTester():
         player.pickNextMoves()
         assert_equals(2, rider.nextMove)
 
+    def testOpportunistic(self):
+        rider = Rider("Opportunistic", createOpportunisticCards([5], ["magenta"], noop), None)
+        player = Player(ChoiceDoer([0, 2]), [rider])
+        player.pickNextMoves()
+        assert_equals(5, rider.nextMove)
+
+def noop(*_):
+    pass
 
 if __name__ == "__main__":
     runTests(IntegrationTester())

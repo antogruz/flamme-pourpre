@@ -4,13 +4,13 @@ from unittests import *
 from cards import Cards
 import random
 
-def createOpportunisticCards(baseCards, specialColors):
+def createOpportunisticCards(baseCards, specialColors, shuffle = random.shuffle):
     baseDeck, specialSets = createDeck(baseCards, specialColors)
     deck = baseDeck
     for specialSet in specialSets:
         deck += specialSet
 
-    return Cards(deck, random.shuffle, [OpportunisticSetManager(cardsSet) for cardsSet in specialSets])
+    return Cards(deck, shuffle, [OpportunisticSetManager(cardsSet) for cardsSet in specialSets])
 
 def createDeck(baseCards, specialColors):
     return baseCards * 2, [ [ str(value) + color for value in baseCards] for color in specialColors ]
