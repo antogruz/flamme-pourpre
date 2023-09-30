@@ -30,7 +30,7 @@ class RankingDisplayTester(VisualTester):
             ]
         rd = RoadDisplay(self.frame, track)
         rd.addRoadDecorator(RankingDisplay(FakeRace(track, riders)))
-        rd.endOfTurnUpdate()
+        rd.update()
 
 class FakeRace:
     def __init__(self, track, riders):

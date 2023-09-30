@@ -9,7 +9,7 @@ from frames import clear
 
 def integrationTests():
     window = tk.Tk()
-    runner = Runner(window, 0.003, 0)
+    runner = Runner(window, 0.003)
     twoRacesSprinteursOnly(runner)
     clear(window)
     integrationSingle(runner)

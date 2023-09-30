@@ -29,10 +29,10 @@ class SpecialModes:
         self.intermediateSprint = intermediateSprint
 
 class Runner:
-    def __init__(self, window, clock, decksDisplayed):
+    def __init__(self, window, clock, displayers = []):
         self.window = window
         self.clock = clock
-        self.decksDisplayed = decksDisplayed
+        self.displayers = displayers
 
     def runTour(self, tour, tracks):
         for track in tracks:
@@ -52,26 +52,29 @@ class Runner:
         for rider in riders:
             rider.cards.newRace()
 
-        layout = RaceLayout(self.window, decksCount = self.decksDisplayed)
-        displays, animation = createDisplays(track, layout, self.clock, self.window, riders[0:self.decksDisplayed])
+        layout = RaceLayout(self.window)
+        roadDisplay, animation = createDisplays(track, layout, self.clock)
+        raceDisplayers = self.displayers + [roadDisplay]
         setRidersOnStart(riders)
-        displays.roadDisplay.addRoadDecorator(RidersDisplay(riders))
+        roadDisplay.addRoadDecorator(RidersDisplay(riders))
         race = Race(track, riders, players)
-        displays.roadDisplay.addRoadDecorator(RankingDisplay(race))
+        roadDisplay.addRoadDecorator(RankingDisplay(race))
         logger = Logger()
         race.addObserver(logger)
         if modes.bestClimber:
-            createMiniRaces(displays.roadDisplay, race, createClimbsObservers(track), "red")
+            createMiniRaces(roadDisplay, race, createClimbsObservers(track), "red")
         if modes.intermediateSprint:
-            createMiniRaces(displays.roadDisplay, race, createSprintsObservers(track), "green")
+            createMiniRaces(roadDisplay, race, createSprintsObservers(track), "green")
 
-        displays.update(riders, race)
+        for d in raceDisplayers:
+            d.update()
 
         while not race.isOver():
             race.newTurn()
             animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
             logRanking(race.ranking())
-            displays.update(riders, race)
+            for d in raceDisplayers:
+                d.update()
             logger.__init__()
 
 def allRiders(teams):
@@ -91,26 +94,12 @@ def createClimbsObservers(track):
 def createSprintsObservers(track):
     return [ createSprintObserver(lastSquare, points) for (lastSquare, points) in getPointsForSprints(track) ]
 
-class Displays:
-    def __init__(self, window, layout, roadDisplay, onCardsDisplay):
-        self.window = window
-        self.roadDisplay = roadDisplay
-        self.cardsDisplays = [CardsDisplay(frame, rider) for rider, frame in zip(onCardsDisplay, layout.getDecksFrames())]
 
-    def update(self, riders, race):
-        self.roadDisplay.endOfTurnUpdate()
-        for display in self.cardsDisplays:
-            display.displayCards(display.rider.cards.inDeck(), display.rider.cards.discard, display.rider.cards.played)
-        self.window.update()
-
-
-
-def createDisplays(track, layout, clock, window, onCardsDisplay):
+def createDisplays(track, layout, clock):
     roadDisplay = RoadDisplay(layout.getTrackFrame(), track)
     eventDisplay = EventDisplay(layout.getEventFrame())
     animation = Animation([EventAnimator(eventDisplay), RoadAnimator(roadDisplay, clock)], clock)
-    displays = Displays(window, layout, roadDisplay, onCardsDisplay)
-    return displays, animation
+    return roadDisplay, animation
 
 
 def setRidersOnStart(riders):

@@ -22,7 +22,7 @@ class MiniRaceDisplayTester(VisualTester):
         rd = RoadDisplay(self.frame, track)
         rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(15, [1]), "green"))
         rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(25, [5]), "red"))
-        rd.endOfTurnUpdate()
+        rd.update()
 
 
 

@@ -45,14 +45,11 @@ class RoadDisplay():
                 empty(lane)
 
 
-    def endOfTurnUpdate(self):
+    def update(self):
         self.removeTokens()
         for decorator in self.decorators:
             for squareDisplay in decorator.displayOnTrack():
                 self.decorate(squareDisplay)
-        self.frame.update()
-
-    def update(self):
         self.frame.update()
 
     def decorate(self, squareDisplay):

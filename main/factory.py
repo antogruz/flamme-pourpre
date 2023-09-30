@@ -12,8 +12,9 @@ def classicDuo():
     return [rouleurSpecialist(), sprinteurSpecialist()]
 
 class Human:
-    def __init__(self, rootWindow):
+    def __init__(self, rootWindow, userFrame):
         self.rootWindow = rootWindow
+        self.userFrame = userFrame
 
     def createTeam(self, color, specialists = classicDuo()):
         team = Team(color, [kind.createRider([]) for kind in specialists])
@@ -22,8 +23,7 @@ class Human:
         return team
 
     def createPlayer(self, team):
-        frameForChoices = tk.Toplevel(self.rootWindow)
-        oracle = UserChoice(frameForChoices)
+        oracle = UserChoice(self.userFrame)
         def onExit(oracle):
             oracle.dontWait()
             self.rootWindow.destroy()

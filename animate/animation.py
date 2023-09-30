@@ -23,7 +23,7 @@ class AnimateMovesTester(VisualTester):
 
     def displayRiders(self, riders):
         self.roadDisplay.addRoadDecorator(RidersDisplay(riders))
-        self.roadDisplay.endOfTurnUpdate()
+        self.roadDisplay.update()
 
     def animate(self):
         self.animation.animate(self.logger.getMoves(), [], [])
@@ -49,7 +49,7 @@ class AnimateRoadTester(VisualTester):
 
     def displayRiders(self, riders):
         self.roadDisplay.addRoadDecorator(RidersDisplay(riders))
-        self.roadDisplay.endOfTurnUpdate()
+        self.roadDisplay.update()
 
     def animate(self):
         self.animation.animate(self.logger.getMoves(), self.logger.getGroups(), self.logger.getExhausted())
@@ -115,19 +115,19 @@ class RoadAnimator:
         for i in range(len(path) - 1):
             sleep(self.clock)
             self.display.move(rider, path[i], path[i + 1])
-            self.display.update()
+            self.display.frame.update()
 
     def animateGroup(self, group):
         for (rider, end) in group:
             start = (end[0] - 1, end[1])
             self.display.move(rider, start, end)
-        self.display.update()
+        self.display.frame.update()
 
     def animateExhaust(self, exhausted):
         for color in ["yellow", "red", "default"]:
             for rider in exhausted:
                 self.display.setBackground(rider, color)
-            self.display.update()
+            self.display.frame.update()
             sleep(self.clock)
 
 class EventAnimator:

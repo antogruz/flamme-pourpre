@@ -9,6 +9,7 @@ from menu import *
 from ridersFactory import *
 from runner import Runner
 from tour import Tour
+from cardsDisplay import CardsDisplay
 
 def main():
     root = tk.Tk()
@@ -20,14 +21,26 @@ def main():
 
     clock = 0.3
     ridersKind = pickRiders(window)
-    teams = [ factory.Human(root).createTeam("green", ridersKind) ] + [factory.Bot().createTeam(color) for color in ["blue", "red", "black"]]
+    playerLayout = PlayerLayout(newWindow(root), len(ridersKind))
+    teams = [ factory.Human(root, playerLayout.choices).createTeam("green", ridersKind) ] + [factory.Bot().createTeam(color) for color in ["blue", "red", "black"]]
+    humanRiders = teams[0].riders
+    cardsDisplayers = [ CardsDisplay(riderFrame, rider) for rider, riderFrame in zip(humanRiders, playerLayout.ridersCards) ]
     tour = Tour(teams)
     tracks = [ randomPresetTrack() for i in range(racesCount) ]
-    runner = Runner(window, clock, len(ridersKind))
+    runner = Runner(window, clock, cardsDisplayers)
     runner.runTour(tour, tracks)
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
+
+def newWindow(frame):
+    return tk.Toplevel(frame)
+
+class PlayerLayout:
+    def __init__(self, window, ridersCount):
+        factory = Frames(window)
+        self.choices = factory.new()
+        self.ridersCards = factory.newLine(ridersCount)
 
 
 def pickRiders(window):

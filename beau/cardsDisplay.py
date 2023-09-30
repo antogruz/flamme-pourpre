@@ -41,6 +41,10 @@ class CardsDisplay:
         self.allCardsDiscarded = []
         self.discard.bind("<Button-1>", lambda e:toggleDiscard(self.allCardsDiscarded))
 
+    def update(self):
+        self.displayCards(self.rider.cards.inDeck(), self.rider.cards.discard, self.rider.cards.played)
+        self.frame.update()
+
     def displayCards(self, deckSize, discard, played):
         self.deck.config(text = str(deckSize))
         self.discard.config(text = len(discard))
