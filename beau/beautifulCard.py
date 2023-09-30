@@ -19,7 +19,7 @@ def createBeautifulCard(card, defaultColor = "black"):
     return BeautifulCard(card, defaultColor)
 
 def colorsBank():
-    return ["yellow", "magenta", "red", "blue", "green", "black", "pink"]
+    return ["goldenrod", "magenta", "red", "blue", "green", "black", "pink"]
 
 def thereIsColorIn(string):
     for color in colorsBank():

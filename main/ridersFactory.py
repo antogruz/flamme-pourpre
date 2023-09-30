@@ -18,7 +18,7 @@ class OpportunisticRiderFactory:
         self.baseCards = baseCards
 
     def createRider(self, endOfRaceDecksManagers):
-        cards = createOpportunisticCards(self.baseCards, ["yellow", "magenta"])
+        cards = createOpportunisticCards(self.baseCards, ["goldenrod", "magenta"])
         cards.endOfRaceDecksManagers += endOfRaceDecksManagers
         return Rider(cards)
 
