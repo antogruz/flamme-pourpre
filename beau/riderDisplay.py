@@ -3,17 +3,9 @@
 rouleurShade = "o±ỏ"
 sprinteurShade = "o/ỏ"
 grimpeurShade = "o|ỏ"
+opportunisticShade = "o\\ỏ"
 
 from display import SquareDisplay
-
-def addRouleurDisplay(rider, color):
-    rider.color = color
-    rider.shade = rouleurShade
-
-def addSprinteurDisplay(rider, color):
-    rider.color = color
-    rider.shade = sprinteurShade
-
 
 class RidersDisplay:
     def __init__(self, riders):

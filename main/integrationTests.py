@@ -20,7 +20,7 @@ def integrationSingle(runner):
     runner.runRace(colDuBallon(), teams)
 
 def twoRacesSprinteursOnly(runner):
-    teams = createTeams(Bot(), ["blue", "red", "black"], [sprinteurSpecialist()])
+    teams = createTeams(Bot(), ["blue", "red", "black"], [opportunisticSpecialist()])
     tour = Tour(teams)
     runner.runTour(tour, [corsoPaseo(), firenzeMilano()])
 

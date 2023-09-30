@@ -4,6 +4,7 @@ from visualtests import VisualTester, runVisualTestsInWindow
 import tkinter as tk
 from frames import Frames, clear
 from cards import Cards
+from beautifulCard import *
 
 class CardsTester(VisualTester):
     def testEmpty(self):
@@ -12,7 +13,7 @@ class CardsTester(VisualTester):
 
     def testAfterFirstRound(self):
         display = CardsDisplay(self.frame, Rider())
-        display.displayCards(7, [2, 4, 5], [9, 3, 2, 3, 5, 3, 5])
+        display.displayCards(7, [2, 4, 5, "7magenta"], [9, 3, 2, 3, "3yellow", 5, 3, 5])
 
 from riderDisplay import rouleurShade
 class Rider:
@@ -41,14 +42,15 @@ class CardsDisplay:
         self.discard.bind("<Button-1>", lambda e:toggleDiscard(self.allCardsDiscarded))
 
     def displayCards(self, deckSize, discard, played):
-        self.deck.config(text = deckSize)
+        self.deck.config(text = str(deckSize))
         self.discard.config(text = len(discard))
         if discard:
             self.discard.pack()
         else:
             hide(self.discard)
-        self.allCardsDiscarded = [smallCard(self.fullDiscardFrame, card, self.color) for card in discard]
-        displayPlayed(self.playedFrame, sorted(played), self.color)
+        self.allCardsDiscarded = [smallCard(self.fullDiscardFrame, createBeautifulCard(str(card), self.color)) for card in discard]
+        toDisplay = sorted([ str(card) for card in played if str(card).isdigit()])
+        displayPlayed(self.playedFrame, toDisplay, self.color)
 
 
 
@@ -77,23 +79,25 @@ def displayPlayed(window, cards, color):
             row = 0
             col += 1
         last = c
-        smallCard(window, str(c), color).grid(row = row, column = col, padx = 1, pady = 1)
+        smallCard(window, createBeautifulCard(str(c), color)).grid(row = row, column = col, padx = 1, pady = 1)
 
 def deck(window, text):
-    return bigCard(window, text, "snow4", "raised", "se")
+    label = bigCard(window, BeautifulCard(text, "snow4"))
+    label.config(relief = "raised", anchor = "se")
+    return label
 
-def bigCard(window, text, color = "black", relief = "flat", anchor = "center"):
-    label = cardLabel(window, text, color, relief, anchor)
+def bigCard(window, niceCard):
+    label = cardLabel(window, niceCard)
     resize(label, 3)
     return label
 
-def smallCard(window, text, color = "black", relief = "flat"):
-    label = cardLabel(window, text, color, relief)
+def smallCard(window, niceCard):
+    label = cardLabel(window, niceCard)
     resize(label, 1)
     return label
 
-def cardLabel(window, text, color, relief, anchor = "center"):
-    return tk.Label(window, text = text, fg = color,  highlightthickness = 1, highlightbackground = "black", relief = relief, anchor = anchor)
+def cardLabel(window, niceCard):
+    return tk.Label(window, text = niceCard.text, fg = niceCard.color, bg = niceCard.background, highlightthickness = 1, highlightbackground = "black")
 
 def resize(label, n):
     label.config(width = n, height = n)

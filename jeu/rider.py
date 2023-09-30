@@ -5,10 +5,9 @@
 # On pourrait hériter de classes différentes, et faire ajouter des attributs nécessaires en appelant des fonctions du genre "makeObjectPositionable"
 
 class Rider():
-    def __init__(self, name, cards, riderMove):
-        self.name = name
+    def __init__(self, cards):
         self.cards = cards
-        self.riderMove = riderMove
+        self.name = ""
 
     def draw(self):
         return self.cards.draw()
@@ -40,7 +39,7 @@ def getCardValue(card):
 
 import re
 def extractNumberFrom(card):
-    return int(re.sub("[a-z]||[A-Z]", "", card))
+    return int(re.sub("[a-z]||[A-Z]", "", str(card)))
 
 
 from unittests import *
@@ -50,13 +49,13 @@ from opportunistic import createOpportunisticCards
 
 class IntegrationTester():
     def testEmptyDeck(self):
-        rider = Rider("exhausted", Cards([]), None)
+        rider = Rider(Cards([]))
         player = Player(ChoiceDoer([0, 0, 0]), [rider])
         player.pickNextMoves()
         assert_equals(2, rider.nextMove)
 
     def testOpportunistic(self):
-        rider = Rider("Opportunistic", createOpportunisticCards([5], ["magenta"], noop), None)
+        rider = Rider(createOpportunisticCards([5], ["magenta"], noop))
         player = Player(ChoiceDoer([0, 2]), [rider])
         player.pickNextMoves()
         assert_equals(5, rider.nextMove)

@@ -3,27 +3,49 @@
 from riderDisplay import *
 from rider import *
 import random
-from cards import reshuffleAll, halfRecovery, fullRecovery
+from cards import Cards, ExhaustRecovery
+
+
+class SimpleDeckRiderFactory:
+    def __init__(self, deck):
+        self.deck = deck
+
+    def createRider(self, endOfRaceDecksManagers):
+        return Rider(Cards(self.deck, random.shuffle, endOfRaceDecksManagers))
+
+class OpportunisticRiderFactory:
+    def __init__(self, baseCards):
+        self.baseCards = baseCards
+
+    def createRider(self, endOfRaceDecksManagers):
+        cards = createOpportunisticCards(self.baseCards, ["yellow", "magenta"])
+        cards.endOfRaceDecksManagers += endOfRaceDecksManagers
+        return Rider(cards)
+
 
 class Specialist:
-    def __init__(self, name, deck, shade):
+    def __init__(self, name, factory, shade):
         self.name = name
-        self.deck = deck
         self.shade = shade
+        self.factory = factory
 
-def createRider(specialist, cardsBetweenRaces):
-    rider = Rider(specialist.name, Cards(specialist.deck, random.shuffle, cardsBetweenRaces), None)
-    rider.shade = specialist.shade
-    return rider
+    def createRider(self, endOfRaceDecksManagers):
+        rider = self.factory.createRider(endOfRaceDecksManagers)
+        rider.name = self.name
+        rider.shade = self.shade
+        return rider
 
 def rouleurSpecialist():
-    return Specialist("Rouleur", rouleurDeck(), rouleurShade)
+    return Specialist("Rouleur", SimpleDeckRiderFactory(rouleurDeck()), rouleurShade)
 
 def sprinteurSpecialist():
-    return Specialist("Sprinteur", sprinteurDeck(), sprinteurShade)
+    return Specialist("Sprinteur", SimpleDeckRiderFactory(sprinteurDeck()), sprinteurShade)
 
 def grimpeurSpecialist():
-    return Specialist("Grimpeur", grimpeurDeck(), grimpeurShade)
+    return Specialist("Grimpeur", SimpleDeckRiderFactory(grimpeurDeck()), grimpeurShade)
+
+def opportunisticSpecialist():
+    return Specialist("Opportuniste", OpportunisticRiderFactory([2, 3, 4, 5, 9]), opportunisticShade)
 
 def rouleurDeck():
     return threeTimes([3, 4, 5, 6, 7])

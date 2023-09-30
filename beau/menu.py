@@ -15,6 +15,7 @@ def createMenu(frame, choices, title = ""):
     return choices[i][1]
 
 
+from cardsDisplay import *
 from functools import partial
 class UserChoice():
     def __init__(self, frame):
@@ -29,7 +30,8 @@ class UserChoice():
             tk.Label(self.frame, text = title).pack()
 
         for i, choice in enumerate(choices):
-            tk.Button(self.frame, text = choice, command = partial(setChoice, i)).pack(side = "left")
+            nice = createBeautifulCard(choice)
+            tk.Button(self.frame, text = nice.text, fg = nice.color, bg = nice.background, command = partial(setChoice, i)).pack(side = "left")
 
         self.frame.update()
         self.frame.wait_variable(self.answer)
@@ -44,6 +46,10 @@ class UserChoice():
 class MenuTester(VisualTester):
     def testSimpleMenu(self):
         choice = createSimpleMenu(self.frame, ["Un choix", "Un autre", "Un dernier pour la route"], "Quel choix faire ?")
+        tk.Label(self.frame, text = choice).pack()
+
+    def testSimpleColors(self):
+        choice = createSimpleMenu(self.frame, ["3green", "5magenta", "5yellow", "f"])
         tk.Label(self.frame, text = choice).pack()
 
     def testMenu(self):

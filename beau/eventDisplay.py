@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 
 from visualtests import VisualTester, runVisualTestsInWindow
-from riderDisplay import rouleurShade, sprinteurShade
+from riderDisplay import *
 import tkinter as tk
 from frames import Frames
-from cardsDisplay import bigCard, smallCard
+from cardsDisplay import bigCard, smallCard, thereIsColorIn, extractColor
+from beautifulCard import *
 
 class EventTester(VisualTester):
     def testEvent(self):
-        blue, red = Rider("Rouleur", rouleurShade, "blue"), Rider("Sprinteur", sprinteurShade, "red")
+        blue, red = Rider("Rouleur", rouleurShade, "blue"), Rider("Opportuniste", opportunisticShade, "red")
         display = EventDisplay(self.frame)
         display.displayEvent(blue, "f")
-        display.displayEvent(red, "9")
+        display.displayEvent(red, "9magenta")
 
 class EventDisplay:
     def __init__(self, window):
@@ -20,11 +21,11 @@ class EventDisplay:
         names = subFrames.newLine(2)
         cards = subFrames.newLine(2)
         for frame in names + cards:
-            frame.config(width = 100, height = 60)
+            frame.config(width = 140, height = 60)
         self.currentRider = tk.Label(names[0])
         self.previousRider = tk.Label(names[1])
-        self.currentCard = bigCard(cards[0], "")
-        self.previousCard = smallCard(cards[1], "")
+        self.currentCard = bigCard(cards[0], BeautifulCard(""))
+        self.previousCard = smallCard(cards[1], BeautifulCard(""))
         for label in [self.currentRider, self.previousRider, self.currentCard, self.previousCard]:
             label.place(relx=.5, rely=.5, anchor="c")
 
@@ -38,11 +39,16 @@ class EventDisplay:
 
     def updatePrevious(self, rider, card):
         self.previousRider.config(text = rider.shade, fg = rider.color)
-        self.previousCard.config(text = card, fg = rider.color)
+        updateCardLabel(self.previousCard, card, rider.color)
 
     def updateCurrent(self, rider, card):
         self.currentRider.config(text = rider.name + " " + rider.shade, fg = rider.color)
-        self.currentCard.config(text = card, fg = rider.color)
+        updateCardLabel(self.currentCard, card, rider.color)
+
+
+def updateCardLabel(label, card, defaultColor):
+    niceCard = createBeautifulCard(card, defaultColor)
+    label.config(text = niceCard.text, fg = niceCard.color, bg = niceCard.background)
 
 class Rider:
     def __init__(self, name, shade, color):

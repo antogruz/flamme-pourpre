@@ -16,7 +16,7 @@ class Human:
         self.rootWindow = rootWindow
 
     def createTeam(self, color, specialists = classicDuo()):
-        team = Team(color, [self.createRider(kind) for kind in specialists])
+        team = Team(color, [kind.createRider([]) for kind in specialists])
         player = self.createPlayer(team)
         team.player = player
         return team
@@ -30,22 +30,16 @@ class Human:
         self.rootWindow.protocol("WM_DELETE_WINDOW", partial(onExit, oracle))
         return Player(oracle, team.riders, [CardDecorator()])
 
-    def createRider(self, kind):
-        return createRider(kind, reshuffleAll)
-
 
 class Bot:
     def createTeam(self, color, specialists = classicDuo()):
-        team = Team(color, [self.createRider(kind) for kind in specialists])
+        team = Team(color, [kind.createRider([ExhaustRecovery(0.5)]) for kind in specialists])
         player = self.createPlayer(team)
         team.player = player
         return team
 
     def createPlayer(self, team):
         return Player(FirstOracle(), team.riders, [CardDecorator()])
-
-    def createRider(self, kind):
-        return createRider(kind, halfRecovery)
 
 
 class FirstOracle():

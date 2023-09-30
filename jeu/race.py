@@ -66,7 +66,9 @@ def copy(list):
     return [l for l in list]
 
 def createRider(square, lane):
-    return Rider("Tac", Cards([]), riderMove.Rider(square, lane))
+    rider = Rider(Cards([]))
+    rider.riderMove = riderMove.Rider(square, lane)
+    return rider
 
 class SimplePlayer():
     def __init__(self, riders, move):
