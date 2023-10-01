@@ -1,26 +1,9 @@
 #!/usr/bin/env python3
 
-from visualtests import VisualTester, runVisualTestsInWindow
 import tkinter as tk
 from frames import Frames, clear
 from cards import Cards
 from beautifulCard import *
-
-class CardsTester(VisualTester):
-    def testEmpty(self):
-        display = CardsDisplay(self.frame, Rider())
-        display.displayCards(0, [], [])
-
-    def testAfterFirstRound(self):
-        display = CardsDisplay(self.frame, Rider())
-        display.displayCards(7, [2, 4, 5, "7magenta"], [9, 3, 2, 3, "3goldenrod", 5, 3, 5])
-
-from riderDisplay import rouleurShade
-class Rider:
-    def __init__(self):
-        self.shade = rouleurShade
-        self.name = "Rouleur"
-        self.color = "green"
 
 class CardsDisplay:
     def __init__(self, frame, rider):
@@ -107,6 +90,23 @@ def cardLabel(window, niceCard):
 
 def resize(label, n):
     label.config(width = n, height = n)
+
+from visualtests import VisualTester, runVisualTestsInWindow
+class CardsTester(VisualTester):
+    def testEmpty(self):
+        display = CardsDisplay(self.frame, Rider())
+        display.displayCards(0, [], [])
+
+    def testAfterFirstRound(self):
+        display = CardsDisplay(self.frame, Rider())
+        display.displayCards(7, [2, 4, 5, "7magenta"], [9, 3, 2, 3, "3goldenrod", 5, 3, 5])
+
+from riderDisplay import rouleurShade
+class Rider:
+    def __init__(self):
+        self.shade = rouleurShade
+        self.name = "Rouleur"
+        self.color = "green"
 
 if __name__ == "__main__":
     runVisualTestsInWindow(CardsTester)

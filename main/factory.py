@@ -16,7 +16,7 @@ class Human:
         self.rootWindow = rootWindow
         self.userFrame = userFrame
 
-    def createTeam(self, color, specialists = classicDuo()):
+    def createTeam(self, color, specialists):
         team = Team(color, [kind.createRider([]) for kind in specialists])
         player = self.createPlayer(team)
         team.player = player
@@ -29,6 +29,9 @@ class Human:
             self.rootWindow.destroy()
         self.rootWindow.protocol("WM_DELETE_WINDOW", partial(onExit, oracle))
         return Player(oracle, team.riders, [CardDecorator()])
+
+    def createSpecialDisplays(self, specialists, specialFrames):
+        return [ s.createSpecialDisplay(f) for (s, f) in zip(specialists, specialFrames) ]
 
 
 class Bot:

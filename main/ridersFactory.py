@@ -4,6 +4,7 @@ from riderDisplay import *
 from rider import *
 import random
 from cards import Cards, ExhaustRecovery
+from opportunisticDisplay import OpportunisticDisplay
 
 
 class SimpleDeckRiderFactory:
@@ -13,14 +14,26 @@ class SimpleDeckRiderFactory:
     def createRider(self, endOfRaceDecksManagers):
         return Rider(Cards(self.deck, random.shuffle, endOfRaceDecksManagers))
 
+    def createSpecialDisplay(self, frame):
+        return NothingDisplay()
+
+class NothingDisplay:
+    def update(self, *_):
+        pass
+
 class OpportunisticRiderFactory:
     def __init__(self, baseCards):
         self.baseCards = baseCards
+        self.sets = ["goldenrod", "magenta"]
+        self.cards = createOpportunisticCards(self.baseCards, self.sets)
 
     def createRider(self, endOfRaceDecksManagers):
-        cards = createOpportunisticCards(self.baseCards, ["goldenrod", "magenta"])
-        cards.endOfRaceDecksManagers += endOfRaceDecksManagers
-        return Rider(cards)
+        self.cards.endOfRaceDecksManagers += endOfRaceDecksManagers
+        return Rider(self.cards)
+
+    def createSpecialDisplay(self, frame):
+        return OpportunisticDisplay(frame, [[ card for card in self.cards.deck if color in str(card)] for color in self.sets], self.cards)
+
 
 
 class Specialist:
@@ -34,6 +47,9 @@ class Specialist:
         rider.name = self.name
         rider.shade = self.shade
         return rider
+
+    def createSpecialDisplay(self, frame):
+        return self.factory.createSpecialDisplay(frame)
 
 def rouleurSpecialist():
     return Specialist("Rouleur", SimpleDeckRiderFactory(rouleurDeck()), rouleurShade)

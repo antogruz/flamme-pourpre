@@ -22,12 +22,14 @@ def main():
     clock = 0.3
     ridersKind = pickRiders(window)
     playerLayout = PlayerLayout(newWindow(root), len(ridersKind))
-    teams = [ factory.Human(root, playerLayout.choices).createTeam("green", ridersKind) ] + [factory.Bot().createTeam(color) for color in ["blue", "red", "black"]]
+    humanFactory = factory.Human(root, playerLayout.choices)
+    teams = [ humanFactory.createTeam("green", ridersKind) ] + [factory.Bot().createTeam(color) for color in ["blue", "red", "black"]]
     humanRiders = teams[0].riders
     cardsDisplayers = [ CardsDisplay(riderFrame, rider) for rider, riderFrame in zip(humanRiders, playerLayout.ridersCards) ]
+    specialDisplayers = humanFactory.createSpecialDisplays(ridersKind, playerLayout.ridersSpecialFrames)
     tour = Tour(teams)
     tracks = [ randomPresetTrack() for i in range(racesCount) ]
-    runner = Runner(window, clock, cardsDisplayers)
+    runner = Runner(window, clock, cardsDisplayers + specialDisplayers)
     runner.runTour(tour, tracks)
 
     window.bind("<Escape>", lambda e: window.destroy())
@@ -41,6 +43,7 @@ class PlayerLayout:
         factory = Frames(window)
         self.choices = factory.new()
         self.ridersCards = factory.newLine(ridersCount)
+        self.ridersSpecialFrames = factory.newLine(ridersCount)
 
 
 def pickRiders(window):
