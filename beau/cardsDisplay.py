@@ -35,6 +35,7 @@ class CardsDisplay:
             self.discard.pack()
         else:
             hide(self.discard)
+        destroy(self.allCardsDiscarded)
         self.allCardsDiscarded = [smallCard(self.fullDiscardFrame, createBeautifulCard(str(card), self.color)) for card in discard]
         toDisplay = sorted([ createBeautifulCard(str(card), self.color) for card in played], key = getValue)
         displayPlayed(self.playedFrame, toDisplay)
@@ -55,6 +56,10 @@ def toggleDiscard(cardLabels):
 
 def hide(label):
     label.pack_forget()
+
+def destroy(labels):
+    for label in labels:
+        label.destroy()
 
 def displayPlayed(window, niceCards):
     clear(window)
