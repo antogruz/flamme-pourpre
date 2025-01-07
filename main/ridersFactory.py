@@ -32,7 +32,7 @@ class OpportunisticRiderFactory:
         return Rider(self.cards)
 
     def createSpecialDisplay(self, frame):
-        return OpportunisticDisplay(frame, [[ card for card in self.cards.deck if color in str(card)] for color in self.sets], self.cards)
+        return OpportunisticDisplay(frame, [sorted([ card for card in self.cards.deck if color in str(card)]) for color in self.sets], self.cards)
 
 
 
