@@ -56,27 +56,26 @@ from visualtests import *
 from tracks import *
 
 class TrackTester(VisualTester):
-    def display(self, track, name):
-        tk.Label(self.frame, text = name).pack()
+    def display(self, track):
         displayTrack(self.frames.new(), track)
 
     def testCorsoPaseo(self):
-        self.display(corsoPaseo(), "Corso Paseo")
+        self.display(corsoPaseo())
 
     def testColDuBallon(self):
-        self.display(colDuBallon(), "Col du Ballon")
+        self.display(colDuBallon())
 
     def testHauteMontagne(self):
-        self.display(hauteMontagne(), "Haute Montagne")
+        self.display(hauteMontagne())
 
     def testClassicissima(self):
-        self.display(classicissima(), "Classicissima")
+        self.display(classicissima())
 
     def testRonde(self):
-        self.display(rondeVanWevelgem(), "Ronde Van Wevelgem")
+        self.display(rondeVanWevelgem())
 
     def testFirenzeMilano(self):
-        self.display(firenzeMilano(), "Firenze Milano")
+        self.display(firenzeMilano())
 
 
 if __name__ == "__main__":

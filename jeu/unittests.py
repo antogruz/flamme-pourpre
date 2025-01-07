@@ -5,6 +5,8 @@ def runTests(tester):
     testNames = [m for m in methodNames if "test" in m]
     for test in testNames:
         print(test)
+        if "__display__" in methodNames:
+            tester.__display__(test)
         if "__before__" in methodNames:
             tester.__before__()
         getattr(tester, test)()
