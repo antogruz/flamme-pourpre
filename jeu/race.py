@@ -81,7 +81,6 @@ class SimplePlayer():
 
 
 from obstacles import Obstacles
-from obstacles import Obstacles
 from slipstreaming import slipstreaming
 from exhaust import exhaust
 

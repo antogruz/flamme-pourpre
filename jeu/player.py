@@ -86,9 +86,6 @@ class Player():
         self.cardObservers = cardObservers
         self.resetRiders(riders)
 
-    def resetRiders(self, riders):
-        self.riders = copy(riders)
-
     def pickNextMoves(self):
         ridersToPick = [r for r in self.riders]
         while (ridersToPick):
@@ -117,6 +114,10 @@ class Player():
         if choice < 0 or choice >= len(list):
             return 0
         return choice
+
+    def resetRiders(self, riders):
+        self.riders = copy(riders)
+
 
 def copy(l):
     return [e for e in l]

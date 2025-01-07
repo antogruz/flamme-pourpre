@@ -14,6 +14,7 @@ class Cards:
         self.discard = []
         self.played = []
         self.shuffle = shuffle
+        self.handSize = 4
         self.endOfRaceDecksManagers = endOfRaceDecksManagers
         shuffle(self.deck)
 
@@ -22,7 +23,7 @@ class Cards:
 
     def draw(self):
         self.hand = []
-        for i in range(4):
+        for i in range(self.handSize):
             self.drawOne()
         return self.hand
 
