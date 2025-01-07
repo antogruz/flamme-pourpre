@@ -49,7 +49,7 @@ class MenuTester(VisualTester):
         tk.Label(self.frame, text = choice).pack()
 
     def testSimpleColors(self):
-        choice = createSimpleMenu(self.frame, ["3green", "5magenta", "5yellow", "f"])
+        choice = createSimpleMenu(self.frame, ["3green", "5magenta", "5goldenrod", "f"])
         tk.Label(self.frame, text = choice).pack()
 
     def testMenu(self):
