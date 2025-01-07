@@ -38,7 +38,7 @@ class DisplayTester(VisualTester):
             ]
         rd = RoadDisplay(self.frame, track)
         rd.addRoadDecorator(RidersDisplay(riders))
-        rd.endOfTurnUpdate()
+        rd.update()
 
 
 class Rider:
