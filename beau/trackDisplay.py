@@ -2,8 +2,46 @@
 
 import tkinter as tk
 
+class TrackDisplayTkinter:
+    def __init__(self, window, track):
+        self.frame = window
+        self.boxes = displayTrack(window, track)
+
+    def clear(self, square, lane):
+        self.boxes[square][lane].clear()
+
+    def setContent(self, square, lane, content, color):
+        self.boxes[square][lane].setContent(content, color)
+
+    def setBackground(self, square, lane, color):
+        self.boxes[square][lane].setBackground(color)
+
+    def clearAll(self):
+        for column in self.boxes:
+            for box in column:
+                box.clear()
+
+class BoxDisplay:
+    def __init__(self, widget):
+        self.widget = widget
+        self.defaultBackground = widget.cget('bg')
+
+    def setContent(self, content, color):
+        self.widget.config(text = content, fg = color)
+
+    def setBackground(self, color):
+        if color == "default":
+            color = self.defaultBackground
+        self.widget.config(bg = color)
+
+    def clear(self):
+        self.widget.config(text = "", fg = "black", bg = self.defaultBackground)
+
+
+# private methods
+
 def displayTrack(window, track):
-    widgets = []
+    boxesDisplays = []
     column = 0
     bigRow = 0
     while (track.getRoadType(column) != "out"):
@@ -11,13 +49,13 @@ def displayTrack(window, track):
         for row in range(2):
             lane = getLabel(window, track.getRoadType(column))
             setGrid(lane, column, row)
-            square.append(lane)
+            square.append(BoxDisplay(lane))
         lane = invisible(window)
         setGrid(lane, column, 2)
-        square.append(lane)
-        widgets.append(square)
+        square.append(BoxDisplay(lane))
+        boxesDisplays.append(square)
         column += 1
-    return widgets
+    return boxesDisplays
 
 maxColumn = 30
 def setGrid(label, square, lane):
@@ -47,9 +85,6 @@ def slot(window, border):
 
 def invisible(window):
     return tk.Label(window, width = 3)
-
-def empty(widget):
-    widget.config(text = "", fg = "black")
 
 
 from visualtests import *

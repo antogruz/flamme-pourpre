@@ -15,6 +15,7 @@ from visualtests import *
 from track import Track
 from riderDisplay import rouleurShade, sprinteurShade, Rider
 from display import RoadDisplay
+from trackDisplay import TrackDisplayTkinter
 class RankingDisplayTester(VisualTester):
     def testRanking(self):
         track = Track([(10, "normal")])
@@ -28,7 +29,7 @@ class RankingDisplayTester(VisualTester):
                 Rider(sprinteurShade, "red", (6, 2)),
                 Rider(sprinteurShade, "blue", (8, 0))
             ]
-        rd = RoadDisplay(self.frame, track)
+        rd = RoadDisplay(self.frame, TrackDisplayTkinter(self.frame, track))
         rd.addRoadDecorator(RankingDisplay(FakeRace(track, riders)))
         rd.update()
 

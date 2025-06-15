@@ -16,10 +16,12 @@ from visualtests import *
 from display import RoadDisplay
 from meilleurGrimpeurObserver import createClimberObserver
 from track import Track
+from trackDisplay import TrackDisplayTkinter
 class MiniRaceDisplayTester(VisualTester):
     def testBoth(self):
         track = Track([(5, "start"), (12, "normal"), (9, "ascent"), (12, "normal"), (5, "end")])
-        rd = RoadDisplay(self.frame, track)
+        trackDisplay = TrackDisplayTkinter(self.frame, track)
+        rd = RoadDisplay(self.frame, trackDisplay)
         rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(15, [1]), "green"))
         rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(25, [5]), "red"))
         rd.update()

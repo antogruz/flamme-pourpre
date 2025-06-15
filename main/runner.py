@@ -5,6 +5,7 @@ from race import Race
 import riderMove
 import random
 from display import RoadDisplay
+from trackDisplay import TrackDisplayTkinter
 from animation import Logger, Animation, EventAnimator, RoadAnimator
 from raceLayout import RaceLayout
 from cardsDisplay import CardsDisplay
@@ -96,9 +97,10 @@ def createSprintsObservers(track):
 
 
 def createDisplays(track, layout, clock):
-    roadDisplay = RoadDisplay(layout.getTrackFrame(), track)
+    trackDisplay = TrackDisplayTkinter(layout.getTrackFrame(), track)
     eventDisplay = EventDisplay(layout.getEventFrame())
-    animation = Animation([EventAnimator(eventDisplay), RoadAnimator(roadDisplay, clock)], clock)
+    animation = Animation([EventAnimator(eventDisplay), RoadAnimator(layout.getTrackFrame(), trackDisplay, clock)], clock)
+    roadDisplay = RoadDisplay(layout.getTrackFrame(), trackDisplay)
     return roadDisplay, animation
 
 

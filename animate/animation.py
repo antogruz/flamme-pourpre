@@ -4,11 +4,11 @@ from visualtests import VisualTester
 from unittests import runTests
 from track import Track
 from obstacles import Obstacles
-from riderDisplay import rouleurShade, sprinteurShade
+from riderDisplay import rouleurShade, sprinteurShade, RidersDisplay
 from display import RoadDisplay
+from trackDisplay import TrackDisplayTkinter
 from eventDisplay import EventDisplay
 from logger import Logger, CardDecorator
-from riderDisplay import RidersDisplay
 
 class AnimateMovesTester(VisualTester):
     def __before__(self):
@@ -17,9 +17,10 @@ class AnimateMovesTester(VisualTester):
         track = Track([(10, "normal")])
         self.logger = Logger()
         self.cardDecorator = CardDecorator()
-        self.roadDisplay = RoadDisplay(frames[0], track)
+        self.trackDisplay = TrackDisplayTkinter(frames[0], track)
+        self.roadDisplay = RoadDisplay(frames[0], self.trackDisplay)
         eventDisplay = EventDisplay(frames[1])
-        self.animation = Animation([EventAnimator(eventDisplay), RoadAnimator(self.roadDisplay)])
+        self.animation = Animation([EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay)])
 
     def displayRiders(self, riders):
         self.roadDisplay.addRoadDecorator(RidersDisplay(riders))
@@ -44,8 +45,9 @@ class AnimateRoadTester(VisualTester):
         frame = self.frames.new()
         track = Track([(10, "normal")])
         self.logger = Logger()
-        self.roadDisplay = RoadDisplay(frame, track)
-        self.animation = Animation([RoadAnimator(self.roadDisplay)])
+        self.trackDisplay = TrackDisplayTkinter(frame, track)
+        self.roadDisplay = RoadDisplay(frame, self.trackDisplay)
+        self.animation = Animation([RoadAnimator(frame, self.trackDisplay)])
 
     def displayRiders(self, riders):
         self.roadDisplay.addRoadDecorator(RidersDisplay(riders))
@@ -107,28 +109,36 @@ class Animation:
 
 
 class RoadAnimator:
-    def __init__(self, display, clock = 0.3):
-        self.display = display
+    def __init__(self, frame, trackDisplay, clock = 0.3):
+        self.frame = frame
+        self.display = trackDisplay
         self.clock = clock
 
     def animateMove(self, rider, card, path):
         for i in range(len(path) - 1):
             sleep(self.clock)
-            self.display.move(rider, path[i], path[i + 1])
-            self.display.frame.update()
+            self.move(rider, path[i], path[i + 1])
+            self.frame.update()
 
     def animateGroup(self, group):
         for (rider, end) in group:
             start = (end[0] - 1, end[1])
-            self.display.move(rider, start, end)
-        self.display.frame.update()
+            self.move(rider, start, end)
+        self.frame.update()
 
     def animateExhaust(self, exhausted):
         for color in ["yellow", "red", "default"]:
             for rider in exhausted:
-                self.display.setBackground(rider, color)
-            self.display.frame.update()
+                square, lane = rider.position()
+                self.display.setBackground(square, lane, color)
+            self.frame.update()
             sleep(self.clock)
+
+    def move(self, rider, start, end):
+        self.display.clear(start[0], start[1])
+        self.display.setContent(end[0], end[1], rider.shade, rider.color)
+
+
 
 class EventAnimator:
     def __init__(self, display):

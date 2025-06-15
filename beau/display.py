@@ -1,60 +1,31 @@
 #!/usr/bin/env python3
 
 from visualtests import *
-from trackDisplay import displayTrack, empty
 from track import Track
 import tkinter as tk
 
-def displayRiderAtPosition(boardWidgets, rider, position):
-    square, lane = position[0], position[1]
-    widget = boardWidgets[square][lane]
-    widget.config(text = rider.shade, fg = rider.color)
-
-
 from time import sleep
 class RoadDisplay():
-    def __init__(self, frame, track):
+    def __init__(self, frame, trackDisplay):
         self.frame = frame
-        self.trackWidgets = displayTrack(frame, track)
-        self.frame.update()
-        self.defaultBackground = self.trackWidgets[0][0].cget('bg')
+        self.trackDisplay = trackDisplay
         self.decorators = []
 
     def addRoadDecorator(self, decorator):
         self.decorators.append(decorator)
 
-    def move(self, rider, start, end):
-        self.empty(start)
-        displayRiderAtPosition(self.trackWidgets, rider, end)
-
-    def setBackground(self, rider, color):
-        if color== "default":
-            color = self.defaultBackground
-        self.widget(rider).config(bg = color)
-
-    def widget(self, rider):
-        square, lane = rider.position()
-        return self.trackWidgets[square][lane]
-
-    def empty(self, position):
-        empty(self.trackWidgets[position[0]][position[1]])
-
-    def removeTokens(self):
-        for square in self.trackWidgets:
-            for lane in square:
-                empty(lane)
-
-
     def update(self):
-        self.removeTokens()
+        self.trackDisplay.clearAll()
         for decorator in self.decorators:
             for squareDisplay in decorator.displayOnTrack():
                 self.decorate(squareDisplay)
         self.frame.update()
 
+# Private methods
+
     def decorate(self, squareDisplay):
-        widget = self.trackWidgets[squareDisplay.square][squareDisplay.lane]
-        widget.config(fg = squareDisplay.color, text = squareDisplay.text)
+        self.trackDisplay.setContent(squareDisplay.square, squareDisplay.lane, squareDisplay.text, squareDisplay.color)
+
 
 
 class SquareDisplay:
