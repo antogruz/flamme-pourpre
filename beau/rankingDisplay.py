@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from display import SquareDisplay
+from display import SquareDisplay, TokensDecorators
 
 class RankingDisplay:
     def __init__(self, race):
@@ -14,7 +14,6 @@ class RankingDisplay:
 from visualtests import *
 from track import Track
 from riderDisplay import rouleurShade, sprinteurShade, Rider
-from display import RoadDisplay
 from trackDisplay import TrackDisplayTkinter
 class RankingDisplayTester(VisualTester):
     def testRanking(self):
@@ -29,7 +28,7 @@ class RankingDisplayTester(VisualTester):
                 Rider(sprinteurShade, "red", (6, 2)),
                 Rider(sprinteurShade, "blue", (8, 0))
             ]
-        rd = RoadDisplay(self.frame, TrackDisplayTkinter(self.frame, track))
+        rd = TokensDecorators(self.frame, TrackDisplayTkinter(self.frame, track))
         rd.addRoadDecorator(RankingDisplay(FakeRace(track, riders)))
         rd.update()
 

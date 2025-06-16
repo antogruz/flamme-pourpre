@@ -5,7 +5,7 @@ from unittests import runTests
 from track import Track
 from obstacles import Obstacles
 from riderDisplay import rouleurShade, sprinteurShade, RidersDisplay
-from display import RoadDisplay
+from display import TokensDecorators
 from trackDisplay import TrackDisplayTkinter
 from eventDisplay import EventDisplay
 from logger import Logger, CardDecorator
@@ -18,13 +18,13 @@ class AnimateMovesTester(VisualTester):
         self.logger = Logger()
         self.cardDecorator = CardDecorator()
         self.trackDisplay = TrackDisplayTkinter(frames[0], track)
-        self.roadDisplay = RoadDisplay(frames[0], self.trackDisplay)
+        self.tokensDecorators = TokensDecorators(frames[0], self.trackDisplay)
         eventDisplay = EventDisplay(frames[1])
         self.animation = Animation([EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay)])
 
     def displayRiders(self, riders):
-        self.roadDisplay.addRoadDecorator(RidersDisplay(riders))
-        self.roadDisplay.update()
+        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders))
+        self.tokensDecorators.update()
 
     def animate(self):
         self.animation.animate(self.logger.getMoves(), [], [])
@@ -46,12 +46,12 @@ class AnimateRoadTester(VisualTester):
         track = Track([(10, "normal")])
         self.logger = Logger()
         self.trackDisplay = TrackDisplayTkinter(frame, track)
-        self.roadDisplay = RoadDisplay(frame, self.trackDisplay)
+        self.tokensDecorators = TokensDecorators(frame, self.trackDisplay)
         self.animation = Animation([RoadAnimator(frame, self.trackDisplay)])
 
     def displayRiders(self, riders):
-        self.roadDisplay.addRoadDecorator(RidersDisplay(riders))
-        self.roadDisplay.update()
+        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders))
+        self.tokensDecorators.update()
 
     def animate(self):
         self.animation.animate(self.logger.getMoves(), self.logger.getGroups(), self.logger.getExhausted())

@@ -4,7 +4,7 @@ from tracks import *
 from race import Race
 import riderMove
 import random
-from display import RoadDisplay
+from display import TokensDecorators
 from trackDisplay import TrackDisplayTkinter
 from animation import Logger, Animation, EventAnimator, RoadAnimator
 from raceLayout import RaceLayout
@@ -54,18 +54,18 @@ class Runner:
             rider.cards.newRace()
 
         layout = RaceLayout(self.window)
-        roadDisplay, animation = createDisplays(track, layout, self.clock)
-        raceDisplayers = self.displayers + [roadDisplay]
+        tokensDecorators, animation = createDisplays(track, layout, self.clock)
+        raceDisplayers = self.displayers + [tokensDecorators]
         setRidersOnStart(riders)
-        roadDisplay.addRoadDecorator(RidersDisplay(riders))
+        tokensDecorators.addRoadDecorator(RidersDisplay(riders))
         race = Race(track, riders, players)
-        roadDisplay.addRoadDecorator(RankingDisplay(race))
+        tokensDecorators.addRoadDecorator(RankingDisplay(race))
         logger = Logger()
         race.addObserver(logger)
         if modes.bestClimber:
-            createMiniRaces(roadDisplay, race, createClimbsObservers(track), "red")
+            createMiniRaces(tokensDecorators, race, createClimbsObservers(track), "red")
         if modes.intermediateSprint:
-            createMiniRaces(roadDisplay, race, createSprintsObservers(track), "green")
+            createMiniRaces(tokensDecorators, race, createSprintsObservers(track), "green")
 
         for d in raceDisplayers:
             d.update()
@@ -84,10 +84,10 @@ def allRiders(teams):
 def allPlayers(teams):
     return [team.player for team in teams]
 
-def createMiniRaces(roadDisplay, race, observers, decoratorColor):
+def createMiniRaces(tokensDecorators, race, observers, decoratorColor):
     for observer in observers:
         race.addObserver(observer)
-        roadDisplay.addRoadDecorator(MiniRacePointsDisplay(observer, decoratorColor))
+        tokensDecorators.addRoadDecorator(MiniRacePointsDisplay(observer, decoratorColor))
 
 def createClimbsObservers(track):
     return [ createClimberObserver(lastAscentSquare, points) for (points, lastAscentSquare) in getPointsForClimbs(track) ]
@@ -100,8 +100,8 @@ def createDisplays(track, layout, clock):
     trackDisplay = TrackDisplayTkinter(layout.getTrackFrame(), track)
     eventDisplay = EventDisplay(layout.getEventFrame())
     animation = Animation([EventAnimator(eventDisplay), RoadAnimator(layout.getTrackFrame(), trackDisplay, clock)], clock)
-    roadDisplay = RoadDisplay(layout.getTrackFrame(), trackDisplay)
-    return roadDisplay, animation
+    tokensDecorators = TokensDecorators(layout.getTrackFrame(), trackDisplay)
+    return tokensDecorators, animation
 
 
 def setRidersOnStart(riders):

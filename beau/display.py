@@ -2,7 +2,7 @@
 
 from visualtests import *
 
-class RoadDisplay():
+class TokensDecorators():
     def __init__(self, frame, trackDisplay):
         self.frame = frame
         self.trackDisplay = trackDisplay

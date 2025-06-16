@@ -5,7 +5,7 @@ sprinteurShade = "o/ỏ"
 grimpeurShade = "o|ỏ"
 opportunisticShade = "o\\ỏ"
 
-from display import SquareDisplay
+from display import SquareDisplay, TokensDecorators
 
 class RidersDisplay:
     def __init__(self, riders):
@@ -18,11 +18,10 @@ class RidersDisplay:
 
 from visualtests import *
 from track import Track
-from display import RoadDisplay
 class DisplayTester(VisualTester):
     def testTrack(self):
         track = Track([(1, "start"), (1, "normal"), (1, "ascent"), (1, "descent"), (1, "end")])
-        RoadDisplay(self.frame, track)
+        TokensDecorators(self.frame, track)
 
     def testRiders(self):
         track = Track([(10, "normal")])
@@ -36,7 +35,7 @@ class DisplayTester(VisualTester):
                 Rider(sprinteurShade, "red", (6, 2)),
                 Rider(sprinteurShade, "blue", (8, 0))
             ]
-        rd = RoadDisplay(self.frame, track)
+        rd = TokensDecorators(self.frame, track)
         rd.addRoadDecorator(RidersDisplay(riders))
         rd.update()
 

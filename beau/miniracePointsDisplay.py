@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from display import SquareDisplay
+from display import SquareDisplay, TokensDecorators
 
 class MiniRacePointsDisplay:
     def __init__(self, observer, color):
@@ -13,7 +13,6 @@ class MiniRacePointsDisplay:
         return [ SquareDisplay(self.observer.lastSquare + i, 2, self.color, self.observer.prizeGiver.points[0]) for i in range(2) ]
 
 from visualtests import *
-from display import RoadDisplay
 from meilleurGrimpeurObserver import createClimberObserver
 from track import Track
 from trackDisplay import TrackDisplayTkinter
@@ -21,7 +20,7 @@ class MiniRaceDisplayTester(VisualTester):
     def testBoth(self):
         track = Track([(5, "start"), (12, "normal"), (9, "ascent"), (12, "normal"), (5, "end")])
         trackDisplay = TrackDisplayTkinter(self.frame, track)
-        rd = RoadDisplay(self.frame, trackDisplay)
+        rd = TokensDecorators(self.frame, trackDisplay)
         rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(15, [1]), "green"))
         rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(25, [5]), "red"))
         rd.update()
