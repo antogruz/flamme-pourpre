@@ -2,7 +2,6 @@
 
 import tkinter as tk
 from tracks import *
-from player import Player
 import factory
 from menu import *
 from ridersFactory import *

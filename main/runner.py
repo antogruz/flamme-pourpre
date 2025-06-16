@@ -8,7 +8,6 @@ from tokensDecorators import TokensDecorators
 from trackDisplay import TrackDisplayTkinter
 from animation import EventAnimator, RoadAnimator
 from raceLayout import RaceLayout
-from cardsDisplay import CardsDisplay
 from menu import *
 from ridersFactory import *
 from eventDisplay import EventDisplay
