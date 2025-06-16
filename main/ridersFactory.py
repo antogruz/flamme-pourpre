@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from riderDisplay import *
+from decorators.riderDisplay import *
 from rider import *
 import random
 from cards import Cards, ExhaustRecovery

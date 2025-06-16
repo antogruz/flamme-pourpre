@@ -4,7 +4,7 @@ from visualtests import VisualTester
 from unittests import runTests
 from track import Track
 from obstacles import Obstacles
-from riderDisplay import rouleurShade, sprinteurShade, RidersDisplay
+from decorators.riderDisplay import rouleurShade, sprinteurShade, RidersDisplay
 from tokensDecorators import TokensDecorators
 from trackDisplay import TrackDisplayTkinter
 from eventDisplay import EventDisplay

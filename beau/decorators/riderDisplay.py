@@ -51,4 +51,4 @@ class Rider:
 
 
 if __name__ == "__main__":
-    runVisualTestsInWindow(DisplayTester)
+    runVisualTestsInWindow(DisplayTester) 

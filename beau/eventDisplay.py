@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from visualtests import VisualTester, runVisualTestsInWindow
-from riderDisplay import *
+from decorators.riderDisplay import *
 import tkinter as tk
 from frames import Frames
 from cardsDisplay import bigCard, smallCard, thereIsColorIn, extractColor

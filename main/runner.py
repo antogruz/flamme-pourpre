@@ -16,9 +16,9 @@ from results import displayResults
 from frames import Frames
 from cols import getPointsForClimbs
 from meilleurGrimpeurObserver import createClimberObserver
-from miniracePointsDisplay import MiniRacePointsDisplay
-from riderDisplay import RidersDisplay
-from rankingDisplay import RankingDisplay
+from decorators.miniracePointsDisplay import MiniRacePointsDisplay
+from decorators.riderDisplay import RidersDisplay
+from decorators.rankingDisplay import RankingDisplay
 from intermediateSprintObserver import createSprintObserver, getPointsForSprints
 
 def noLog(ranking):

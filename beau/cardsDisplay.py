@@ -106,7 +106,7 @@ class CardsTester(VisualTester):
         display = CardsDisplay(self.frame, Rider())
         display.displayCards(7, [2, 4, 5, "7magenta"], [9, 3, 2, 3, "3goldenrod", 5, 3, 5])
 
-from riderDisplay import rouleurShade
+from decorators.riderDisplay import rouleurShade
 class Rider:
     def __init__(self):
         self.shade = rouleurShade

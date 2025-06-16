@@ -28,5 +28,4 @@ class MiniRaceDisplayTester(VisualTester):
 
 
 if __name__ == "__main__":
-    runVisualTestsInWindow(MiniRaceDisplayTester)
-
+    runVisualTestsInWindow(MiniRaceDisplayTester) 
