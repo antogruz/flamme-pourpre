@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
-from tokensDecorators import SquareDisplay, TokensDecorators
+from tokensDecorators import TokensDecorators
 from decorators.riderDisplay import rouleurShade, sprinteurShade, Rider
 
 class RankingDisplay:
-    def __init__(self, race):
+    def __init__(self, race, trackDisplay):
         self.race = race
         self.lastTrackSquare = race.track.lastSquare()
+        self.trackDisplay = trackDisplay
 
     def displayOnTrack(self):
-        return [ SquareDisplay(self.lastTrackSquare - i, 2, rider.color, rider.shade) for i, rider in enumerate(self.race.ranking()) ]
+        for i, rider in enumerate(self.race.ranking()):
+            self.trackDisplay.setContent(self.lastTrackSquare - i, 2, rider.shade, rider.color)
 
 
 from visualtests import *
@@ -28,8 +30,9 @@ class RankingDisplayTester(VisualTester):
                 Rider(sprinteurShade, "red", (6, 2)),
                 Rider(sprinteurShade, "blue", (8, 0))
             ]
-        rd = TokensDecorators(self.frame, TrackDisplayTkinter(self.frame, track))
-        rd.addRoadDecorator(RankingDisplay(FakeRace(track, riders)))
+        trackDisplay = TrackDisplayTkinter(self.frame, track)
+        rd = TokensDecorators(self.frame, trackDisplay)
+        rd.addRoadDecorator(RankingDisplay(FakeRace(track, riders), trackDisplay))
         rd.update()
 
 class FakeRace:

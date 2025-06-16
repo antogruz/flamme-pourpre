@@ -57,9 +57,9 @@ class Runner:
         tokensDecorators, animation = createDisplays(track, layout, self.clock)
         raceDisplayers = self.displayers + [tokensDecorators]
         setRidersOnStart(riders)
-        tokensDecorators.addRoadDecorator(RidersDisplay(riders))
+        tokensDecorators.addRoadDecorator(RidersDisplay(riders, tokensDecorators.trackDisplay))
         race = Race(track, riders, players)
-        tokensDecorators.addRoadDecorator(RankingDisplay(race))
+        tokensDecorators.addRoadDecorator(RankingDisplay(race, tokensDecorators.trackDisplay))
         logger = Logger()
         race.addObserver(logger)
         if modes.bestClimber:
@@ -87,7 +87,7 @@ def allPlayers(teams):
 def createMiniRaces(tokensDecorators, race, observers, decoratorColor):
     for observer in observers:
         race.addObserver(observer)
-        tokensDecorators.addRoadDecorator(MiniRacePointsDisplay(observer, decoratorColor))
+        tokensDecorators.addRoadDecorator(MiniRacePointsDisplay(observer, decoratorColor, tokensDecorators.trackDisplay))
 
 def createClimbsObservers(track):
     return [ createClimberObserver(lastAscentSquare, points) for (points, lastAscentSquare) in getPointsForClimbs(track) ]

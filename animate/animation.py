@@ -23,7 +23,7 @@ class AnimateMovesTester(VisualTester):
         self.animation = Animation([EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay)])
 
     def displayRiders(self, riders):
-        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders))
+        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay))
         self.tokensDecorators.update()
 
     def animate(self):
@@ -50,7 +50,7 @@ class AnimateRoadTester(VisualTester):
         self.animation = Animation([RoadAnimator(frame, self.trackDisplay)])
 
     def displayRiders(self, riders):
-        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders))
+        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay))
         self.tokensDecorators.update()
 
     def animate(self):

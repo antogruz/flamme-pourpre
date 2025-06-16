@@ -5,19 +5,22 @@ sprinteurShade = "o/ỏ"
 grimpeurShade = "o|ỏ"
 opportunisticShade = "o\\ỏ"
 
-from tokensDecorators import SquareDisplay, TokensDecorators
+from tokensDecorators import TokensDecorators
 
 class RidersDisplay:
-    def __init__(self, riders):
+    def __init__(self, riders, trackDisplay):
         self.riders = riders
+        self.trackDisplay = trackDisplay
 
     def displayOnTrack(self):
-        return [ SquareDisplay(r.position()[0], r.position()[1], r.color, r.shade) for r in self.riders ]
+        for r in self.riders:
+            self.trackDisplay.setContent(r.position()[0], r.position()[1], r.shade, r.color)
 
 
 
 from visualtests import *
 from track import Track
+from trackDisplay import TrackDisplayTkinter
 class DisplayTester(VisualTester):
     def testTrack(self):
         track = Track([(1, "start"), (1, "normal"), (1, "ascent"), (1, "descent"), (1, "end")])
@@ -35,8 +38,9 @@ class DisplayTester(VisualTester):
                 Rider(sprinteurShade, "red", (6, 2)),
                 Rider(sprinteurShade, "blue", (8, 0))
             ]
-        rd = TokensDecorators(self.frame, track)
-        rd.addRoadDecorator(RidersDisplay(riders))
+        trackDisplay = TrackDisplayTkinter(self.frame, track)
+        rd = TokensDecorators(self.frame, trackDisplay)
+        rd.addRoadDecorator(RidersDisplay(riders, trackDisplay))
         rd.update()
 
 

@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
-from tokensDecorators import SquareDisplay, TokensDecorators
+from tokensDecorators import TokensDecorators
+lanesCount = 2
 
 class MiniRacePointsDisplay:
-    def __init__(self, observer, color):
+    def __init__(self, observer, color, trackDisplay):
         self.observer = observer
         self.color = color
+        self.trackDisplay = trackDisplay
 
     def displayOnTrack(self):
         if not self.observer.prizeGiver.points:
-            return []
-        return [ SquareDisplay(self.observer.lastSquare + i, 2, self.color, self.observer.prizeGiver.points[0]) for i in range(2) ]
+            return
+        for i in range(lanesCount):
+            self.trackDisplay.setContent(self.observer.lastSquare + i, lanesCount, self.observer.prizeGiver.points[0], self.color)
 
 from visualtests import *
 from meilleurGrimpeurObserver import createClimberObserver
@@ -21,8 +24,8 @@ class MiniRaceDisplayTester(VisualTester):
         track = Track([(5, "start"), (12, "normal"), (9, "ascent"), (12, "normal"), (5, "end")])
         trackDisplay = TrackDisplayTkinter(self.frame, track)
         rd = TokensDecorators(self.frame, trackDisplay)
-        rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(15, [1]), "green"))
-        rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(25, [5]), "red"))
+        rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(15, [1]), "green", trackDisplay))
+        rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(25, [5]), "red", trackDisplay))
         rd.update()
 
 

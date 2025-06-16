@@ -14,22 +14,6 @@ class TokensDecorators():
     def update(self):
         self.trackDisplay.clearAll()
         for decorator in self.decorators:
-            for squareDisplay in decorator.displayOnTrack():
-                self.decorate(squareDisplay)
+            decorator.displayOnTrack()
         self.frame.update()
-
-# Private methods
-
-    def decorate(self, squareDisplay):
-        self.trackDisplay.setContent(squareDisplay.square, squareDisplay.lane, squareDisplay.text, squareDisplay.color)
-
-
-
-class SquareDisplay:
-    def __init__(self, square, lane, color, text):
-        self.square = square
-        self.lane = lane
-        self.color = color
-        self.text = text
-
 
