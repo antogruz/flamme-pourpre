@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
 from positions import headToTail
+from race import RaceObserver
 
-class MiniraceObserver:
+class MiniraceObserver(RaceObserver):
     def __init__(self, lastSquare, prizeGiver):
         self.lastSquare = lastSquare
         self.prizeGiver = prizeGiver
         self.ridersThatCrossedThisTurn = []
 
-    def logMove(self, rider, start, end, *_):
+    def onRiderMove(self, rider, start, end, *_):
         if self.prizeGiver.finished():
             return
         if start[0] <= self.lastSquare and end[0] > self.lastSquare:
@@ -17,18 +18,18 @@ class MiniraceObserver:
     def saveRider(self, rider):
         self.ridersThatCrossedThisTurn.append(rider)
 
-    def endTurn(self):
+    def onTurnEnd(self):
         for rider in headToTail(self.ridersThatCrossedThisTurn):
             if self.prizeGiver.finished():
                 break
             self.prizeGiver.reward(rider)
         self.ridersThatCrossedThisTurn = []
 
-    def logGroup(*_):
+    def onSlipstream(*_):
         #TODO group can cross a point by slipstream
         pass
 
-    def logExhaust(*_):
+    def onExhaustion(*_):
         pass
 
 

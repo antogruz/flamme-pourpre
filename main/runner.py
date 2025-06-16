@@ -6,7 +6,7 @@ import riderMove
 import random
 from tokensDecorators import TokensDecorators
 from trackDisplay import TrackDisplayTkinter
-from animation import Logger, Animation, EventAnimator, RoadAnimator
+from animation import EventAnimator, RoadAnimator
 from raceLayout import RaceLayout
 from cardsDisplay import CardsDisplay
 from menu import *
@@ -54,14 +54,14 @@ class Runner:
             rider.cards.newRace()
 
         layout = RaceLayout(self.window)
-        tokensDecorators, animation = createDisplays(track, layout, self.clock)
+        tokensDecorators, eventAnimator, roadAnimator = createDisplays(track, layout, self.clock)
         raceDisplayers = self.displayers + [tokensDecorators]
         setRidersOnStart(riders)
         tokensDecorators.addRoadDecorator(RidersDisplay(riders, tokensDecorators.trackDisplay))
         race = Race(track, riders, players)
         tokensDecorators.addRoadDecorator(RankingDisplay(race, tokensDecorators.trackDisplay))
-        logger = Logger()
-        race.addObserver(logger)
+        race.addObserver(eventAnimator)
+        race.addObserver(roadAnimator)
         if modes.bestClimber:
             createMiniRaces(tokensDecorators, race, createClimbsObservers(track), "red")
         if modes.intermediateSprint:
@@ -72,11 +72,9 @@ class Runner:
 
         while not race.isOver():
             race.newTurn()
-            animation.animate(logger.getMoves(), logger.getGroups(), logger.getExhausted())
             logRanking(race.ranking())
             for d in raceDisplayers:
                 d.update()
-            logger.__init__()
 
 def allRiders(teams):
     return [rider for team in teams for rider in team.riders]
@@ -99,9 +97,10 @@ def createSprintsObservers(track):
 def createDisplays(track, layout, clock):
     trackDisplay = TrackDisplayTkinter(layout.getTrackFrame(), track)
     eventDisplay = EventDisplay(layout.getEventFrame())
-    animation = Animation([EventAnimator(eventDisplay), RoadAnimator(layout.getTrackFrame(), trackDisplay, clock)], clock)
+    eventAnimator = EventAnimator(eventDisplay)
+    roadAnimator = RoadAnimator(layout.getTrackFrame(), trackDisplay, clock)
     tokensDecorators = TokensDecorators(layout.getTrackFrame(), trackDisplay)
-    return tokensDecorators, animation
+    return tokensDecorators, eventAnimator, roadAnimator
 
 
 def setRidersOnStart(riders):

@@ -81,9 +81,8 @@ def createSprinteur():
     return Rider("Sprinteur", [2, 9, 4, 5])
 
 class Player():
-    def __init__(self, oracle, riders, cardObservers = []):
+    def __init__(self, oracle, riders):
         self.oracle = oracle
-        self.cardObservers = cardObservers
         self.resetRiders(riders)
 
     def pickNextMoves(self):
@@ -99,8 +98,7 @@ class Player():
         else:
             card = self.pickCard(cards)
         rider.play(card)
-        for observer in self.cardObservers:
-            observer.cardPlayed(rider, card)
+        rider.logCardPlayed = card
 
     def pickRider(self, riders):
         choice = self.pick([r.name for r in riders], "Pick a rider")

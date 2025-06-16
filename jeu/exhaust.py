@@ -43,11 +43,13 @@ class Rider():
         return self.square
 
 def exhaust(riders, observers = []):
+    exhausted = []
     for r in riders:
         if not riderAtPosition(r.getSquare() + 1, riders):
             r.exhaust()
-            for observer in observers:
-                observer.logExhaust(r)
+            exhausted.append(r)
+    for observer in observers:
+        observer.onExhaustion(exhausted)
 
 def riderAtPosition(square, riders):
     for r in riders:

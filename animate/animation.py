@@ -8,72 +8,59 @@ from decorators.riderDisplay import rouleurShade, sprinteurShade, RidersDisplay
 from tokensDecorators import TokensDecorators
 from trackDisplay import TrackDisplayTkinter
 from eventDisplay import EventDisplay
-from logger import Logger, CardDecorator
 
 class AnimateMovesTester(VisualTester):
     def __before__(self):
         VisualTester.__before__(self)
         frames = self.frames.newLine(2)
         track = Track([(10, "normal")])
-        self.logger = Logger()
-        self.cardDecorator = CardDecorator()
         self.trackDisplay = TrackDisplayTkinter(frames[0], track)
         self.tokensDecorators = TokensDecorators(frames[0], self.trackDisplay)
         eventDisplay = EventDisplay(frames[1])
-        self.animation = Animation([EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay)])
+        self.eventAnimator = EventAnimator(eventDisplay)
+        self.roadAnimator = RoadAnimator(frames[0], self.trackDisplay)
 
     def displayRiders(self, riders):
         self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay))
         self.tokensDecorators.update()
 
-    def animate(self):
-        self.animation.animate(self.logger.getMoves(), [], [])
-
     def testMove(self):
         rouleur = Rider(rouleurShade, "green")
         sprinteur = Rider(sprinteurShade, "red", (1, 0))
-        self.cardDecorator.cardPlayed(sprinteur, "f")
-        self.cardDecorator.cardPlayed(rouleur, 3)
-        self.logger.logMove(sprinteur, (1, 0), (3, 0), Obstacles([]))
-        self.logger.logMove(rouleur, (0, 0), (3, 1), Obstacles([]))
+        sprinteur.logCardPlayed = "f"
+        rouleur.logCardPlayed = 3
         self.displayRiders([rouleur, sprinteur])
-        self.animate()
+        self.roadAnimator.onRiderMove(sprinteur, (1, 0), (3, 0), Obstacles([]))
+        self.roadAnimator.onRiderMove(rouleur, (0, 0), (3, 1), Obstacles([]))
 
 class AnimateRoadTester(VisualTester):
     def __before__(self):
         VisualTester.__before__(self)
         frame = self.frames.new()
         track = Track([(10, "normal")])
-        self.logger = Logger()
         self.trackDisplay = TrackDisplayTkinter(frame, track)
         self.tokensDecorators = TokensDecorators(frame, self.trackDisplay)
-        self.animation = Animation([RoadAnimator(frame, self.trackDisplay)])
+        self.roadAnimator = RoadAnimator(frame, self.trackDisplay)
 
     def displayRiders(self, riders):
         self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay))
         self.tokensDecorators.update()
-
-    def animate(self):
-        self.animation.animate(self.logger.getMoves(), self.logger.getGroups(), self.logger.getExhausted())
 
     def testGroup(self):
         a = Rider(rouleurShade, "green", (0, 0))
         b = Rider(rouleurShade, "blue", (2, 0))
         self.displayRiders([a, b])
         a.pos = (1, 0)
-        self.logger.logGroup([a])
+        self.roadAnimator.onSlipstream([a])
         a.pos = (2, 0)
         b.pos = (3, 0)
-        self.logger.logGroup([b, a])
-        self.animate()
+        self.roadAnimator.onSlipstream([b, a])
 
     def testExhaust(self):
         a = Rider(rouleurShade, "black")
         b = Rider(rouleurShade, "blue", (0, 1))
-        self.logger.logExhaust(a)
-        self.logger.logExhaust(b)
         self.displayRiders([a, b])
-        self.animate()
+        self.roadAnimator.onExhaustion([a, b])
 
 
 class Rider:
@@ -87,52 +74,40 @@ class Rider:
         return self.pos
 
 from time import sleep
-class Animation:
-    def __init__(self, animators, clock = 0.3):
-        self.animators = animators
-        self.clock = clock
-
-    def animate(self, moves, groups, exhausted):
-        for (rider, card, path) in moves:
-            for a in self.animators:
-                a.animateMove(rider, card, path)
-
-        sleep(self.clock * 2)
-        for group in groups:
-            sleep(self.clock * 2)
-            for a in self.animators:
-                a.animateGroup(group)
-
-        sleep(self.clock * 2)
-        for a in self.animators:
-            a.animateExhaust(exhausted)
-
-
-class RoadAnimator:
+from race import RaceObserver
+from path import findPath
+class RoadAnimator(RaceObserver):
     def __init__(self, frame, trackDisplay, clock = 0.3):
         self.frame = frame
         self.display = trackDisplay
         self.clock = clock
 
-    def animateMove(self, rider, card, path):
+    def onRiderMove(self, rider, start, end, obstacles):
+        path = findPath(obstacles, start, end)
         for i in range(len(path) - 1):
             sleep(self.clock)
             self.move(rider, path[i], path[i + 1])
             self.frame.update()
 
-    def animateGroup(self, group):
-        for (rider, end) in group:
+    def onSlipstream(self, group):
+        sleep(self.clock * 2)
+        for rider in group:
+            end = rider.position()
             start = (end[0] - 1, end[1])
             self.move(rider, start, end)
         self.frame.update()
 
-    def animateExhaust(self, exhausted):
+    def onExhaustion(self, exhausted):
+        sleep(self.clock * 2)
         for color in ["yellow", "red", "default"]:
             for rider in exhausted:
                 square, lane = rider.position()
                 self.display.setBackground(square, lane, color)
             self.frame.update()
             sleep(self.clock)
+    
+    def onTurnEnd(self):
+        pass
 
     def move(self, rider, start, end):
         self.display.clear(start[0], start[1])
@@ -140,17 +115,24 @@ class RoadAnimator:
 
 
 
-class EventAnimator:
+class EventAnimator(RaceObserver):
     def __init__(self, display):
         self.display = display
 
-    def animateMove(self, rider, card, path):
+    def onRiderMove(self, rider, start, end, obstacles):
+        try:
+            card = rider.logCardPlayed
+        except:
+            card = ""
         self.display.displayEvent(rider, card)
 
     def animateGroup(self, group):
         pass
 
     def animateExhaust(self, exhausted):
+        pass
+
+    def onTurnEnd(self):
         pass
 
 from frames import clear

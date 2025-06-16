@@ -10,8 +10,8 @@ class OneRiderTest:
 
     def logMoveAndEndTurn(self, start, end):
         self.rider.pos = (end, 0)
-        self.observer.logMove(self.rider, (start, 0), (end, 0))
-        self.observer.endTurn()
+        self.observer.onRiderMove(self.rider, (start, 0), (end, 0))
+        self.observer.onTurnEnd()
 
     def testRiderCrossEndOfClimb(self):
         self.logMoveAndEndTurn(3, finDeCol + 1)
@@ -42,13 +42,13 @@ class SeveralRidersTest:
 
     def logAndMove(self, rider, start, end):
         rider.pos = end
-        self.observer.logMove(rider, start, end)
+        self.observer.onRiderMove(rider, start, end)
 
     def testThreeRiders(self):
         riders = [ Rider() for i in range(3) ]
         for i, r in enumerate(riders):
             self.logAndMove(r, (0, 0), (finDeCol + 1 + i, 0))
-        self.observer.endTurn()
+        self.observer.onTurnEnd()
         assert_equals(0, riders[0].climberPoints)
         assert_equals(1, riders[1].climberPoints)
         assert_equals(2, riders[2].climberPoints)

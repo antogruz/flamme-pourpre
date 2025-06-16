@@ -108,14 +108,14 @@ class Race():
             start = r.position()
             r.move(self.track, self.obstacles)
             for observer in self.observers:
-                observer.logMove(r, start, r.position(), self.obstacles)
+                observer.onRiderMove(r, start, r.position(), self.obstacles)
 
         slipstreaming(self.riders, self.track, self.observers)
         self.checkArrivals()
 
         exhaust(headToTail(self.riders), self.observers)
         for observer in self.observers:
-            observer.endTurn()
+            observer.onTurnEnd()
 
     def ranking(self):
         return self.arrivals
@@ -135,6 +135,29 @@ class Race():
 
 def arrived(rider, track):
     return track.getRoadType(rider.getSquare()) == "end"
+
+class RaceObserver:
+    """Interface for observing race events.
+    
+    Implement this interface to receive notifications about race events
+    such as rider movements, slipstreaming, exhaustion, and turn endings.
+    """
+
+    def onRiderMove(self, rider, start, end, obstacles):
+        """Called when a rider moves from start to end position."""
+        pass
+    
+    def onSlipstream(self, riders):
+        """Called when riders benefit from slipstream."""
+        pass
+    
+    def onExhaustion(self, riders):
+        """Called when riders get exhausted.  """
+        pass
+    
+    def onTurnEnd(self):
+        """Called at the end of each turn."""
+        pass
 
 if __name__ == "__main__":
     runTests(RaceTest())

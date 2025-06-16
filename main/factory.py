@@ -2,7 +2,6 @@
 
 import tkinter as tk
 from player import Player
-from animation import CardDecorator
 from tour import Tour, Team
 from ridersFactory import *
 from menu import UserChoice
@@ -28,7 +27,7 @@ class Human:
             oracle.dontWait()
             self.rootWindow.destroy()
         self.rootWindow.protocol("WM_DELETE_WINDOW", partial(onExit, oracle))
-        return Player(oracle, team.riders, [CardDecorator()])
+        return Player(oracle, team.riders)
 
     def createSpecialDisplays(self, specialists, specialFrames):
         return [ s.createSpecialDisplay(f) for (s, f) in zip(specialists, specialFrames) ]
@@ -42,7 +41,7 @@ class Bot:
         return team
 
     def createPlayer(self, team):
-        return Player(FirstOracle(), team.riders, [CardDecorator()])
+        return Player(FirstOracle(), team.riders)
 
 
 class FirstOracle():
