@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 
 from visualtests import *
-from track import Track
-import tkinter as tk
 
-from time import sleep
 class RoadDisplay():
     def __init__(self, frame, trackDisplay):
         self.frame = frame
