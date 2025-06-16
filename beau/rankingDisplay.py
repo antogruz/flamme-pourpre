@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from display import SquareDisplay, TokensDecorators
+from tokensDecorators import SquareDisplay, TokensDecorators
 
 class RankingDisplay:
     def __init__(self, race):

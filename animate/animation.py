@@ -5,7 +5,7 @@ from unittests import runTests
 from track import Track
 from obstacles import Obstacles
 from riderDisplay import rouleurShade, sprinteurShade, RidersDisplay
-from display import TokensDecorators
+from tokensDecorators import TokensDecorators
 from trackDisplay import TrackDisplayTkinter
 from eventDisplay import EventDisplay
 from logger import Logger, CardDecorator

@@ -4,7 +4,7 @@ from tracks import *
 from race import Race
 import riderMove
 import random
-from display import TokensDecorators
+from tokensDecorators import TokensDecorators
 from trackDisplay import TrackDisplayTkinter
 from animation import Logger, Animation, EventAnimator, RoadAnimator
 from raceLayout import RaceLayout

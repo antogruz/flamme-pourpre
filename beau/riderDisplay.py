@@ -5,7 +5,7 @@ sprinteurShade = "o/ỏ"
 grimpeurShade = "o|ỏ"
 opportunisticShade = "o\\ỏ"
 
-from display import SquareDisplay, TokensDecorators
+from tokensDecorators import SquareDisplay, TokensDecorators
 
 class RidersDisplay:
     def __init__(self, riders):
