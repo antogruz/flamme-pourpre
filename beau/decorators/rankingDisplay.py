@@ -17,7 +17,7 @@ class RankingDisplay:
 from visualtests import *
 from track import Track
 from trackDisplay import TrackDisplay
-from tkinterSpecific.boxes import BoxFactory
+from tkinterSpecific.canvasBoxFactory import CanvasBoxFactory
 class RankingDisplayTester(VisualTester):
     def testRanking(self):
         track = Track([(10, "normal")])
@@ -31,7 +31,7 @@ class RankingDisplayTester(VisualTester):
                 Rider(sprinteurShade, "red", (6, 2)),
                 Rider(sprinteurShade, "blue", (8, 0))
             ]
-        factory = BoxFactory(self.frame)
+        factory = CanvasBoxFactory(self.frame)
         trackDisplay = TrackDisplay(factory, track)
         rd = TokensDecorators(self.frame, trackDisplay)
         rd.addRoadDecorator(RankingDisplay(FakeRace(track, riders), trackDisplay))

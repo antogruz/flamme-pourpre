@@ -41,3 +41,6 @@ class BoxFactory:
         grid_column = column % self.maxColumn
         border_frame.grid(row=grid_row, column=grid_column, padx=1, pady=1)
         return Box(border_frame, content_label)
+
+def buildBoxFactory(frame):
+    return BoxFactory(frame)

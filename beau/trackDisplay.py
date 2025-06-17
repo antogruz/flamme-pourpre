@@ -53,25 +53,36 @@ def colorFromRoadType(roadType):
 
 from visualtests import *
 from tracks import *
-from tkinterSpecific.boxes import BoxFactory
+from tkinterSpecific.boxes import buildBoxFactory
+from tkinterSpecific.canvasBoxFactory import buildCanvasFactory
 
 class TrackTester(VisualTester):
     def display(self, track):
-        factory = BoxFactory(self.frame)
-        TrackDisplay(factory, track)
+        TrackDisplay(self.factoryBuilder(self.frame), track)
 
-#    def testColDuBallon(self):
-#        self.display(colDuBallon())
+    def testColDuBallon(self):
+        self.display(colDuBallon())
 
-#    def testStage10_2(self):
-#        self.display(stage10(2))
+    def testStage10_2(self):
+        self.display(stage10(2))
 
     def testStage10_5(self):
         self.display(stage10(5))
 
-#    def testLaneOf3(self):
-#        self.display(Track([(10, "refuel", 3), (2, "ascent", 1), (1, "descent", 2)]))
+    def testLaneOf3(self):
+        self.display(Track([(10, "refuel", 3), (2, "ascent", 1), (1, "descent", 2)]))
+
+class CanvasTester(TrackTester):
+    def __init__(self, window):
+        self.factoryBuilder = buildCanvasFactory
+        TrackTester.__init__(self, window)
+
+class BoxTester(TrackTester):
+    def __init__(self, window):
+        self.factoryBuilder = buildBoxFactory
+        TrackTester.__init__(self, window)
 
 
 if __name__ == "__main__":
-    runVisualTestsInWindow(TrackTester)
+    runVisualTestsInWindow(CanvasTester)
+   # runVisualTestsInWindow(BoxTester)

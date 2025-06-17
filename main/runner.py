@@ -6,6 +6,7 @@ import riderMove
 import random
 from tokensDecorators import TokensDecorators
 from trackDisplay import TrackDisplay
+from tkinterSpecific.canvasBoxFactory import CanvasBoxFactory
 from animation import EventAnimator, RoadAnimator
 from raceLayout import RaceLayout
 from menu import *
@@ -94,7 +95,7 @@ def createSprintsObservers(track):
 
 
 def createDisplays(track, layout, clock):
-    factory = BoxFactory(layout.getTrackFrame())
+    factory = CanvasBoxFactory(layout.getTrackFrame())
     trackDisplay = TrackDisplay(factory, track)
     eventDisplay = EventDisplay(layout.getEventFrame())
     eventAnimator = EventAnimator(eventDisplay)
