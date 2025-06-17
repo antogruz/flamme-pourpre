@@ -20,7 +20,8 @@ class RidersDisplay:
 
 from visualtests import *
 from track import Track
-from trackDisplay import TrackDisplayTkinter
+from trackDisplay import TrackDisplay
+from tkinterSpecific.boxes import BoxFactory
 class DisplayTester(VisualTester):
     def testRiders(self):
         track = Track([(10, "normal")])
@@ -34,7 +35,8 @@ class DisplayTester(VisualTester):
                 Rider(sprinteurShade, "red", (6, 2)),
                 Rider(sprinteurShade, "blue", (8, 0))
             ]
-        trackDisplay = TrackDisplayTkinter(self.frame, track)
+        factory = BoxFactory(self.frame)
+        trackDisplay = TrackDisplay(factory, track)
         rd = TokensDecorators(self.frame, trackDisplay)
         rd.addRoadDecorator(RidersDisplay(riders, trackDisplay))
         rd.update()

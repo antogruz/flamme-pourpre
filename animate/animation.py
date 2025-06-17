@@ -6,7 +6,7 @@ from track import Track
 from obstacles import Obstacles
 from decorators.riderDisplay import rouleurShade, sprinteurShade, RidersDisplay
 from tokensDecorators import TokensDecorators
-from trackDisplay import TrackDisplayTkinter
+from trackDisplay import TrackDisplay
 from eventDisplay import EventDisplay
 
 class AnimateMovesTester(VisualTester):
@@ -14,7 +14,8 @@ class AnimateMovesTester(VisualTester):
         VisualTester.__before__(self)
         frames = self.frames.newLine(2)
         track = Track([(10, "normal")])
-        self.trackDisplay = TrackDisplayTkinter(frames[0], track)
+        factory = BoxFactory(frames[0])
+        self.trackDisplay = TrackDisplay(factory, track)
         self.tokensDecorators = TokensDecorators(frames[0], self.trackDisplay)
         eventDisplay = EventDisplay(frames[1])
         self.eventAnimator = EventAnimator(eventDisplay)
@@ -38,7 +39,8 @@ class AnimateRoadTester(VisualTester):
         VisualTester.__before__(self)
         frame = self.frames.new()
         track = Track([(10, "normal")])
-        self.trackDisplay = TrackDisplayTkinter(frame, track)
+        factory = BoxFactory(frame)
+        self.trackDisplay = TrackDisplay(factory, track)
         self.tokensDecorators = TokensDecorators(frame, self.trackDisplay)
         self.roadAnimator = RoadAnimator(frame, self.trackDisplay)
 
@@ -136,6 +138,7 @@ class EventAnimator(RaceObserver):
         pass
 
 from frames import clear
+from tkinterSpecific.boxes import BoxFactory
 import tkinter as tk
 if __name__ == "__main__":
     window = tk.Tk()

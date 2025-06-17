@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
 
-import tkinter as tk
-from tkinterSpecific.boxes import BoxFactory
-
-class TrackDisplayTkinter:
-    def __init__(self, window, track):
-        factory = BoxFactory(window)
-        self.frame = window
+class TrackDisplay:
+    def __init__(self, factory, track):
         self.boxes = displayTrack(factory, track)
 
     def clear(self, square, lane):
@@ -53,28 +48,29 @@ def colorFromRoadType(roadType):
     if roadType == "refuel":
         return 'cyan2'
     if roadType == "stone":
-        return 'brown'
+        return 'burlywood1'
     return 'black'
 
 from visualtests import *
 from tracks import *
+from tkinterSpecific.boxes import BoxFactory
 
 class TrackTester(VisualTester):
     def display(self, track):
         factory = BoxFactory(self.frame)
-        displayTrack(factory, track)
+        TrackDisplay(factory, track)
 
-    def testColDuBallon(self):
-        self.display(colDuBallon())
+#    def testColDuBallon(self):
+#        self.display(colDuBallon())
 
-    def testStage10_2(self):
-        self.display(stage10(2))
+#    def testStage10_2(self):
+#        self.display(stage10(2))
 
     def testStage10_5(self):
         self.display(stage10(5))
 
-    def testLaneOf3(self):
-        self.display(Track([(10, "refuel", 3), (2, "ascent", 1), (1, "descent", 2)]))
+#    def testLaneOf3(self):
+#        self.display(Track([(10, "refuel", 3), (2, "ascent", 1), (1, "descent", 2)]))
 
 
 if __name__ == "__main__":

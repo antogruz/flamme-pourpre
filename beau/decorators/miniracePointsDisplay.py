@@ -18,11 +18,13 @@ class MiniRacePointsDisplay:
 from visualtests import *
 from meilleurGrimpeurObserver import createClimberObserver
 from track import Track
-from trackDisplay import TrackDisplayTkinter
+from trackDisplay import TrackDisplay
+from tkinterSpecific.boxes import BoxFactory
 class MiniRaceDisplayTester(VisualTester):
     def testBoth(self):
         track = Track([(5, "start"), (12, "normal"), (9, "ascent"), (12, "normal"), (5, "end")])
-        trackDisplay = TrackDisplayTkinter(self.frame, track)
+        factory = BoxFactory(self.frame)
+        trackDisplay = TrackDisplay(factory, track)
         rd = TokensDecorators(self.frame, trackDisplay)
         rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(15, [1]), "green", trackDisplay))
         rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(25, [5]), "red", trackDisplay))
