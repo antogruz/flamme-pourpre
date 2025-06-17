@@ -46,12 +46,12 @@ def displayTrack(window, track):
     bigRow = 0
     while (track.getRoadType(column) != "out"):
         square = []
-        for row in range(2):
+        for row in range(track.getLaneCount(column)):
             lane = getLabel(window, track.getRoadType(column))
             setGrid(lane, column, row)
             square.append(BoxDisplay(lane))
         lane = invisible(window)
-        setGrid(lane, column, 2)
+        setGrid(lane, column, track.getLaneCount(column))
         square.append(BoxDisplay(lane))
         boxesDisplays.append(square)
         column += 1
@@ -60,7 +60,7 @@ def displayTrack(window, track):
 maxColumn = 30
 def setGrid(label, square, lane):
     corridor = int(square / maxColumn)
-    label.grid(row = 3 * corridor + 2 - lane, column = square % maxColumn, padx = 1, pady = 1)
+    label.grid(row = 4 * corridor + 3 - lane, column = square % maxColumn, padx = 1, pady = 1)
 
 def getLabel(window, roadType):
     if roadType == "start":
@@ -92,25 +92,13 @@ from tracks import *
 
 class TrackTester(VisualTester):
     def display(self, track):
-        displayTrack(self.frames.new(), track)
-
-    def testCorsoPaseo(self):
-        self.display(corsoPaseo())
+        displayTrack(self.frame, track)
 
     def testColDuBallon(self):
         self.display(colDuBallon())
 
-    def testHauteMontagne(self):
-        self.display(hauteMontagne())
-
-    def testClassicissima(self):
-        self.display(classicissima())
-
-    def testRonde(self):
-        self.display(rondeVanWevelgem())
-
-    def testFirenzeMilano(self):
-        self.display(firenzeMilano())
+    def testLaneOf3(self):
+        self.display(Track([(10, "normal", 3), (2, "ascent", 1), (1, "descent", 2)]))
 
 
 if __name__ == "__main__":

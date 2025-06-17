@@ -17,7 +17,7 @@ class Track():
             return "out"
         return self.squares[square][0]
 
-    def getLanes(self, square):
+    def getLaneCount(self, square):
         if square >= len(self.squares):
             return 0
         return self.squares[square][1]
@@ -38,12 +38,12 @@ class TrackTest():
     def testEmpty(self):
         track = Track([])
         assert_equals("out", track.getRoadType(0))
-        assert_equals(0, track.getLanes(0))
+        assert_equals(0, track.getLaneCount(0))
 
     def testNormal(self):
         track = Track([(3, "normal", 1)])
         assert_equals("normal", track.getRoadType(1))
-        assert_equals(1, track.getLanes(1))
+        assert_equals(1, track.getLaneCount(1))
 
 if __name__ == "__main__":
     tests()

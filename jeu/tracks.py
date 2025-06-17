@@ -107,17 +107,17 @@ class TrackCreationTest():
         assert_equals("normal", track.getRoadType(5))
         assert_equals("normal", track.getRoadType(6))
         assert_equals("ascent", track.getRoadType(10))
-        assert_equals(2, track.getLanes(10))
+        assert_equals(2, track.getLaneCount(10))
 
     def testMultiLanes(self):
         track = createTrack("4")
-        assert_equals(3, track.getLanes(0))
-        assert_equals(2, track.getLanes(5))
+        assert_equals(3, track.getLaneCount(0))
+        assert_equals(2, track.getLaneCount(5))
         assert_equals("refuel", track.getRoadType(1))
 
     def testBlackNumbers(self):
         track = createTrack("_4")
-        assert_equals(1, track.getLanes(0))
+        assert_equals(1, track.getLaneCount(0))
         assert_equals("stone", track.getRoadType(0))
 
 if __name__ == "__main__":
