@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
+from tkinterSpecific.boxes import BoxFactory
 
 class TrackDisplayTkinter:
     def __init__(self, window, track):
+        factory = BoxFactory(window)
         self.frame = window
-        self.boxes = displayTrack(window, track)
+        self.boxes = displayTrack(factory, track)
 
     def clear(self, square, lane):
         self.boxes[square][lane].clear()
@@ -21,81 +23,44 @@ class TrackDisplayTkinter:
             for box in column:
                 box.clear()
 
-class BoxDisplay:
-    def __init__(self, widget):
-        self.widget = widget
-        self.defaultBackground = widget.cget('bg')
 
-    def setContent(self, content, color):
-        self.widget.config(text = content, fg = color)
-
-    def setBackground(self, color):
-        if color == "default":
-            color = self.defaultBackground
-        self.widget.config(bg = color)
-
-    def clear(self):
-        self.widget.config(text = "", fg = "black", bg = self.defaultBackground)
-
-
-# private methods
-
-def displayTrack(window, track):
-    boxesDisplays = []
+def displayTrack(factory, track):
+    boxes = []
     column = 0
-    bigRow = 0
     while (track.getRoadType(column) != "out"):
         square = []
         for row in range(track.getLaneCount(column)):
-            lane = getLabel(window, track.getRoadType(column))
-            setGrid(lane, column, row)
-            square.append(BoxDisplay(lane))
-        lane = invisible(window)
-        setGrid(lane, column, track.getLaneCount(column))
-        square.append(BoxDisplay(lane))
-        boxesDisplays.append(square)
+            box = factory.getBox(row, column)
+            box.setBorder(colorFromRoadType(track.getRoadType(column)))
+            square.append(box)
+        
+        square.append(factory.getBox(track.getLaneCount(column), column))
+        boxes.append(square)
         column += 1
-    return boxesDisplays
+    return boxes
 
-maxColumn = 30
-def setGrid(label, square, lane):
-    corridor = int(square / maxColumn)
-    label.grid(row = 4 * corridor + 3 - lane, column = square % maxColumn, padx = 1, pady = 1)
-
-def getLabel(window, roadType):
+def colorFromRoadType(roadType):
     if roadType == "start":
-        return slot(window, 'goldenrod')
-
+        return 'goldenrod'
     if roadType == "end":
-        return slot(window, 'goldenrod')
-
+        return 'goldenrod'
     if roadType == "ascent":
-        return slot(window, 'red')
-
+        return 'red'
     if roadType == "descent":
-        return slot(window, 'blue')
-
+        return 'blue'
     if roadType == "target":
-        return slot(window, 'green')
-
+        return 'green'
     if roadType == "refuel":
-        return slot(window, 'cyan2')
-
-    return slot(window, 'black')
-
-def slot(window, border):
-    return tk.Label(window, text = "", highlightthickness = 1, highlightbackground = border, width = 3)
-
-def invisible(window):
-    return tk.Label(window, width = 3)
-
+        return 'cyan2'
+    return 'black'
 
 from visualtests import *
 from tracks import *
 
 class TrackTester(VisualTester):
     def display(self, track):
-        displayTrack(self.frame, track)
+        factory = BoxFactory(self.frame)
+        displayTrack(factory, track)
 
     def testColDuBallon(self):
         self.display(colDuBallon())

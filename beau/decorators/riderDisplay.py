@@ -22,10 +22,6 @@ from visualtests import *
 from track import Track
 from trackDisplay import TrackDisplayTkinter
 class DisplayTester(VisualTester):
-    def testTrack(self):
-        track = Track([(1, "start"), (1, "normal"), (1, "ascent"), (1, "descent"), (1, "end")])
-        TokensDecorators(self.frame, track)
-
     def testRiders(self):
         track = Track([(10, "normal")])
         riders = [
