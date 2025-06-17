@@ -78,6 +78,9 @@ def getLabel(window, roadType):
     if roadType == "target":
         return slot(window, 'green')
 
+    if roadType == "refuel":
+        return slot(window, 'cyan2')
+
     return slot(window, 'black')
 
 def slot(window, border):
@@ -98,7 +101,7 @@ class TrackTester(VisualTester):
         self.display(colDuBallon())
 
     def testLaneOf3(self):
-        self.display(Track([(10, "normal", 3), (2, "ascent", 1), (1, "descent", 2)]))
+        self.display(Track([(10, "refuel", 3), (2, "ascent", 1), (1, "descent", 2)]))
 
 
 if __name__ == "__main__":
