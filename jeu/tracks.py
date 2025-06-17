@@ -21,6 +21,11 @@ def rondeVanWevelgem():
 def firenzeMilano():
     return createTrack("abcgiDHqntmKOLrepJsfu")
 
+def stage10(playersCount):
+    if playersCount <= 4:
+        return createTrack("a_2h4Lopc5_6r3gqJksteIU")
+    return createTrack("_12h4_9Lopc5_6r3gqJksteIU")
+
 
 import random
 def randomPresetTrack():
@@ -69,8 +74,24 @@ def getPieces():
         d[l] = "2n2"
     for l in "HP":
         d[l] = "2d2"
+    d['1'] = "4s32n3"
+    d['_1'] = "5s31n3"
+    d['2'] = "5n31n2"
+    d['_2'] = "6n2"
+    d['3'] = "5r31n2"
+    d['_3'] = "2n22p11p21p1"
     d['4'] = "5r31n2"
     d['_4'] = "1p11p22p12n2"
+    d['5'] = "1p11p21p11p22p1"
+    d['_5'] = "2p14n2"
+    d['6'] = "2p11p23p1"
+    d['_6'] = "3p11p21p11n2"
+    d['7'] = "2n22p11p21p1"
+    d['_7'] = "1p11p21p13n2"
+    d['8'] = "3n21p11p21p1"
+    d['_8'] = "2p11p22p11n2"
+    d['9'] = "2r31n2"
+    d['_9'] = "2n31n2"
     return d
 
 def getRoad(s):

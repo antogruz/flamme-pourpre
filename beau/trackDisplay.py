@@ -52,6 +52,8 @@ def colorFromRoadType(roadType):
         return 'green'
     if roadType == "refuel":
         return 'cyan2'
+    if roadType == "stone":
+        return 'brown'
     return 'black'
 
 from visualtests import *
@@ -64,6 +66,12 @@ class TrackTester(VisualTester):
 
     def testColDuBallon(self):
         self.display(colDuBallon())
+
+    def testStage10_2(self):
+        self.display(stage10(2))
+
+    def testStage10_5(self):
+        self.display(stage10(5))
 
     def testLaneOf3(self):
         self.display(Track([(10, "refuel", 3), (2, "ascent", 1), (1, "descent", 2)]))
