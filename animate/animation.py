@@ -82,8 +82,7 @@ class AnimateMovesTester(VisualTester):
         self.trackDisplay = TrackDisplay(factory, track)
         self.tokensDecorators = TokensDecorators(frames[0], self.trackDisplay)
         eventDisplay = EventDisplay(frames[1])
-        self.eventAnimator = EventAnimator(eventDisplay)
-        self.roadAnimator = RoadAnimator(frames[0], self.trackDisplay)
+        self.animators = [EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay)]
 
     def displayRiders(self, riders):
         self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay))
@@ -95,8 +94,11 @@ class AnimateMovesTester(VisualTester):
         sprinteur.logCardPlayed = "f"
         rouleur.logCardPlayed = 3
         self.displayRiders([rouleur, sprinteur])
-        self.roadAnimator.onRiderMove(sprinteur, (1, 0), (3, 0), Obstacles([]))
-        self.roadAnimator.onRiderMove(rouleur, (0, 0), (3, 1), Obstacles([]))
+        for animator in self.animators:
+            animator.onRiderMove(sprinteur, (1, 0), (3, 0), Obstacles([]))
+        for animator in self.animators:
+            animator.onRiderMove(rouleur, (0, 0), (3, 1), Obstacles([]))
+        sleep(0.5)
 
 class AnimateRoadTester(VisualTester):
     def __before__(self):
