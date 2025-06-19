@@ -1,5 +1,69 @@
 #!/usr/bin/env python3
 
+from time import sleep
+from race import RaceObserver
+from path import findPath
+
+class RoadAnimator(RaceObserver):
+    def __init__(self, frame, trackDisplay, clock = 0.3):
+        self.frame = frame
+        self.display = trackDisplay
+        self.clock = clock
+
+    def onRiderMove(self, rider, start, end, obstacles):
+        path = findPath(obstacles, start, end)
+        for i in range(len(path) - 1):
+            sleep(self.clock)
+            self.move(rider, path[i], path[i + 1])
+            self.frame.update()
+
+    def onSlipstream(self, group):
+        sleep(self.clock * 2)
+        for rider in group:
+            end = rider.position()
+            start = (end[0] - 1, end[1])
+            self.move(rider, start, end)
+        self.frame.update()
+
+    def onExhaustion(self, exhausted):
+        sleep(self.clock * 2)
+        for color in ["yellow", "red", "default"]:
+            for rider in exhausted:
+                square, lane = rider.position()
+                self.display.setBackground(square, lane, color)
+            self.frame.update()
+            sleep(self.clock)
+    
+    def onTurnEnd(self):
+        pass
+
+    def move(self, rider, start, end):
+        self.display.clear(start[0], start[1])
+        self.display.setContent(end[0], end[1], rider.shade, rider.color)
+
+
+
+class EventAnimator(RaceObserver):
+    def __init__(self, display):
+        self.display = display
+
+    def onRiderMove(self, rider, start, end, obstacles):
+        try:
+            card = rider.logCardPlayed
+        except:
+            card = ""
+        self.display.displayEvent(rider, card)
+
+    def animateGroup(self, group):
+        pass
+
+    def animateExhaust(self, exhausted):
+        pass
+
+    def onTurnEnd(self):
+        pass
+
+from tkinterSpecific.boxes import BoxFactory
 from visualtests import VisualTester
 from unittests import runTests
 from track import Track
@@ -75,70 +139,7 @@ class Rider:
     def position(self):
         return self.pos
 
-from time import sleep
-from race import RaceObserver
-from path import findPath
-class RoadAnimator(RaceObserver):
-    def __init__(self, frame, trackDisplay, clock = 0.3):
-        self.frame = frame
-        self.display = trackDisplay
-        self.clock = clock
-
-    def onRiderMove(self, rider, start, end, obstacles):
-        path = findPath(obstacles, start, end)
-        for i in range(len(path) - 1):
-            sleep(self.clock)
-            self.move(rider, path[i], path[i + 1])
-            self.frame.update()
-
-    def onSlipstream(self, group):
-        sleep(self.clock * 2)
-        for rider in group:
-            end = rider.position()
-            start = (end[0] - 1, end[1])
-            self.move(rider, start, end)
-        self.frame.update()
-
-    def onExhaustion(self, exhausted):
-        sleep(self.clock * 2)
-        for color in ["yellow", "red", "default"]:
-            for rider in exhausted:
-                square, lane = rider.position()
-                self.display.setBackground(square, lane, color)
-            self.frame.update()
-            sleep(self.clock)
-    
-    def onTurnEnd(self):
-        pass
-
-    def move(self, rider, start, end):
-        self.display.clear(start[0], start[1])
-        self.display.setContent(end[0], end[1], rider.shade, rider.color)
-
-
-
-class EventAnimator(RaceObserver):
-    def __init__(self, display):
-        self.display = display
-
-    def onRiderMove(self, rider, start, end, obstacles):
-        try:
-            card = rider.logCardPlayed
-        except:
-            card = ""
-        self.display.displayEvent(rider, card)
-
-    def animateGroup(self, group):
-        pass
-
-    def animateExhaust(self, exhausted):
-        pass
-
-    def onTurnEnd(self):
-        pass
-
 from frames import clear
-from tkinterSpecific.boxes import BoxFactory
 import tkinter as tk
 if __name__ == "__main__":
     window = tk.Tk()
