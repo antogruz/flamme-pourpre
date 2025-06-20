@@ -25,6 +25,11 @@ class Track():
     def lastSquare(self):
         return len(self.squares) - 1
 
+    def previousPosition(self, square, lane):
+        if lane < self.getLaneCount(square) - 1:
+            return (square, lane + 1)
+        return (square - 1, 0)
+
 
 def streamable(road):
     return not road in ["end", "ascent"]

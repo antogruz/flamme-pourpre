@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from track import streamable
+from track import streamable, Track
 
 # Cette classe regroupe les méthodes permettant à un coureur de se déplacer sur un circuit.
 # Elle est responsable de toutes les règles de déplacement (terrain, aspiration).
@@ -21,7 +21,7 @@ class Rider():
 
     def move(self, distance, track, obstacles):
         distance = self.adaptDistanceToRoadType(distance, track)
-        self.square, self.lane = self.findAvailableSlot(obstacles, self.square + distance)
+        self.square, self.lane = self.findAvailableSlot(obstacles, self.square + distance, track)
 
     def getSlipstream(self, track):
         if not streamable(track.getRoadType(self.square)):
@@ -43,12 +43,12 @@ class Rider():
 
         return distance
 
-    def findAvailableSlot(self, obstacles, square):
+    def findAvailableSlot(self, obstacles, square, track):
             slot = (square, 0)
             while not (obstacles.isFree(slot) ) :
                 if slot == self.position():
                     return slot
-                slot = previous(slot)
+                slot = track.previousPosition(slot[0], slot[1])
             return slot
 
 
@@ -61,14 +61,8 @@ def containsAscent(race, start, end):
             return True
     return False
 
-def previous(slot):
-    if slot[1] == 0:
-        return (slot[0], 1)
-    return (slot[0] - 1, 0)
-
 
 from unittests import runTests, assert_equals
-from track import Track
 
 class RiderTest():
     def __before__(self):
@@ -91,10 +85,17 @@ class RiderTest():
         assert_equals((1, 1), self.rider.position())
 
     def testBlocked(self):
+        self.race.set("normal", 1, 1)
+        self.race.addRider(1, 0)
+        self.move(1)
+        assert_equals((0, 0), self.rider.position())
+
+    def testNotBlocked(self):
+        self.race.set("normal", 1, 3)
         self.race.addRider(1, 0)
         self.race.addRider(1, 1)
         self.move(1)
-        assert_equals((0, 0), self.rider.position())
+        assert_equals((1, 2), self.rider.position())
 
     def testDescent(self):
         self.race.setAll("descent")
@@ -127,7 +128,6 @@ class RiderTest():
         self.race.addRider(1, 1)
         self.move(1)
         assert_equals((0, 0), self.rider.position())
-
 
 class Race():
     def __init__(self, length = 100):
