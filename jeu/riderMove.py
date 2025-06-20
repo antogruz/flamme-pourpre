@@ -68,6 +68,7 @@ def previous(slot):
 
 
 from unittests import runTests, assert_equals
+from track import Track
 
 class RiderTest():
     def __before__(self):
@@ -75,7 +76,7 @@ class RiderTest():
         self.race = Race()
 
     def move(self, distance):
-        self.rider.move(distance, self.race, self.race)
+        self.rider.move(distance, self.race.track, self.race)
 
     def testRiderAtStart(self):
         assert_equals((0, 0), self.rider.position())
@@ -132,22 +133,19 @@ class Race():
     def __init__(self, length = 100):
         self.obstacles = []
         self.length = length
-        self.setAll("normal")
+        self.track = Track([(length, "normal", 2)])
 
     def addRider(self, square, lane):
         self.obstacles.append((square, lane))
 
     def setAll(self, field):
-        self.field = [field for i in range(self.length)]
+        self.track = Track([(self.length, field, 2)])
 
-    def set(self, field, square):
-        self.field[square] = field
-
+    def set(self, field, square, lanes = 2):
+        self.track.squares[square] = (field, lanes)
 
     def getRoadType(self, square):
-        if square >= self.length:
-            return "out"
-        return self.field[square]
+        return self.track.getRoadType(square)
 
     def isFree(self, slot):
         return not slot in self.obstacles
