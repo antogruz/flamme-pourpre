@@ -5,13 +5,14 @@ from race import RaceObserver
 from path import findPath
 
 class RoadAnimator(RaceObserver):
-    def __init__(self, frame, trackDisplay, clock = 0.3):
+    def __init__(self, frame, trackDisplay, track, clock = 0.3):
         self.frame = frame
         self.display = trackDisplay
         self.clock = clock
+        self.track = track
 
     def onRiderMove(self, rider, start, end, obstacles):
-        path = findPath(obstacles, start, end)
+        path = findPath(self.track, obstacles, start, end)
         for i in range(len(path) - 1):
             sleep(self.clock)
             self.move(rider, path[i], path[i + 1])
@@ -82,7 +83,7 @@ class AnimateMovesTester(VisualTester):
         self.trackDisplay = TrackDisplay(factory, track)
         self.tokensDecorators = TokensDecorators(frames[0], self.trackDisplay)
         eventDisplay = EventDisplay(frames[1])
-        self.animators = [EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay)]
+        self.animators = [EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay, track)]
 
     def displayRiders(self, riders):
         self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay))
@@ -108,7 +109,7 @@ class AnimateRoadTester(VisualTester):
         factory = BoxFactory(frame)
         self.trackDisplay = TrackDisplay(factory, track)
         self.tokensDecorators = TokensDecorators(frame, self.trackDisplay)
-        self.roadAnimator = RoadAnimator(frame, self.trackDisplay)
+        self.roadAnimator = RoadAnimator(frame, self.trackDisplay, track)
 
     def displayRiders(self, riders):
         self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay))

@@ -5,5 +5,5 @@ def headToTail(riders):
 
 def absolutePosition(rider):
     square, lane = rider.position()
-    return 2*square + 1 - lane
+    return 10*square + 1 - lane
 

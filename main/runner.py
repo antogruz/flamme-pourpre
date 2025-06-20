@@ -99,7 +99,7 @@ def createDisplays(track, layout, clock):
     trackDisplay = TrackDisplay(factory, track)
     eventDisplay = EventDisplay(layout.getEventFrame())
     eventAnimator = EventAnimator(eventDisplay)
-    roadAnimator = RoadAnimator(layout.getTrackFrame(), trackDisplay, clock)
+    roadAnimator = RoadAnimator(layout.getTrackFrame(), trackDisplay, track, clock)
     tokensDecorators = TokensDecorators(layout.getTrackFrame(), trackDisplay)
     return tokensDecorators, eventAnimator, roadAnimator
 

@@ -15,39 +15,44 @@ class PathTester():
 
     def testNoMoves(self):
         obstacles = Obstacles([])
-        assert_equals([(0, 0)], findPath(obstacles, (0, 0), (0, 0)))
+        assert_equals([(0, 0)], findPath(self.track, obstacles, (0, 0), (0, 0)))
 
     def testMoveOne(self):
         obstacles = Obstacles([])
-        assert_equals([(0, 0), (1, 0)], findPath(obstacles, (0, 0), (1, 0)))
+        assert_equals([(0, 0), (1, 0)], findPath(self.track, obstacles, (0, 0), (1, 0)))
 
     def testMoveStraight(self):
         obstacles = Obstacles([])
-        assert_equals([(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)], findPath(obstacles, (0, 0), (4, 0)))
+        assert_equals([(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)], findPath(self.track, obstacles, (0, 0), (4, 0)))
 
     def testObstacles(self):
         riders = [RiderToken(0, 0), RiderToken(1, 0), RiderToken(2, 1), RiderToken(3, 0), RiderToken(3, 1)]
         obstacles = Obstacles(riders)
-        assert_equals([(0, 0), (1, 1), (2, 0), (3, 2), (4, 0)], findPath(obstacles, (0, 0), (4, 0)))
+        assert_equals([(0, 0), (1, 1), (2, 0), (3, 2), (4, 0)], findPath(self.track, obstacles, (0, 0), (4, 0)))
+
+    def testMoveStraightWithLanes(self):
+        self.track = Track([(1, "normal", 2), (1, "normal", 3), (2, "normal", 1)])
+        obstacles = Obstacles([RiderToken(1, 0), RiderToken(1, 1), RiderToken(1, 2), RiderToken(2, 0)])
+        assert_equals([(0, 0), (1, 3), (2, 1), (3, 0)], findPath(self.track, obstacles, (0, 0), (3, 0)))
 
 
-def findPath(obstacles, start, end):
+def findPath(track, obstacles, start, end):
     if start[0] == end[0]:
         return [end]
 
-    next = findNextEmpty(obstacles, start, end)
-    return [start] + findPath(obstacles, next, end)
+    next = findNextEmpty(track, obstacles, start, end)
+    return [start] + findPath(track, obstacles, next, end)
 
-def findNextEmpty(obstacles, start, end):
+def findNextEmpty(track, obstacles, start, end):
     nextSquare = start[0] + 1
     if nextSquare == end[0]:
         return end
 
-    for lane in range(2):
+    for lane in range(track.getLaneCount(nextSquare)):
         if obstacles.isFree((nextSquare, lane)):
             return nextSquare, lane
 
-    return nextSquare, 2
+    return nextSquare, track.getLaneCount(nextSquare)
 
 
 if __name__ == "__main__":

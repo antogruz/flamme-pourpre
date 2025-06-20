@@ -17,7 +17,7 @@ def integrationTests():
 
 def integrationSingle(runner):
     teams = createTeams(Bot(), ["green", "red", "blue", "black", "magenta"])
-    runner.runRace(colDuBallon(), teams)
+    runner.runRace(stage10(5), teams)
 
 def twoRacesSprinteursOnly(runner):
     teams = createTeams(Bot(), ["blue", "red", "black"], [opportunisticSpecialist()])
