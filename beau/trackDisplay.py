@@ -55,22 +55,19 @@ from visualtests import *
 from tracks import *
 from tkinterSpecific.boxes import buildBoxFactory
 from tkinterSpecific.canvasBoxFactory import buildCanvasFactory
+import random
+from jeu.tracks import randomPresetTrack
 
 class TrackTester(VisualTester):
     def display(self, track):
         TrackDisplay(self.factoryBuilder(self.frame), track)
 
-    def testColDuBallon(self):
-        self.display(colDuBallon())
-
-    def testStage10_2(self):
-        self.display(stage10(2))
-
-    def testStage10_5(self):
-        self.display(stage10(5))
-
     def testLaneOf3(self):
         self.display(Track([(10, "refuel", 3), (2, "ascent", 1), (1, "descent", 2)]))
+
+    def testRandomPresetTrack(self):
+        playersCount = random.randint(2, 5)
+        self.display(randomPresetTrack(playersCount))
 
 class CanvasTester(TrackTester):
     def __init__(self, window):

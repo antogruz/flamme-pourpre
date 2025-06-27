@@ -3,33 +3,61 @@ from track import Track
 
 # Cette classe permet de créer des courses en utilisant la correspondance Lettres/tuiles
 
-def corsoPaseo():
+def corsoPaseo(playersCount):
     return createTrack("abcdefghijklmnopqrstu")
 
-def colDuBallon():
+def colDuBallon(playersCount):
     return createTrack("AnLHgceqtrMBoipjDFkSu")
 
-def hauteMontagne():
+def hauteMontagne(playersCount):
     return createTrack("abcfimetKGLHJsdopRQNU")
 
-def classicissima():
+def classicissima(playersCount):
     return createTrack("AebQRNHPcgikDFsLojmtu")
 
-def rondeVanWevelgem():
+def rondeVanWevelgem(playersCount):
     return createTrack("abcmgfteqonLPjkIDHrSu")
 
-def firenzeMilano():
+def firenzeMilano(playersCount):
     return createTrack("abcgiDHqntmKOLrepJsfu")
+
+def stage7(playersCount):
+    if playersCount <= 4:
+        return createTrack("a_23gMRPkeqos4cDHjTniu")
+    return createTrack("_123gMRPkeqos4cDHjT_9niu")
+
+def stage8(playersCount):
+    if playersCount <= 4:
+        return createTrack("a_2h4oIcQDF3prsejLktgu")
+    return createTrack("_12h4oIcQDF3prsejLktg_9u")
+
+def stage9(playersCount):
+    if playersCount <= 4:
+        return createTrack("A_23p5_7okjq4e8_6hgirsTu")
+    return createTrack("12_93p5_7okjq4e8_6hgirsTu")
 
 def stage10(playersCount):
     if playersCount <= 4:
         return createTrack("a_2h4Lopc5_6r3gqJksteIU")
     return createTrack("_12h4_9Lopc5_6r3gqJksteIU")
 
+def stage11(playersCount):
+    if playersCount <= 4:
+        return createTrack("a_28_5qgir_3_4sopthk7_6eJu")
+    return createTrack("_128_5qgir9_3_4sopthk7_6eJu")
+
+def stage12(playersCount):
+    if playersCount <= 4:
+        return createTrack("A_24qMOKRFsd3plnhgeTju")
+    return createTrack("124qMOKRFsd3pln_9hgeTju")
+
+
+def allTracksBuilders():
+    return [corsoPaseo, colDuBallon, hauteMontagne, classicissima, rondeVanWevelgem, firenzeMilano, stage7, stage8, stage9, stage10, stage11, stage12]
 
 import random
-def randomPresetTrack():
-    return random.choice([corsoPaseo, colDuBallon, hauteMontagne, classicissima, rondeVanWevelgem, firenzeMilano])()
+def randomPresetTrack(playersCount):
+    return random.choice(allTracksBuilders())(playersCount)
 
 
 def createTrack(letters):
