@@ -26,7 +26,7 @@ def main():
     cardsDisplayers = [ CardsDisplay(riderFrame, rider) for rider, riderFrame in zip(humanRiders, playerLayout.ridersCards) ]
     specialDisplayers = humanFactory.createSpecialDisplays(ridersKind, playerLayout.ridersSpecialFrames)
     tour = Tour(teams)
-    tracks = [ randomPresetTrack(len(teams)) for i in range(racesCount) ]
+    tracks = [ randomPresetTrack for i in range(racesCount) ]
     runner = Runner(window, clock, cardsDisplayers + specialDisplayers)
     runner.runTour(tour, tracks)
 

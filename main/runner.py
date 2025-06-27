@@ -35,8 +35,9 @@ class Runner:
         self.clock = clock
         self.displayers = displayers
 
-    def runTour(self, tour, tracks):
-        for track in tracks:
+    def runTour(self, tour, tracksBuilders):
+        for trackBuilder in tracksBuilders:
+            track = trackBuilder(len(tour.teams))
             tour.newRace()
             self.runRace(track, tour.teams, tour.checkNewArrivals, SpecialModes(True, True))
             clear(self.window)

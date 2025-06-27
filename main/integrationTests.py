@@ -6,6 +6,7 @@ from factory import *
 from tour import Team, Tour
 from tracks import *
 from frames import clear
+from jeu.tracks import randomPresetTrack
 
 def integrationTests():
     window = tk.Tk()
@@ -17,12 +18,12 @@ def integrationTests():
 
 def integrationSingle(runner):
     teams = createTeams(Bot(), ["green", "red", "blue", "black", "magenta"])
-    runner.runRace(stage10(5), teams)
+    runner.runRace(randomPresetTrack(5), teams)
 
 def twoRacesSprinteursOnly(runner):
     teams = createTeams(Bot(), ["blue", "red", "black"], [opportunisticSpecialist()])
     tour = Tour(teams)
-    runner.runTour(tour, [corsoPaseo(), firenzeMilano()])
+    runner.runTour(tour, [randomPresetTrack, randomPresetTrack])
 
 def createTeams(factory, colors, kinds = classicDuo()):
     return [ factory.createTeam(color, kinds) for color in colors ]

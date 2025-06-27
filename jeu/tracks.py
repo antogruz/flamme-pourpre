@@ -3,22 +3,22 @@ from track import Track
 
 # Cette classe permet de créer des courses en utilisant la correspondance Lettres/tuiles
 
-def corsoPaseo(playersCount):
+def corsoPaseo(_ = None):
     return createTrack("abcdefghijklmnopqrstu")
 
-def colDuBallon(playersCount):
+def colDuBallon(_ = None):
     return createTrack("AnLHgceqtrMBoipjDFkSu")
 
-def hauteMontagne(playersCount):
+def hauteMontagne(_ = None):
     return createTrack("abcfimetKGLHJsdopRQNU")
 
-def classicissima(playersCount):
+def classicissima(_ = None):
     return createTrack("AebQRNHPcgikDFsLojmtu")
 
-def rondeVanWevelgem(playersCount):
+def rondeVanWevelgem(_ = None):
     return createTrack("abcmgfteqonLPjkIDHrSu")
 
-def firenzeMilano(playersCount):
+def firenzeMilano(_ = None):
     return createTrack("abcgiDHqntmKOLrepJsfu")
 
 def stage7(playersCount):
