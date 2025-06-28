@@ -32,7 +32,7 @@ class Track():
 
 
 def streamable(road):
-    return not road in ["end", "ascent"]
+    return not road in ["end", "ascent", "stone"]
 
 from unittests import runTests, assert_equals
 

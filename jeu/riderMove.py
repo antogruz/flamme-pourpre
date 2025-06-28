@@ -34,6 +34,8 @@ class Rider():
         starting = track.getRoadType(self.square)
         if starting == "descent":
             distance = max(distance, 5)
+        if starting == "refuel":
+            distance = max(distance, 4)
 
         while track.getRoadType(self.square + distance) == "out":
             distance -= 1
@@ -128,6 +130,16 @@ class RiderTest():
         self.race.addRider(1, 1)
         self.move(1)
         assert_equals((0, 0), self.rider.position())
+
+    def testRefuel(self):
+        self.race.setAll("refuel")
+        self.move(1)
+        assert_equals((4, 0), self.rider.position())
+
+    def testRefuelWithHigherCard(self):
+        self.race.setAll("refuel")
+        self.move(6)
+        assert_equals((6, 0), self.rider.position())
 
 class Race():
     def __init__(self, length = 100):

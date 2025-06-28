@@ -109,6 +109,18 @@ class SlipstremingTester():
         slipstreaming(riders, self.track, [observer])
         assert_equals([[2, 1], [5, 4, 3, 2]], observer.groups)
 
+    def testRiderOnStoneIsNotStreamed(self):
+        self.track = Track([(1, "stone"), (10, "normal")])
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(0)
+
+    def testRiderOnStoneCannotStreamOthers(self):
+        self.track = Track([(2, "normal"), (1, "stone")])
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(0)
+
 
 class Logger():
     def __init__(self):
