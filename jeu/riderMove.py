@@ -12,6 +12,7 @@ class Rider():
     def __init__(self, square, lane):
         self.square = square
         self.lane = lane
+        self.movementRules = MovementRules()
 
     def position(self):
         return (self.square, self.lane)
@@ -20,7 +21,7 @@ class Rider():
         return self.square
 
     def move(self, distance, track, obstacles):
-        distance = self.adaptDistanceToRoadType(distance, track)
+        distance = self.movementRules.adaptDistanceToRoadType(self.square, distance, track)
         self.square, self.lane = self.findAvailableSlot(obstacles, self.square + distance, track)
 
     def getSlipstream(self, track):
@@ -29,21 +30,6 @@ class Rider():
 
         self.square += 1
         return True
-
-    def adaptDistanceToRoadType(self, distance, track):
-        starting = track.getRoadType(self.square)
-        if starting == "descent":
-            distance = max(distance, 5)
-        if starting == "refuel":
-            distance = max(distance, 4)
-
-        while track.getRoadType(self.square + distance) == "out":
-            distance -= 1
-
-        while not ascentValid(track, self.square, distance):
-            distance -= 1
-
-        return distance
 
     def findAvailableSlot(self, obstacles, square, track):
             slot = (square, 0)
@@ -54,12 +40,28 @@ class Rider():
             return slot
 
 
-def ascentValid(race, start, distance):
-    return distance <= 5 or not containsAscent(race, start, start + distance)
+class MovementRules():
+    def adaptDistanceToRoadType(self, square, distance, track):
+        starting = track.getRoadType(square)
+        if starting == "descent":
+            distance = max(distance, 5)
+        if starting == "refuel":
+            distance = max(distance, 4)
 
-def containsAscent(race, start, end):
+        while track.getRoadType(square + distance) == "out":
+            distance -= 1
+
+        while not ascentValid(track, square, distance):
+            distance -= 1
+
+        return distance
+
+def ascentValid(track, start, distance):
+    return distance <= 5 or not containsAscent(track, start, start + distance)
+
+def containsAscent(track, start, end):
     for i in range(start, end + 1):
-        if race.getRoadType(i) == "ascent":
+        if track.getRoadType(i) == "ascent":
             return True
     return False
 
