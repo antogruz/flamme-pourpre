@@ -12,6 +12,8 @@ class Timer:
 
     def arrive(self, riders):
         if not riders:
+            if self.best:
+                self.turnsAfterFirst += 1
             return
 
         if not self.best:
@@ -64,6 +66,13 @@ class TimeTest:
         self.timer.arrive([second])
         assert_equals(90, first.persistent.time)
         assert_equals(40, second.persistent.time)
+
+    def testSeveralTurnsBetweenArrivals(self):
+        first, second = createRider(), createRider()
+        self.timer.arrive([first])
+        self.timer.arrive([])
+        self.timer.arrive([second])
+        assert_equals(120, second.persistent.time)
 
 from riderInRace import RiderInRace
 from riderBuilder import RiderBuilder
