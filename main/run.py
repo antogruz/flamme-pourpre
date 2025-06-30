@@ -6,13 +6,11 @@ from beau.menu import *
 from beau.frames import Frames
 from runner import Runner
 from jeu.tour import Tour
-from beau.cardsDisplay import CardsDisplay
 from jeu.teamBuilder import TeamBuilder
 from ridersDirector import RidersDirector
 from riderBuilderWithDisplay import RiderBuilderWithDisplay
 from displayRegistry import DisplayRegistry
-from teamsDirector import TeamsDirector, FirstOracle
-from beau.opportunisticDisplay import OpportunisticDisplay
+from teamsDirector import TeamsDirector
 from jeu.propulsion import SequentialPropulsion
 from functools import partial
 
