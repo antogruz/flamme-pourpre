@@ -2,14 +2,12 @@
 
 import tkinter as tk
 from runner import Runner
-from tour import Tour
+from jeu.tour import Tour
 from jeu.tracks import randomPresetTrack
 from teamBuilder import TeamBuilder
-from riderBuilder import RiderBuilder
-from decorators.riderDisplay import sprinteurShade, rouleurShade, grimpeurShade, opportunisticShade
-from riderMove import MovementRules
 from propulsion import SimpleTeamPropulsion
 from teamsDirector import TeamsDirector, FirstOracle
+from ridersDirector import RidersDirector
 
 def integrationTests():
     window = tk.Tk()
@@ -21,21 +19,9 @@ def integrationTests():
 
 def integrationSingle(runner):
     teams = []
+    teamsDirector = TeamsDirector()
     for color in ["green", "red", "blue", "black", "magenta"]:
-        tb = TeamBuilder()
-        tb.buildColor(color)
-        tb.buildPropulsion(SimpleTeamPropulsion())
-        rb = RiderBuilder()
-        rb.buildTexts(sprinteurShade, "Sprinteur")
-        rb.buildDice([2, 3, 4, 5, 6, 9])
-        rb.buildMovementRules(MovementRules())
-        tb.addRider(rb.getResult())
-        rb = RiderBuilder()
-        rb.buildTexts(rouleurShade, "Rouleur")
-        rb.buildDice([3, 4, 5, 6, 7, 8])
-        rb.buildMovementRules(MovementRules())
-        tb.addRider(rb.getResult())
-        teams.append(tb.getResult())
+        teams.append(teamsDirector.makeStandardBots(color))
     runner.runRace(randomPresetTrack(len(teams)), teams)
 
 def testDice(runner):
@@ -50,12 +36,8 @@ def twoRacesOpportunistic(runner):
         tb = TeamBuilder()
         tb.buildColor(color)
         tb.buildPropulsion(SimpleTeamPropulsion())
-        rb = RiderBuilder()
-        rb.buildMovementRules(MovementRules())
-        rb.buildTexts(opportunisticShade, "Opportunistic")
-        rb.buildOracle(oracle)
-        rb.buildOpportunisticDeck([2, 3, 4, 5, 9])
-        tb.addRider(rb.getResult())
+        riderDirector = RidersDirector()
+        tb.addRider(riderDirector.makeOpportunistic(oracle))
         team = tb.getResult()
         teams.append(team)
     tour = Tour(teams)
