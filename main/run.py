@@ -84,11 +84,6 @@ def createPlayerOracle(root, window):
     root.protocol("WM_DELETE_WINDOW", partial(onExit, oracle))
     return oracle
 
-def pickRiders(window):
-    number = createSimpleMenu(window, [1, 2, 3, 4], "How many riders in your team?")
-    return [ createMenu(window, [ (rider.name, rider) for rider in [ rouleurSpecialist(), sprinteurSpecialist(), grimpeurSpecialist(), opportunisticSpecialist() ]], "Add a rider to your team") for i in range(number) ]
-
-
 if __name__ == "__main__":
     main()
 
