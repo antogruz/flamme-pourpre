@@ -2,15 +2,19 @@
 
 import tkinter as tk
 from jeu.tracks import randomPresetTrack
-from menu import *
+from beau.menu import *
+from beau.frames import Frames
 from runner import Runner
-from tour import Tour
-from cardsDisplay import CardsDisplay
-from teamBuilder import TeamBuilder
+from jeu.tour import Tour
+from beau.cardsDisplay import CardsDisplay
+from jeu.teamBuilder import TeamBuilder
 from ridersDirector import RidersDirector
+from riderBuilderWithDisplay import RiderBuilderWithDisplay
+from displayRegistry import DisplayRegistry
 from teamsDirector import TeamsDirector, FirstOracle
-from opportunisticDisplay import OpportunisticDisplay
-from propulsion import SequentialPropulsion
+from beau.opportunisticDisplay import OpportunisticDisplay
+from jeu.propulsion import SequentialPropulsion
+from functools import partial
 
 def main():
     root = tk.Tk()
@@ -27,10 +31,13 @@ def main():
     tb.buildColor("green")
     tb.buildOracle(oracle)
     tb.buildPropulsion(SequentialPropulsion(oracle))
-    director = RidersDirector()
-    specialDisplayers = []
+
+    displayRegistry = DisplayRegistry()
     for i in range(ridersCount):
         riderType = createSimpleMenu(window, ["Rouleur", "Sprinteur", "Grimpeur", "Opportunistic"], "Add a rider to your team")
+
+        director = RidersDirector(RiderBuilderWithDisplay(displayRegistry, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i]))
+
         if riderType == "Rouleur":
             rider = director.makeRouleur(oracle)
         elif riderType == "Sprinteur":
@@ -38,10 +45,10 @@ def main():
         elif riderType == "Grimpeur":
             rider = director.makeGrimpeur(oracle)
         elif riderType == "Opportunistic":
-            sets = ["goldenrod", "magenta"]
-            rider = director.makeOpportunistic(oracle, sets)
-            specialDisplayers.append(OpportunisticDisplay(playerLayout.ridersSpecialFrames[i], [sorted([ card for card in rider.propulsor.cards.deck if color in str(card)]) for color in sets], rider.propulsor.cards))
+            rider = director.makeOpportunistic(oracle)
+
         tb.addRider(rider)
+
     humanTeam = tb.getResult()
     teamsDirector = TeamsDirector()
     botTeams = []
@@ -49,10 +56,11 @@ def main():
     for color in ["blue", "red", "black"]:
         botTeams.append(botsFactory(color))
 
-    cardsDisplayers = [ CardsDisplay(riderFrame, rider) for rider, riderFrame in zip(humanTeam.riders, playerLayout.ridersCards) ]
     tour = Tour([humanTeam] + botTeams)
     tracks = [ randomPresetTrack for i in range(racesCount) ]
-    runner = Runner(window, clock, cardsDisplayers + specialDisplayers)
+
+    allDisplays = displayRegistry.getAll()
+    runner = Runner(window, clock, allDisplays)
     runner.runTour(tour, tracks)
 
     window.bind("<Escape>", lambda e: window.destroy())

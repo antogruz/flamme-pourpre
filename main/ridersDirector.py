@@ -1,13 +1,16 @@
 #! /usr/bin/env python3
 
-from riderDisplay import rouleurShade, sprinteurShade, grimpeurShade, opportunisticShade
-from riderBuilder import RiderBuilder
-from riderMove import MovementRules
-from dicePropulsor import DicePropulsor
+from decorators.riderDisplay import rouleurShade, sprinteurShade, grimpeurShade, opportunisticShade
+from jeu.riderBuilder import RiderBuilder
+from jeu.riderMove import MovementRules
+from jeu.dicePropulsor import DicePropulsor
 
 class RidersDirector:
+    def __init__(self, builder = RiderBuilder()):
+        self.builder = builder
+
     def makeRouleur(self, oracle):
-        builder = RiderBuilder()
+        builder = self.builder
         builder.buildMovementRules(MovementRules())
         builder.buildTexts(rouleurShade, "Rouleur")
         builder.buildOracle(oracle)
@@ -15,7 +18,7 @@ class RidersDirector:
         return builder.getResult()
 
     def makeSprinteur(self, oracle):
-        builder = RiderBuilder()
+        builder = self.builder
         builder.buildMovementRules(MovementRules())
         builder.buildTexts(sprinteurShade, "Sprinteur")
         builder.buildOracle(oracle)
@@ -23,7 +26,7 @@ class RidersDirector:
         return builder.getResult()
 
     def makeGrimpeur(self, oracle):
-        builder = RiderBuilder()
+        builder = self.builder
         builder.buildMovementRules(MovementRules())
         builder.buildTexts(grimpeurShade, "Grimpeur")
         builder.buildOracle(oracle)
@@ -31,7 +34,7 @@ class RidersDirector:
         return builder.getResult()
 
     def makeOpportunistic(self, oracle, sets = ["goldenrod", "magenta"]):
-        builder = RiderBuilder()
+        builder = self.builder
         builder.buildMovementRules(MovementRules())
         builder.buildTexts(opportunisticShade, "Opportunistic")
         builder.buildOracle(oracle)
@@ -39,14 +42,14 @@ class RidersDirector:
         return builder.getResult()
 
     def makeDiceRider(self):
-        builder = RiderBuilder()
+        builder = self.builder
         builder.buildMovementRules(MovementRules())
         builder.buildTexts(rouleurShade, "Rouleur")
         builder.buildPropulsor(DicePropulsor([3, 4, 5, 6, 7, 8]))
         return builder.getResult()
 
     def makeDiceSprinteur(self):
-        builder = RiderBuilder()
+        builder = self.builder
         builder.buildMovementRules(MovementRules())
         builder.buildTexts(sprinteurShade, "Sprinteur")
         builder.buildPropulsor(DicePropulsor([2, 3, 4, 5, 6, 10]))
