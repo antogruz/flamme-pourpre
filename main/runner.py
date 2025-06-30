@@ -12,6 +12,7 @@ from raceLayout import RaceLayout
 from menu import *
 from eventDisplay import EventDisplay
 from results import displayResults
+from beau.resultsWindow import ResultsWindow
 from frames import Frames
 from cols import getPointsForClimbs
 from meilleurGrimpeurObserver import createClimberObserver
@@ -36,15 +37,13 @@ class Runner:
         self.displayers = displayers
 
     def runTour(self, tour, tracksBuilders):
+        self.displayers.append(ResultsWindow(self.window, tour))
+
         for trackBuilder in tracksBuilders:
             track = trackBuilder(len(tour.teams))
             tour.newRace()
             self.runRace(track, tour.teams, tour.checkNewArrivals, SpecialModes(True, True))
-            clear(self.window)
-            frames = Frames(self.window)
-            displayResults(frames.new(), tour.ridersResults())
-            createSimpleMenu(frames.new(), ["Next Race!"])
-            clear(self.window)
+
 
     def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes(False, False)):
         teamsInRace = [TeamInRace(team) for team in teams]
