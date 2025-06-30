@@ -17,6 +17,17 @@ class Tour:
     def scores(self):
         return [(team.color, team.score()) for team in sorted(self.teams, key = getScore, reverse = True)]
 
+    def ridersResults(self):
+        riders = sorted(self.getRiders(), key = getTime)
+        removeTime(riders[0].time, riders)
+        return [{
+            'name': rider.name,
+            'color': self.findTeam(rider).color,
+            'time': rider.time,
+            'score': rider.score,
+            'climberPoints': rider.climberPoints
+        } for rider in riders]
+
     def checkNewArrivals(self, ranking):
         newArrivals = self.extractNew(ranking)
         for rider in newArrivals:

@@ -42,7 +42,7 @@ class Runner:
             self.runRace(track, tour.teams, tour.checkNewArrivals, SpecialModes(True, True))
             clear(self.window)
             frames = Frames(self.window)
-            displayResults(frames.new(), tour.scores(), tour.times(), tour.climberPoints())
+            displayResults(frames.new(), tour.ridersResults())
             createSimpleMenu(frames.new(), ["Next Race!"])
             clear(self.window)
 
