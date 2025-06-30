@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from tracks import *
+from jeu.tracks import *
 from race import Race
 import riderMove
 import random

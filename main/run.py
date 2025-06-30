@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from tracks import *
+from jeu.tracks import randomPresetTrack
 from menu import *
 from runner import Runner
 from tour import Tour

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 from visualtests import VisualTester, runVisualTestsInWindow
-from decorators.riderDisplay import *
+from decorators.riderDisplay import rouleurShade, opportunisticShade
 import tkinter as tk
 from frames import Frames
 from cardsDisplay import bigCard, smallCard, thereIsColorIn, extractColor
-from beautifulCard import *
+from beautifulCard import createBeautifulCard, BeautifulCard
 
 class EventTester(VisualTester):
     def testEvent(self):

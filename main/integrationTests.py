@@ -2,15 +2,13 @@
 
 import tkinter as tk
 from runner import Runner
-from tour import Team, Tour
-from tracks import *
-from frames import clear
+from tour import Tour
 from jeu.tracks import randomPresetTrack
 from teamBuilder import TeamBuilder
 from riderBuilder import RiderBuilder
 from decorators.riderDisplay import sprinteurShade, rouleurShade, grimpeurShade, opportunisticShade
 from riderMove import MovementRules
-from propulsion import SequentialPropulsion, SimpleTeamPropulsion
+from propulsion import SimpleTeamPropulsion
 from teamsDirector import TeamsDirector, FirstOracle
 
 def integrationTests():

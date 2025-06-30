@@ -15,7 +15,7 @@ def createMenu(frame, choices, title = ""):
     return choices[i][1]
 
 
-from cardsDisplay import *
+from beautifulCard import createBeautifulCard
 from functools import partial
 class UserChoice():
     def __init__(self, frame):

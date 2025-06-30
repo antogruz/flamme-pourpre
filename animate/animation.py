@@ -67,7 +67,7 @@ class EventAnimator(RaceObserver):
 from tkinterSpecific.boxes import BoxFactory
 from visualtests import VisualTester
 from unittests import runTests
-from track import Track
+from jeu.track import Track
 from obstacles import Obstacles
 from decorators.riderDisplay import rouleurShade, sprinteurShade, RidersDisplay
 from tokensDecorators import TokensDecorators

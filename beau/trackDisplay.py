@@ -52,11 +52,11 @@ def colorFromRoadType(roadType):
     return 'black'
 
 from visualtests import *
-from tracks import *
 from tkinterSpecific.boxes import buildBoxFactory
 from tkinterSpecific.canvasBoxFactory import buildCanvasFactory
 import random
 from jeu.tracks import randomPresetTrack
+from jeu.track import Track
 
 class TrackTester(VisualTester):
     def display(self, track):
