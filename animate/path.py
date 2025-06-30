@@ -3,7 +3,6 @@
 from unittests import runTests, assert_equals
 from track import Track
 from obstacles import Obstacles
-from riderMove import Rider as RiderToken
 
 # Cette fonction détermine le chemin précis suivi par un coureur lors de son déplacement.
 # Elle doit changer si la route change (plus de lanes), ou si l'afficheur ne veut plus voir le coureur passer par ce même chemin arbitraire
@@ -35,6 +34,13 @@ class PathTester():
         obstacles = Obstacles([RiderToken(1, 0), RiderToken(1, 1), RiderToken(1, 2), RiderToken(2, 0)])
         assert_equals([(0, 0), (1, 3), (2, 1), (3, 0)], findPath(self.track, obstacles, (0, 0), (3, 0)))
 
+class RiderToken:
+    def __init__(self, square, lane):
+        self.square = square
+        self.lane = lane
+
+    def position(self):
+        return self.square, self.lane
 
 def findPath(track, obstacles, start, end):
     if start[0] == end[0]:

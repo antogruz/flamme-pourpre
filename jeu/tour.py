@@ -2,7 +2,6 @@
 
 from unittests import *
 from timer import Timer
-
 # Cette classe implémente les règles du grand tour. Elle sera changée si l'on ajoute des points pour les meilleurs grimpeurs par exemple, ou si on change la répartition des gains pour les gagnants d'une étape.
 
 class Tour:
@@ -21,7 +20,7 @@ class Tour:
     def checkNewArrivals(self, ranking):
         newArrivals = self.extractNew(ranking)
         for rider in newArrivals:
-            rider.score += self.claimBounty()
+            rider.earnScore(self.claimBounty())
         self.timer.arrive(newArrivals)
 
     def findTeam(self, rider):
@@ -160,9 +159,16 @@ class Rider:
     def __init__(self, name, position = 0):
         self.name = name
         self.pos = position
+        self.score = 0
 
     def position(self):
         return self.pos, 0
+
+    def earnScore(self, score):
+        self.score += score
+
+    def addTime(self, time):
+        self.time += time
 
 if __name__ == "__main__":
     runTests(TourTest())

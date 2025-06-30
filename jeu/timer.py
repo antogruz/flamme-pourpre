@@ -18,9 +18,10 @@ class Timer:
             self.best = headToTail(riders)[0]
 
         for r in riders:
-            r.time += 60 * self.turnsAfterFirst
-            r.time += secondsEarned(self.best)
-            r.time -= secondsEarned(r)
+            timeDelta = 60 * self.turnsAfterFirst
+            timeDelta += secondsEarned(self.best)
+            timeDelta -= secondsEarned(r)
+            r.addTime(timeDelta)
 
         self.turnsAfterFirst += 1
 
@@ -32,49 +33,44 @@ class TimeTest:
         self.timer = Timer()
 
     def testOneArrival(self):
-        rider = Rider()
+        rider = createRider()
         self.timer.arrive([rider])
-        assert_equals(0, rider.time)
+        assert_equals(0, rider.persistent.time)
 
     def testTwoArrivals(self):
-        first, second = Rider(), Rider()
+        first, second = createRider(), createRider()
         self.timer.arrive([first])
         self.timer.arrive([second])
-        assert_equals(60, second.time)
+        assert_equals(60, second.persistent.time)
 
     def testNoArrival(self):
-        rider = Rider()
+        rider = createRider()
         self.timer.arrive([])
         self.timer.arrive([rider])
-        assert_equals(0, rider.time)
+        assert_equals(0, rider.persistent.time)
 
     def testTwoInSameTurn(self):
-        first = Rider(3)
-        second = Rider(1)
+        first = createRider(3)
+        second = createRider(1)
         self.timer.arrive([first, second])
-        assert_equals(20, second.time)
+        assert_equals(20, second.persistent.time)
 
     def testSecondRace(self):
-        first = Rider(60)
-        first.time = 90
-        second = Rider(62)
-        second.time = 0
+        first = createRider(60)
+        first.persistent.time = 90
+        second = createRider(62)
+        second.persistent.time = 0
         self.timer.arrive([first])
         self.timer.arrive([second])
-        assert_equals(90, first.time)
-        assert_equals(40, second.time)
+        assert_equals(90, first.persistent.time)
+        assert_equals(40, second.persistent.time)
 
+from riderInRace import RiderInRace
+from riderBuilder import RiderBuilder
 
-class Rider:
-    def __init__(self, square = 0, lane = 0):
-        self.square = square
-        self.lane = lane
-        self.time = 0
-
-    def position(self):
-        return (self.square, self.lane)
-
-
+def createRider(square = 0):
+    rb = RiderBuilder()
+    return RiderInRace(rb.getResult(), square, 0)
 
 
 if __name__ == "__main__":

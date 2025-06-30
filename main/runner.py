@@ -10,7 +10,6 @@ from tkinterSpecific.canvasBoxFactory import CanvasBoxFactory
 from animation import EventAnimator, RoadAnimator
 from raceLayout import RaceLayout
 from menu import *
-from ridersFactory import *
 from eventDisplay import EventDisplay
 from results import displayResults
 from frames import Frames
@@ -20,6 +19,7 @@ from decorators.miniracePointsDisplay import MiniRacePointsDisplay
 from decorators.riderDisplay import RidersDisplay
 from decorators.rankingDisplay import RankingDisplay
 from intermediateSprintObserver import createSprintObserver, getPointsForSprints
+from race import TeamInRace
 
 def noLog(ranking):
     pass
@@ -47,19 +47,17 @@ class Runner:
             clear(self.window)
 
     def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes(False, False)):
-        for team in teams:
-            team.player.resetRiders(team.riders)
-        riders = allRiders(teams)
-        players = allPlayers(teams)
+        teamsInRace = [TeamInRace(team) for team in teams]
+        setRidersOnStart(teamsInRace)
+        riders = [rider for team in teamsInRace for rider in team.ridersInRace]
         for rider in riders:
-            rider.cards.newRace()
+            rider.persistent.propulsor.newRace()
 
         layout = RaceLayout(self.window)
         tokensDecorators, eventAnimator, roadAnimator = createDisplays(track, layout, self.clock)
         raceDisplayers = self.displayers + [tokensDecorators]
-        setRidersOnStart(riders)
         tokensDecorators.addRoadDecorator(RidersDisplay(riders, tokensDecorators.trackDisplay))
-        race = Race(track, riders, players)
+        race = Race(track, teamsInRace)
         tokensDecorators.addRoadDecorator(RankingDisplay(race, tokensDecorators.trackDisplay))
         race.addObserver(eventAnimator)
         race.addObserver(roadAnimator)
@@ -76,12 +74,6 @@ class Runner:
             logRanking(race.ranking())
             for d in raceDisplayers:
                 d.update()
-
-def allRiders(teams):
-    return [rider for team in teams for rider in team.riders]
-
-def allPlayers(teams):
-    return [team.player for team in teams]
 
 def createMiniRaces(tokensDecorators, race, observers, decoratorColor):
     for observer in observers:
@@ -105,12 +97,16 @@ def createDisplays(track, layout, clock):
     return tokensDecorators, eventAnimator, roadAnimator
 
 
-def setRidersOnStart(riders):
-    random.shuffle(riders)
+def setRidersOnStart(teamsInRace):
+    teamsWithRidersWaiting = list(teamsInRace)
+    random.shuffle(teamsWithRidersWaiting)
     square, lane = 0, 0
-    for r in riders:
-        r.riderMove = riderMove.Rider(square, lane)
-        square, lane = next(square, lane)
+    while teamsWithRidersWaiting:
+        team = teamsWithRidersWaiting[0]
+        if team.placeNextRider(square, lane):
+            square, lane = next(square, lane)
+        else:
+            teamsWithRidersWaiting.pop(0)
 
 def next(square, lane):
     if lane == 0:

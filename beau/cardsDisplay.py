@@ -9,15 +9,15 @@ class CardsDisplay:
     def __init__(self, frame, rider):
         self.frame = frame
         subFrames = Frames(frame)
-        self.riderFrame = subFrames.new()
+        riderFrame = subFrames.new()
         self.deckFrame, self.discardFrame, self.playedFrame = subFrames.newLine(3)
         self.fullDiscardFrame = subFrames.new()
-        self.rider = rider
+        self.cards = rider.propulsor.cards
         self.color = rider.color
+        displayRider(riderFrame, rider)
         self.prepareWidgets()
 
     def prepareWidgets(self):
-        displayRider(self.riderFrame, self.rider)
         self.deck = deck(self.deckFrame, "")
         self.deck.pack()
         self.discard = deck(self.discardFrame, "")
@@ -25,7 +25,7 @@ class CardsDisplay:
         self.discard.bind("<Button-1>", lambda e:toggleDiscard(self.allCardsDiscarded))
 
     def update(self):
-        self.displayCards(self.rider.cards.inDeck(), self.rider.cards.discard, self.rider.cards.played)
+        self.displayCards(self.cards.inDeck(), self.cards.discard, self.cards.played)
         self.frame.update()
 
     def displayCards(self, deckSize, discard, played):
@@ -42,7 +42,6 @@ class CardsDisplay:
 
 def getValue(niceCard):
     return int(niceCard.text)
-
 
 def displayRider(window, rider):
     tk.Label(window, text = rider.name + " " + rider.shade, fg = rider.color).pack()
@@ -112,6 +111,11 @@ class Rider:
         self.shade = rouleurShade
         self.name = "Rouleur"
         self.color = "green"
+        self.propulsor = Propulsor()
+
+class Propulsor:
+    def __init__(self):
+        self.cards = None
 
 if __name__ == "__main__":
     runVisualTestsInWindow(CardsTester)

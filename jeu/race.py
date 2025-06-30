@@ -9,12 +9,12 @@ from slipstreaming import slipstreaming
 from exhaust import exhaust
 
 class Race():
-    def __init__(self, track, riders, players):
+    def __init__(self, track, teamsInRace):
         self.observers = []
         self.track = track
-        self.riders = riders
-        self.obstacles = Obstacles(riders)
-        self.players = players
+        self.teamsInRace = teamsInRace
+        self.riders = [r for team in teamsInRace for r in team.ridersInRace]
+        self.obstacles = Obstacles(self.riders)
         self.arrivals = []
         self.checkArrivals()
 
@@ -25,12 +25,12 @@ class Race():
         return not self.riders
 
     def newTurn(self):
-        for p in self.players:
-            p.pickNextMoves()
+        for team in self.teamsInRace:
+            team.pickNextMoves()
 
         for r in headToTail(self.riders):
             start = r.position()
-            r.move(self.track, self.obstacles)
+            r.move(r.nextMove, self.track, self.obstacles)
             for observer in self.observers:
                 observer.onRiderMove(r, start, r.position(), self.obstacles)
 
@@ -42,20 +42,14 @@ class Race():
             observer.onTurnEnd()
 
     def ranking(self):
-        return self.arrivals
+        return list(self.arrivals)
 
     def checkArrivals(self):
         for r in headToTail(self.riders):
             if arrived(r, self.track):
                 self.riders.remove(r)
                 self.arrivals.append(r)
-                self.removeFromPlayers(r)
-
-    def removeFromPlayers(self, rider):
-        for p in self.players:
-            if rider in p.riders:
-                p.riders.remove(rider)
-
+                r.setArrived()
 
 def arrived(rider, track):
     return track.getRoadType(rider.getSquare()) == "end"
@@ -83,79 +77,116 @@ class RaceObserver:
         """Called at the end of each turn."""
         pass
 
+class TeamInRace:
+    def __init__(self, team):
+        self.team = team
+        self.ridersToPlace = list(team.riders)
+        self.ridersInRace = []
+
+    def placeNextRider(self, square, lane):
+        if not self.ridersToPlace:
+            return False
+        self.ridersInRace.append(RiderInRace(self.ridersToPlace.pop(0), square, lane))
+        return True
+
+    def pickNextMoves(self):
+        self.team.propulsor.pickNextMoves(self.getActiveRiders())
+
+    def getActiveRiders(self):
+        return [r for r in self.ridersInRace if not r.arrived]
+
 from unittests import runTests, assert_equals, assert_similars
 from track import Track
-from rider import Rider
-from cards import Cards
 from positions import headToTail
-import riderMove
+from riderMove import MovementRules
+from riderInRace import RiderInRace
+from team import Team
+from teamBuilder import TeamBuilder
+from propulsion import SimpleTeamPropulsion
 
 class RaceTest():
     def __before__(self):
         self.track = Track([(5, "normal"), (3, "end")])
 
-    def createRace(self, riders):
-        return Race(self.track, riders, [SimplePlayer(copy(riders), 2)])
+    def createTeam(self, ridersCount):
+        tb = TeamBuilder()
+        for i in range(ridersCount):
+            tb.addRider(createRider(str(i)))
+        tb.buildColor("green")
+        tb.buildPropulsion(SimpleTeamPropulsion())
+        self.team = TeamInRace(tb.getResult())
+
+    def createRace(self):
+        return Race(self.track, [self.team])
 
     def testCreateRace(self):
-        riders = [createRider(0, 0)]
-        race = self.createRace(riders)
+        self.createTeam(1)
+        self.team.placeNextRider(0, 0)
+        race = self.createRace()
         assert_equals(False, race.isOver())
         assert_similars([], race.ranking())
 
     def testRaceOver(self):
-        race = self.createRace([])
+        self.createTeam(0)
+        race = self.createRace()
         assert_equals(True, race.isOver())
 
     def testRaceIsOverIfAllRidersHavePassedLine(self):
-        race = self.createRace([createRider(5, 0)])
+        self.createTeam(1)
+        self.team.placeNextRider(5, 0)
+        race = self.createRace()
         assert_equals(True, race.isOver())
 
     def testRiderMovesAfterATurn(self):
-        rider = createRider(0, 0)
-        race = self.createRace([rider])
+        self.createTeam(1)
+        self.team.placeNextRider(0, 0)
+        race = self.createRace()
         race.newTurn()
-        assert_equals(2, rider.position()[0])
+        assert_equals(2, self.team.ridersInRace[0].position()[0])
 
     def testArrival(self):
-        rider = createRider(4, 0)
-        race = self.createRace([rider, createRider(0, 0)])
+        self.createTeam(2)
+        self.team.placeNextRider(4, 0)
+        self.team.placeNextRider(0, 0)
+        race = self.createRace()
         race.newTurn()
-        assert_similars([rider], race.ranking())
+        assert_similars(["0"], [r.persistent.name for r in race.ranking()])
 
     def testDontPlayForArrivedRiders(self):
-        rider = createRider(5, 0)
-        race = self.createRace([rider])
+        self.createTeam(1)
+        self.team.placeNextRider(5, 0)
+        race = self.createRace()
         race.newTurn()
-        assert_equals((5, 0), rider.position())
+        assert_equals((5, 0), self.team.ridersInRace[0].position())
 
     def testRanking(self):
-        first = createRider(5, 0)
-        second = createRider(4, 0)
-        third = createRider(3, 0)
-        fourth = createRider(0, 0)
-        race = self.createRace([fourth, second, third, first])
+        self.createTeam(4)
+        self.team.placeNextRider(5, 0)
+        self.team.placeNextRider(4, 0)
+        self.team.placeNextRider(3, 0)
+        self.team.placeNextRider(0, 0)
+        race = self.createRace()
         while not race.isOver():
             race.newTurn()
-        assert_equals([first, second, third, fourth], race.ranking())
+        assert_equals(["0", "1", "2", "3"], [r.persistent.name for r in race.ranking()])
 
+from riderBuilder import RiderBuilder
+def createRider(name):
+    rb = RiderBuilder()
+    rb.buildTexts("o/o", name)
+    rb.buildPropulsor(SimplePropulsor(2))
+    rb.buildMovementRules(MovementRules())
+    return rb.getResult()
 
-def copy(list):
-    return [l for l in list]
-
-def createRider(square, lane):
-    rider = Rider(Cards([]))
-    rider.riderMove = riderMove.Rider(square, lane)
-    return rider
-
-class SimplePlayer():
-    def __init__(self, riders, move):
-        self.riders = riders
+class SimplePropulsor():
+    def __init__(self, move):
         self.move = move
 
-    def pickNextMoves(self):
-        for r in self.riders:
-            r.nextMove = self.move
+    def generateMove(self):
+        return self.move
+    
+    def exhaust(self):
+        pass
 
 
 if __name__ == "__main__":

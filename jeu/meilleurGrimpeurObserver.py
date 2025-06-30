@@ -6,7 +6,7 @@ finDeCol = 6
 class OneRiderTest:
     def __before__(self):
         self.observer = createClimberObserver(finDeCol, [1, 1])
-        self.rider = Rider()
+        self.rider = RiderInRace()
 
     def logMoveAndEndTurn(self, start, end):
         self.rider.pos = (end, 0)
@@ -15,25 +15,25 @@ class OneRiderTest:
 
     def testRiderCrossEndOfClimb(self):
         self.logMoveAndEndTurn(3, finDeCol + 1)
-        assert_equals(1, self.rider.climberPoints)
+        assert_equals(1, self.rider.persistent.climberPoints)
 
     def testRiderDontCrossEndOfClimb(self):
         self.logMoveAndEndTurn(3, finDeCol)
-        assert_equals(0, self.rider.climberPoints)
+        assert_equals(0, self.rider.persistent.climberPoints)
 
     def testRiderAfterEndOfClimb(self):
         self.logMoveAndEndTurn(finDeCol + 1, finDeCol + 2)
-        assert_equals(0, self.rider.climberPoints)
+        assert_equals(0, self.rider.persistent.climberPoints)
 
     def testRiderCumulatePoints(self):
-        self.rider.climberPoints = 3
+        self.rider.persistent.climberPoints = 3
         self.logMoveAndEndTurn(3, finDeCol + 1)
-        assert_equals(4, self.rider.climberPoints)
+        assert_equals(4, self.rider.persistent.climberPoints)
 
     def testRiderMovesTwice(self):
         self.logMoveAndEndTurn(3, finDeCol + 1)
         self.logMoveAndEndTurn(finDeCol + 1, finDeCol + 2)
-        assert_equals(1, self.rider.climberPoints)
+        assert_equals(1, self.rider.persistent.climberPoints)
 
 
 class SeveralRidersTest:
@@ -45,21 +45,26 @@ class SeveralRidersTest:
         self.observer.onRiderMove(rider, start, end)
 
     def testThreeRiders(self):
-        riders = [ Rider() for i in range(3) ]
+        riders = [ RiderInRace() for i in range(3) ]
         for i, r in enumerate(riders):
             self.logAndMove(r, (0, 0), (finDeCol + 1 + i, 0))
         self.observer.onTurnEnd()
-        assert_equals(0, riders[0].climberPoints)
-        assert_equals(1, riders[1].climberPoints)
-        assert_equals(2, riders[2].climberPoints)
+        assert_equals(0, riders[0].persistent.climberPoints)
+        assert_equals(1, riders[1].persistent.climberPoints)
+        assert_equals(2, riders[2].persistent.climberPoints)
 
-class Rider:
+class RiderInRace:
     def __init__(self):
-        self.climberPoints = 0
+        self.persistent = Rider()
         self.pos = (0, 0)
 
     def position(self):
         return self.pos
+
+class Rider:
+    def __init__(self):
+        self.climberPoints = 0
+
 
 
 from miniraceObserver import MiniraceObserver

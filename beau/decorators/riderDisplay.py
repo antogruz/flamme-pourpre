@@ -9,12 +9,13 @@ from tokensDecorators import TokensDecorators
 
 class RidersDisplay:
     def __init__(self, riders, trackDisplay):
-        self.riders = riders
+        self.riders = list(riders)
         self.trackDisplay = trackDisplay
 
     def displayOnTrack(self):
         for r in self.riders:
-            self.trackDisplay.setContent(r.position()[0], r.position()[1], r.shade, r.color)
+            if not r.arrived:
+                self.trackDisplay.setContent(r.position()[0], r.position()[1], r.shade, r.color)
 
 
 
@@ -47,6 +48,7 @@ class Rider:
         self.shade = shade
         self.color = color
         self.pos = pos
+        self.arrived = False
 
     def position(self):
         return self.pos

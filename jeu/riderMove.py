@@ -8,40 +8,13 @@ from track import streamable, Track
 # TODO La responsabilité de l'aspiration est pour le moment un peu partagée avec slipstream : il serait facile de faire qu'un coureur soit capable d'être aspiré en montagne, mais difficile de le faire être aspiré à 2 cases ou bien qu'il aspire ses co-équipiers de plus loin
 # TODO Séparer la responsabilité de donner la position avec celle de connaitre les règles de déplacement. Finalement, ce sont deux choses différentes. Les mouvements du rider peuvent dépendre des règles du jeu spécifiques à chaque coureur. Et pour les mettre en oeuvre, on a besoin d'une entité sur laquelle modifier la position
 
-class Rider():
-    def __init__(self, square, lane):
-        self.square = square
-        self.lane = lane
-        self.movementRules = MovementRules()
-
-    def position(self):
-        return (self.square, self.lane)
-
-    def getSquare(self):
-        return self.square
-
-    def move(self, distance, track, obstacles):
-        distance = self.movementRules.adaptDistanceToRoadType(self.square, distance, track)
-        self.square, self.lane = self.findAvailableSlot(obstacles, self.square + distance, track)
-
-    def getSlipstream(self, track):
-        if not streamable(track.getRoadType(self.square)):
-            return False
-
-        self.square += 1
-        return True
-
-    def findAvailableSlot(self, obstacles, square, track):
-            slot = (square, 0)
-            while not (obstacles.isFree(slot) ) :
-                if slot == self.position():
-                    return slot
-                slot = track.previousPosition(slot[0], slot[1])
-            return slot
-
-
 class MovementRules():
-    def adaptDistanceToRoadType(self, square, distance, track):
+    def computeNewPosition(self, startingPosition, fuel, track, obstacles):
+        distance = self.adaptDistanceToRoadType(startingPosition[0], fuel, track)
+        return self.findAvailableSlot(obstacles, startingPosition, distance, track)
+
+    def adaptDistanceToRoadType(self, square, fuel, track):
+        distance = int(fuel)
         starting = track.getRoadType(square)
         if starting == "descent":
             distance = max(distance, 5)
@@ -56,6 +29,14 @@ class MovementRules():
 
         return distance
 
+    def findAvailableSlot(self, obstacles, startingPosition, distance, track):
+            slot = (startingPosition[0] + distance, 0)
+            while not (obstacles.isFree(slot) ) :
+                if slot == startingPosition:
+                    return slot
+                slot = track.previousPosition(slot[0], slot[1])
+            return slot
+
 def ascentValid(track, start, distance):
     return distance <= 5 or not containsAscent(track, start, start + distance)
 
@@ -67,81 +48,68 @@ def containsAscent(track, start, end):
 
 
 from unittests import runTests, assert_equals
+from newRider import NewRider
 
-class RiderTest():
+class MovementRulesTest():
     def __before__(self):
-        self.rider = Rider(0, 0)
         self.race = Race()
+        self.position = (0, 0)
+        self.movementRules = MovementRules()
 
-    def move(self, distance):
-        self.rider.move(distance, self.race.track, self.race)
-
-    def testRiderAtStart(self):
-        assert_equals((0, 0), self.rider.position())
+    def move(self, fuel):
+        return self.movementRules.computeNewPosition(self.position, fuel, self.race.track, self.race)
 
     def testRiderMove(self):
-        self.move(1)
-        assert_equals((1, 0), self.rider.position())
+        assert_equals((1, 0), self.move(1))
 
     def testTwoRiders(self):
         self.race.addRider(1, 0)
-        self.move(1)
-        assert_equals((1, 1), self.rider.position())
+        assert_equals((1, 1), self.move(1))
 
     def testBlocked(self):
         self.race.set("normal", 1, 1)
         self.race.addRider(1, 0)
-        self.move(1)
-        assert_equals((0, 0), self.rider.position())
+        assert_equals((0, 0), self.move(1))
 
     def testNotBlocked(self):
         self.race.set("normal", 1, 3)
         self.race.addRider(1, 0)
         self.race.addRider(1, 1)
-        self.move(1)
-        assert_equals((1, 2), self.rider.position())
+        assert_equals((1, 2), self.move(1))
 
     def testDescent(self):
         self.race.setAll("descent")
-        self.move(1)
-        assert_equals((5, 0), self.rider.position())
+        assert_equals((5, 0), self.move(1))
 
     def testEndOfRace(self):
         self.race = Race(4)
-        self.move(4)
-        assert_equals((3, 0), self.rider.position())
+        assert_equals((3, 0), self.move(4))
 
     def testStartInAscent(self):
         self.race.setAll("ascent")
-        self.move(9)
-        assert_equals((5, 0), self.rider.position())
+        assert_equals((5, 0), self.move(9))
 
     def testThroughAscent(self):
         self.race.set("ascent", 1)
-        self.move(9)
-        assert_equals((5, 0), self.rider.position())
+        assert_equals((5, 0), self.move(9))
 
     def testStopBeforeAscent(self):
         self.race.set("ascent", 7)
-        self.move(9)
-        assert_equals((6, 0), self.rider.position())
+        assert_equals((6, 0), self.move(9))
 
     def testShouldStayAtSamePositionIfBlocked(self):
         self.race.addRider(0, 0) # Myself
         self.race.addRider(1, 0)
         self.race.addRider(1, 1)
-        self.move(1)
-        assert_equals((0, 0), self.rider.position())
+        assert_equals((0, 0), self.move(1))
 
     def testRefuel(self):
         self.race.setAll("refuel")
-        self.move(1)
-        assert_equals((4, 0), self.rider.position())
+        assert_equals((4, 0), self.move(1))
 
     def testRefuelWithHigherCard(self):
         self.race.setAll("refuel")
-        self.move(6)
-        assert_equals((6, 0), self.rider.position())
+        assert_equals((6, 0), self.move(6))
 
 class Race():
     def __init__(self, length = 100):
@@ -165,6 +133,5 @@ class Race():
         return not slot in self.obstacles
 
 
-
 if __name__ == "__main__":
-    runTests(RiderTest())
+    runTests(MovementRulesTest())

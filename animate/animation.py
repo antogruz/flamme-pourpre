@@ -138,6 +138,7 @@ class Rider:
         self.color = color
         self.pos = position
         self.name = "Coureur"
+        self.arrived = False
 
     def position(self):
         return self.pos

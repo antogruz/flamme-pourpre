@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from unittests import assert_equals, runTests
-from riderMove import Rider
+from riderInRace import RiderInRace
 from track import Track, streamable
 
 # Cette fonction (slipstreaming) gère les régles d'aspiration.
@@ -10,7 +10,7 @@ from track import Track, streamable
 
 class SlipstremingTester():
     def __before__(self):
-        self.rider = Rider(0, 0)
+        self.rider = createRider(0, 0)
         self.track = Track([(10, "normal")])
         self.others = []
 
@@ -18,7 +18,7 @@ class SlipstremingTester():
         slipstreaming([self.rider] + self.others, self.track)
 
     def addRider(self, square):
-        self.others.append(Rider(square, 0))
+        self.others.append(createRider(square, 0))
 
     def assertPosition(self, square):
         assert_equals((square, 0), self.rider.position())
@@ -44,14 +44,14 @@ class SlipstremingTester():
         self.assertPosition(0)
 
     def test3Groups(self):
-        self.rider = Rider(3, 0)
+        self.rider = createRider(3, 0)
         self.addRider(0)
         self.addRider(5)
         self.slipstream()
         self.assertPosition(4)
 
     def testWholeGroupStreamed(self):
-        self.rider = Rider(1, 0)
+        self.rider = createRider(1, 0)
         self.addRider(0)
         self.addRider(2)
         self.addRider(4)
@@ -85,9 +85,9 @@ class SlipstremingTester():
 
     def testBackOfGroupInAscent(self):
         track = Track([(1, "ascent"), (9, "normal")])
-        grimpeur = Rider(0, 0)
-        rouleur = Rider(1, 0)
-        streamer = Rider(3, 0)
+        grimpeur = createRider(0, 0)
+        rouleur = createRider(1, 0)
+        streamer = createRider(3, 0)
         slipstreaming([grimpeur, rouleur, streamer], track)
         assert_equals((0, 0), grimpeur.position())
         assert_equals((2, 0), rouleur.position())
@@ -121,6 +121,10 @@ class SlipstremingTester():
         self.slipstream()
         self.assertPosition(0)
 
+from riderBuilder import RiderBuilder
+def createRider(square, lane):
+    rb = RiderBuilder()
+    return RiderInRace(rb.getResult(), square, lane)
 
 class Logger():
     def __init__(self):
