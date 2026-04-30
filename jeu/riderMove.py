@@ -48,7 +48,6 @@ def containsAscent(track, start, end):
 
 
 from unittests import runTests, assert_equals
-from newRider import NewRider
 
 class MovementRulesTest():
     def __before__(self):

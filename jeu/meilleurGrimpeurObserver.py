@@ -15,25 +15,25 @@ class OneRiderTest:
 
     def testRiderCrossEndOfClimb(self):
         self.logMoveAndEndTurn(3, finDeCol + 1)
-        assert_equals(1, self.rider.persistent.climberPoints)
+        assert_equals(1, self.rider.personnage.climberPoints)
 
     def testRiderDontCrossEndOfClimb(self):
         self.logMoveAndEndTurn(3, finDeCol)
-        assert_equals(0, self.rider.persistent.climberPoints)
+        assert_equals(0, self.rider.personnage.climberPoints)
 
     def testRiderAfterEndOfClimb(self):
         self.logMoveAndEndTurn(finDeCol + 1, finDeCol + 2)
-        assert_equals(0, self.rider.persistent.climberPoints)
+        assert_equals(0, self.rider.personnage.climberPoints)
 
     def testRiderCumulatePoints(self):
-        self.rider.persistent.climberPoints = 3
+        self.rider.personnage.climberPoints = 3
         self.logMoveAndEndTurn(3, finDeCol + 1)
-        assert_equals(4, self.rider.persistent.climberPoints)
+        assert_equals(4, self.rider.personnage.climberPoints)
 
     def testRiderMovesTwice(self):
         self.logMoveAndEndTurn(3, finDeCol + 1)
         self.logMoveAndEndTurn(finDeCol + 1, finDeCol + 2)
-        assert_equals(1, self.rider.persistent.climberPoints)
+        assert_equals(1, self.rider.personnage.climberPoints)
 
 
 class SeveralRidersTest:
@@ -49,13 +49,13 @@ class SeveralRidersTest:
         for i, r in enumerate(riders):
             self.logAndMove(r, (0, 0), (finDeCol + 1 + i, 0))
         self.observer.onTurnEnd()
-        assert_equals(0, riders[0].persistent.climberPoints)
-        assert_equals(1, riders[1].persistent.climberPoints)
-        assert_equals(2, riders[2].persistent.climberPoints)
+        assert_equals(0, riders[0].personnage.climberPoints)
+        assert_equals(1, riders[1].personnage.climberPoints)
+        assert_equals(2, riders[2].personnage.climberPoints)
 
 class RiderInRace:
     def __init__(self):
-        self.persistent = Rider()
+        self.personnage = Rider()
         self.pos = (0, 0)
 
     def position(self):

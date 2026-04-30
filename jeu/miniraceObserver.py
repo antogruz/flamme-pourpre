@@ -22,7 +22,7 @@ class MiniraceObserver(RaceObserver):
         for rider in headToTail(self.ridersThatCrossedThisTurn):
             if self.prizeGiver.finished():
                 break
-            self.prizeGiver.reward(rider.persistent)
+            self.prizeGiver.reward(rider.personnage)
         self.ridersThatCrossedThisTurn = []
 
     def onSlipstream(*_):

@@ -4,7 +4,7 @@ import random
 from cards import Cards
 from deckPropulsor import DeckPropulsor
 from dicePropulsor import DicePropulsor
-from newRider import NewRider
+from personnage import Personnage
 from opportunistic import createOpportunisticCards
 
 class RiderBuilder:
@@ -43,7 +43,7 @@ class RiderBuilder:
         self.movementRules = movementRules
 
     def getResult(self):
-        rider = NewRider(self.name, self.movementRules, self.propulsor)
+        rider = Personnage(self.name, self.movementRules, self.propulsor)
         rider.shade = self.shade
         rider.color = self.color
         rider.time = 0

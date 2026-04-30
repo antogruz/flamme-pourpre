@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-class NewRider():
+class Personnage():
     def __init__(self, name, movementRules, propulsor):
         self.name = name
         self.movementRules = movementRules

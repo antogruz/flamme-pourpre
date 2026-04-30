@@ -51,7 +51,7 @@ class Runner:
         setRidersOnStart(teamsInRace)
         riders = [rider for team in teamsInRace for rider in team.ridersInRace]
         for rider in riders:
-            rider.persistent.propulsor.newRace()
+            rider.personnage.propulsor.newRace()
 
         layout = RaceLayout(self.window)
         tokensDecorators, eventAnimator, roadAnimator = createDisplays(track, layout, self.clock)

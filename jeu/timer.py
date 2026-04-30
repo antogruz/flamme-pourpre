@@ -37,42 +37,42 @@ class TimeTest:
     def testOneArrival(self):
         rider = createRider()
         self.timer.arrive([rider])
-        assert_equals(0, rider.persistent.time)
+        assert_equals(0, rider.personnage.time)
 
     def testTwoArrivals(self):
         first, second = createRider(), createRider()
         self.timer.arrive([first])
         self.timer.arrive([second])
-        assert_equals(60, second.persistent.time)
+        assert_equals(60, second.personnage.time)
 
     def testNoArrival(self):
         rider = createRider()
         self.timer.arrive([])
         self.timer.arrive([rider])
-        assert_equals(0, rider.persistent.time)
+        assert_equals(0, rider.personnage.time)
 
     def testTwoInSameTurn(self):
         first = createRider(3)
         second = createRider(1)
         self.timer.arrive([first, second])
-        assert_equals(20, second.persistent.time)
+        assert_equals(20, second.personnage.time)
 
     def testSecondRace(self):
         first = createRider(60)
-        first.persistent.time = 90
+        first.personnage.time = 90
         second = createRider(62)
-        second.persistent.time = 0
+        second.personnage.time = 0
         self.timer.arrive([first])
         self.timer.arrive([second])
-        assert_equals(90, first.persistent.time)
-        assert_equals(40, second.persistent.time)
+        assert_equals(90, first.personnage.time)
+        assert_equals(40, second.personnage.time)
 
     def testSeveralTurnsBetweenArrivals(self):
         first, second = createRider(), createRider()
         self.timer.arrive([first])
         self.timer.arrive([])
         self.timer.arrive([second])
-        assert_equals(120, second.persistent.time)
+        assert_equals(120, second.personnage.time)
 
 from riderInRace import RiderInRace
 from riderBuilder import RiderBuilder

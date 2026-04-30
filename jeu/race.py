@@ -150,7 +150,7 @@ class RaceTest():
         self.team.placeNextRider(0, 0)
         race = self.createRace()
         race.newTurn()
-        assert_similars(["0"], [r.persistent.name for r in race.ranking()])
+        assert_similars(["0"], [r.personnage.name for r in race.ranking()])
 
     def testDontPlayForArrivedRiders(self):
         self.createTeam(1)
@@ -168,7 +168,7 @@ class RaceTest():
         race = self.createRace()
         while not race.isOver():
             race.newTurn()
-        assert_equals(["0", "1", "2", "3"], [r.persistent.name for r in race.ranking()])
+        assert_equals(["0", "1", "2", "3"], [r.personnage.name for r in race.ranking()])
 
 from riderBuilder import RiderBuilder
 def createRider(name):

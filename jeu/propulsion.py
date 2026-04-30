@@ -11,11 +11,11 @@ class SequentialPropulsion():
 
     def pickOneMove(self, riders):
         rider = self.pickRider(riders)
-        rider.nextMove = rider.persistent.propulsor.generateMove()
+        rider.nextMove = rider.personnage.propulsor.generateMove()
         rider.logCardPlayed = rider.nextMove
 
     def pickRider(self, riders):
-        choice = self.pick([r.persistent.name for r in riders], "Pick a rider")
+        choice = self.pick([r.personnage.name for r in riders], "Pick a rider")
         return riders.pop(choice)
 
     def pick(self, list, instruction):
@@ -27,6 +27,6 @@ class SequentialPropulsion():
 class SimpleTeamPropulsion():
     def pickNextMoves(self, riders):
         for r in riders:
-            r.nextMove = r.persistent.propulsor.generateMove()
+            r.nextMove = r.personnage.propulsor.generateMove()
             r.logCardPlayed = r.nextMove
     
