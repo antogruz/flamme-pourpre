@@ -1,10 +1,2 @@
-- Pouvoir quitter le jeu en cours sans stall le terminal
-- Le jeu fonctionne sur le nouveau mac
-- Ajouter les règles de peloton (Ravitaillement, Rangées de 3 cases, Pavés)
-- Mettre des bots plus forts
-- Créer des menus avec des titres
 - Afficher dans la case de chaque vélo la carte jouée
-- Écrire les "acteurs", les raisons de changer et les responsabilités des différentes classes
-  - /jeu -> ok
-- Améliorer les perfs du display des cartes (Ne pas recréer les frames à chaque fois?)
-- Utiliser le pattern builder pour créer les riders
+- Pouvoir jouer un grand tour avec 2 personnages qui ont des paliers de talents
