@@ -43,7 +43,6 @@ class Runner:
             track = trackBuilder(len(tour.teams))
             tour.newRace()
             self.runRace(track, tour.teams, tour.checkNewArrivals, SpecialModes(True, True))
-            clear(self.window)
 
 
     def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes(False, False)):
@@ -107,7 +106,6 @@ def setRidersOnStart(teamsInRace):
             square, lane = next(square, lane)
         else:
             teamsWithRidersWaiting.pop(0)
-        random.shuffle(teamsWithRidersWaiting)
 
 def next(square, lane):
     if lane == 0:
