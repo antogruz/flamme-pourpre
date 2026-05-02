@@ -50,7 +50,7 @@ def main():
     humanTeam = tb.getResult()
     teamsDirector = TeamsDirector()
     botTeams = []
-    botsFactory = createMenu(window, [("Standard", teamsDirector.makeStandardBots), ("Dice", teamsDirector.makeDiceBots)], "Choose the type of bots")
+    botsFactory = createMenu(window, [("Standard", teamsDirector.makeStandardBots), ("Dice", teamsDirector.makeDiceBots), ("Muscle", teamsDirector.makeMuscleTeam)], "Choose the type of bots")
     for color in ["blue", "red", "black"]:
         botTeams.append(botsFactory(color))
 

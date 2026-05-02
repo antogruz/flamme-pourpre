@@ -23,6 +23,15 @@ class TeamsDirector:
         tb.addRider(riderDirector.makeDiceSprinteur())
         return tb.getResult()
 
+    def makeMuscleTeam(self, color):
+        tb = TeamBuilder()
+        tb.buildColor(color)
+        tb.buildPropulsion(SimpleTeamPropulsion())
+        riderDirector = RidersDirector()
+        tb.addRider(riderDirector.makeMuscleRouleur())
+        tb.addRider(riderDirector.makeMuscleSprinteur())
+        return tb.getResult()
+
 class FirstOracle():
     def pick(self, *_):
         return 0

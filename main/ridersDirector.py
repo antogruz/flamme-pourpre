@@ -4,6 +4,7 @@ from decorators.riderDisplay import rouleurShade, sprinteurShade, grimpeurShade,
 from jeu.riderBuilder import RiderBuilder
 from jeu.riderMove import MovementRules
 from jeu.dicePropulsor import DicePropulsor
+from jeu.drawOnePropulsor import DrawOnePropulsor
 
 class RidersDirector:
     def __init__(self, builder = RiderBuilder()):
@@ -55,6 +56,19 @@ class RidersDirector:
         builder.buildPropulsor(DicePropulsor([2, 3, 4, 5, 6, 10]))
         return builder.getResult()
 
+    def makeMuscleRouleur(self):
+        builder = self.builder
+        builder.buildMovementRules(MovementRules())
+        builder.buildTexts(rouleurShade, "Rouleur")
+        builder.buildPropulsor(DrawOnePropulsor(rouleurDeck()))
+        return builder.getResult()
+
+    def makeMuscleSprinteur(self):
+        builder = self.builder
+        builder.buildMovementRules(MovementRules())
+        builder.buildTexts(sprinteurShade, "Sprinteur")
+        builder.buildPropulsor(DrawOnePropulsor(sprinteurDeck() + [5]))
+        return builder.getResult()
 
 def rouleurDeck():
     return threeTimes([3, 4, 5, 6, 7])
