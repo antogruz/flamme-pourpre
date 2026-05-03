@@ -9,12 +9,12 @@ from track import streamable, Track
 # TODO Séparer la responsabilité de donner la position avec celle de connaitre les règles de déplacement. Finalement, ce sont deux choses différentes. Les mouvements du rider peuvent dépendre des règles du jeu spécifiques à chaque coureur. Et pour les mettre en oeuvre, on a besoin d'une entité sur laquelle modifier la position
 
 class MovementRules():
-    def computeNewPosition(self, startingPosition, fuel, track, obstacles):
-        distance = self.adaptDistanceToRoadType(startingPosition[0], fuel, track)
+    def computeNewPosition(self, startingPosition, energy, track, obstacles):
+        distance = self.adaptDistanceToRoadType(startingPosition[0], energy, track)
         return self.findAvailableSlot(obstacles, startingPosition, distance, track)
 
-    def adaptDistanceToRoadType(self, square, fuel, track):
-        distance = int(fuel)
+    def adaptDistanceToRoadType(self, square, energy, track):
+        distance = int(energy)
         starting = track.getRoadType(square)
         if starting == "descent":
             distance = max(distance, 5)
@@ -55,8 +55,8 @@ class MovementRulesTest():
         self.position = (0, 0)
         self.movementRules = MovementRules()
 
-    def move(self, fuel):
-        return self.movementRules.computeNewPosition(self.position, fuel, self.race.track, self.race)
+    def move(self, energy):
+        return self.movementRules.computeNewPosition(self.position, energy, self.race.track, self.race)
 
     def testRiderMove(self):
         assert_equals((1, 0), self.move(1))
