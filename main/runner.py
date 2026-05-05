@@ -26,7 +26,7 @@ def noLog(ranking):
     pass
 
 class SpecialModes:
-    def __init__(self, bestClimber, intermediateSprint):
+    def __init__(self, bestClimber=None, intermediateSprint=None):
         self.bestClimber = bestClimber
         self.intermediateSprint = intermediateSprint
 
@@ -42,10 +42,12 @@ class Runner:
         for trackBuilder in tracksBuilders:
             track = trackBuilder(len(tour.teams))
             tour.newRace()
-            self.runRace(track, tour.teams, tour.checkNewArrivals, SpecialModes(True, True))
+            self.runRace(track, tour.teams, tour.checkNewArrivals,
+                         SpecialModes(bestClimber=tour.addClimberPoints,
+                                      intermediateSprint=tour.addPoints))
 
 
-    def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes(False, False)):
+    def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes()):
         teamsInRace = [TeamInRace(team) for team in teams]
         setRidersOnStart(teamsInRace)
         riders = [rider for team in teamsInRace for rider in team.ridersInRace]
@@ -61,9 +63,9 @@ class Runner:
         race.addObserver(eventAnimator)
         race.addObserver(roadAnimator)
         if modes.bestClimber:
-            createMiniRaces(tokensDecorators, race, createClimbsObservers(track), "red")
+            createMiniRaces(tokensDecorators, race, createClimbsObservers(track, modes.bestClimber), "red")
         if modes.intermediateSprint:
-            createMiniRaces(tokensDecorators, race, createSprintsObservers(track), "green")
+            createMiniRaces(tokensDecorators, race, createSprintsObservers(track, modes.intermediateSprint), "green")
 
         for d in raceDisplayers:
             d.update()
@@ -79,11 +81,11 @@ def createMiniRaces(tokensDecorators, race, observers, decoratorColor):
         race.addObserver(observer)
         tokensDecorators.addRoadDecorator(MiniRacePointsDisplay(observer, decoratorColor, tokensDecorators.trackDisplay))
 
-def createClimbsObservers(track):
-    return [ createClimberObserver(lastAscentSquare, points) for (points, lastAscentSquare) in getPointsForClimbs(track) ]
+def createClimbsObservers(track, awardClimberPoints):
+    return [ createClimberObserver(lastAscentSquare, points, awardClimberPoints) for (points, lastAscentSquare) in getPointsForClimbs(track) ]
 
-def createSprintsObservers(track):
-    return [ createSprintObserver(lastSquare, points) for (lastSquare, points) in getPointsForSprints(track) ]
+def createSprintsObservers(track, awardPoints):
+    return [ createSprintObserver(lastSquare, points, awardPoints) for (lastSquare, points) in getPointsForSprints(track) ]
 
 
 def createDisplays(track, layout, clock):

@@ -6,6 +6,3 @@ class Team:
         self.riders = riders
         self.propulsor = propulsor
         self.oracle = oracle
-
-    def score(self):
-        return sum([r.score for r in self.riders])

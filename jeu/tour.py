@@ -7,32 +7,41 @@ from timer import Timer
 class Tour:
     def __init__(self, teams):
         self.teams = teams
-        for t in teams:
-            for r in t.riders:
-                r.time = 0
-                r.score = 0
-                r.climberPoints = 0
+        self.times = {rider: 0 for rider in self.getRiders()}
+        self.points = {rider: 0 for rider in self.getRiders()}
+        self.climberPoints = {rider: 0 for rider in self.getRiders()}
         self.newRace()
 
-    def scores(self):
-        return [(team.color, team.score()) for team in sorted(self.teams, key = getScore, reverse = True)]
+    def getScores(self):
+        pointsForEachTeam = {team: 0 for team in self.teams}
+        for team in self.teams:
+            pointsForEachTeam[team] = sum([self.points[rider] for rider in team.riders])
+        return [(team.color, points) for team, points in sortDictByValue(pointsForEachTeam, reverse = True)]
 
     def ridersResults(self):
-        riders = sorted(self.getRiders(), key = getTime)
-        removeTime(riders[0].time, riders)
+        self.shiftTimesTowardZero()
+        riders = sortDictByValue(self.times)
         return [{
             'name': rider.name,
             'color': self.findTeam(rider).color,
-            'time': rider.time,
-            'score': rider.score,
-            'climberPoints': rider.climberPoints
-        } for rider in riders]
+            'time': self.times[rider],
+            'score': self.points[rider],
+            'climberPoints': self.climberPoints[rider]
+        } for rider, _ in riders]
 
     def checkNewArrivals(self, ranking):
         newArrivals = self.extractNew(ranking)
         for rider in newArrivals:
-            rider.earnScore(self.claimBounty())
+            self.addPoints(rider.personnage, self.claimBounty())
         self.timer.arrive(newArrivals)
+        for rider in newArrivals:
+            self.times[rider.personnage] += self.timer.getRaceTime(rider)
+
+    def addPoints(self, rider, points):
+        self.points[rider] += points
+
+    def addClimberPoints(self, rider, points):
+        self.climberPoints[rider] += points
 
     def findTeam(self, rider):
         for team in self.teams:
@@ -55,34 +64,28 @@ class Tour:
         self.alreadyArrived = []
         self.timer = Timer()
 
-    def times(self):
-        riders = sorted(self.getRiders(), key = getTime)
-        removeTime(riders[0].time, riders)
-        return [(self.findTeam(rider).color + " " + rider.name, rider.time) for rider in riders]
+    def getTimes(self):
+        self.shiftTimesTowardZero()
+        riders = sortDictByValue(self.times)
+        return [(self.findTeam(rider).color + " " + rider.name, time) for rider, time in riders]
 
-    def climberPoints(self):
-        riders = sorted(self.getRiders(), key = getClimberPoints, reverse = True)
-        return [(self.findTeam(rider).color + " " + rider.name, getClimberPoints(rider)) for rider in riders if getClimberPoints(rider) > 0]
+    def shiftTimesTowardZero(self):
+        bestTime = min(self.times.values())
+        for rider in self.times:
+            self.times[rider] -= bestTime
+
+    def getClimberPoints(self):
+        pointsForEachRider = sortDictByValue(self.climberPoints, reverse = True)
+        return [(self.findTeam(rider).color + " " + rider.name, points) for rider, points in pointsForEachRider if points > 0]
 
     def getRiders(self):
         return [rider for team in self.teams for rider in team.riders]
 
-def removeTime(delta, riders):
-    for r in riders:
-        r.time -= delta
-
+def sortDictByValue(dict, reverse = False):
+    return sorted(dict.items(), key = lambda x: x[1], reverse = reverse)
 
 def copy(l):
     return [e for e in l]
-
-def getScore(team):
-    return team.score()
-
-def getTime(rider):
-    return rider.time
-
-def getClimberPoints(rider):
-    return rider.climberPoints
 
 
 
@@ -94,40 +97,40 @@ class TourTest:
 
     def testScoreAtBeginning(self):
         tour = Tour([self.green])
-        assert_equals([("green", 0)], tour.scores())
+        assert_equals([("green", 0)], tour.getScores())
 
     def testMultipleTeamsScore(self):
         tour = Tour([self.green, self.blue])
-        assert_similars([("green", 0), ("blue", 0)], tour.scores())
+        assert_similars([("green", 0), ("blue", 0)], tour.getScores())
 
     def testFirstGets3Points(self):
         tour = Tour([self.green])
         tour.checkNewArrivals([self.a])
-        assert_similars([("green", 3)], tour.scores())
+        assert_similars([("green", 3)], tour.getScores())
 
     def testScoresAfterARace(self):
         tour = Tour([self.green, self.blue])
         tour.checkNewArrivals([self.a, self.b, self.c, self.d])
-        assert_similars([("green", 5), ("blue", 1)], tour.scores())
+        assert_similars([("green", 5), ("blue", 1)], tour.getScores())
 
     def testArrivalsInDifferentTurns(self):
         tour = Tour([self.green, self.blue])
         tour.checkNewArrivals([self.a])
         tour.checkNewArrivals([self.a, self.c, self.b])
         tour.checkNewArrivals([self.a, self.c, self.b, self.d])
-        assert_similars([("green", 4), ("blue", 2)], tour.scores())
+        assert_similars([("green", 4), ("blue", 2)], tour.getScores())
 
     def testScoresInDescendingOrder(self):
         tour = Tour([self.green, self.blue])
         tour.checkNewArrivals([self.c, self.d, self.a, self.b])
-        assert_equals([("blue", 5), ("green", 1)], tour.scores())
+        assert_equals([("blue", 5), ("green", 1)], tour.getScores())
 
     def testTwoRaces(self):
         tour = Tour([self.green])
         tour.checkNewArrivals([self.a])
         tour.newRace()
         tour.checkNewArrivals([self.a])
-        assert_equals([("green", 6)], tour.scores())
+        assert_equals([("green", 6)], tour.getScores())
 
     def testTimes(self):
         tour = Tour([self.green, self.blue])
@@ -136,7 +139,7 @@ class TourTest:
         tour.checkNewArrivals([self.a])
         tour.checkNewArrivals([self.c, self.d])
         tour.checkNewArrivals([self.b])
-        assert_equals([("green a", 0), ("blue c", 50), ("blue d", 60), ("green b", 100)], tour.times())
+        assert_equals([("green a", 0), ("blue c", 50), ("blue d", 60), ("green b", 100)], tour.getTimes())
 
     def testTwoRacesTimes(self):
         tour = Tour([self.green, self.blue])
@@ -145,7 +148,7 @@ class TourTest:
         tour.newRace()
         tour.checkNewArrivals([self.b])
         tour.checkNewArrivals([self.a, self.c, self.d])
-        assert_similars([("green a", 0), ("green b", 0), ("blue c", 60), ("blue d", 60)], tour.times())
+        assert_similars([("green a", 0), ("green b", 0), ("blue c", 60), ("blue d", 60)], tour.getTimes())
 
     def testArrivalsIsCopied(self):
         tour = Tour([self.green])
@@ -153,8 +156,12 @@ class TourTest:
         tour.checkNewArrivals(arrivals)
         arrivals.append(self.b)
         tour.checkNewArrivals(arrivals)
-        assert_equals([("green", 5)], tour.scores())
+        assert_equals([("green", 5)], tour.getScores())
 
+    def testRidersResults(self):
+        tour = Tour([self.green])
+        tour.checkNewArrivals([self.a])
+        assert_equals(2, len(tour.ridersResults()))
 
 class Team:
     def __init__(self, color, riders = []):
@@ -170,16 +177,10 @@ class Rider:
     def __init__(self, name, position = 0):
         self.name = name
         self.pos = position
-        self.score = 0
+        self.personnage = self
 
     def position(self):
         return self.pos, 0
-
-    def earnScore(self, score):
-        self.score += score
-
-    def addTime(self, time):
-        self.time += time
 
 if __name__ == "__main__":
     runTests(TourTest())

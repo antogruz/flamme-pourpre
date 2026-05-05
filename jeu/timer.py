@@ -9,6 +9,7 @@ class Timer:
     def __init__(self):
         self.turnsAfterFirst = 0
         self.best = None
+        self.raceTimes = {}
 
     def arrive(self, riders):
         if not riders:
@@ -23,9 +24,12 @@ class Timer:
             timeDelta = 60 * self.turnsAfterFirst
             timeDelta += secondsEarned(self.best)
             timeDelta -= secondsEarned(r)
-            r.addTime(timeDelta)
+            self.raceTimes[r] = timeDelta
 
         self.turnsAfterFirst += 1
+
+    def getRaceTime(self, rider):
+        return self.raceTimes[rider]
 
 def secondsEarned(rider):
     return 10 * rider.position()[0]
@@ -37,42 +41,32 @@ class TimeTest:
     def testOneArrival(self):
         rider = createRider()
         self.timer.arrive([rider])
-        assert_equals(0, rider.personnage.time)
+        assert_equals(0, self.timer.getRaceTime(rider))
 
     def testTwoArrivals(self):
         first, second = createRider(), createRider()
         self.timer.arrive([first])
         self.timer.arrive([second])
-        assert_equals(60, second.personnage.time)
+        assert_equals(60, self.timer.getRaceTime(second))
 
     def testNoArrival(self):
         rider = createRider()
         self.timer.arrive([])
         self.timer.arrive([rider])
-        assert_equals(0, rider.personnage.time)
+        assert_equals(0, self.timer.getRaceTime(rider))
 
     def testTwoInSameTurn(self):
         first = createRider(3)
         second = createRider(1)
         self.timer.arrive([first, second])
-        assert_equals(20, second.personnage.time)
-
-    def testSecondRace(self):
-        first = createRider(60)
-        first.personnage.time = 90
-        second = createRider(62)
-        second.personnage.time = 0
-        self.timer.arrive([first])
-        self.timer.arrive([second])
-        assert_equals(90, first.personnage.time)
-        assert_equals(40, second.personnage.time)
+        assert_equals(20, self.timer.getRaceTime(second))
 
     def testSeveralTurnsBetweenArrivals(self):
         first, second = createRider(), createRider()
         self.timer.arrive([first])
         self.timer.arrive([])
         self.timer.arrive([second])
-        assert_equals(120, second.personnage.time)
+        assert_equals(120, self.timer.getRaceTime(second))
 
 from riderInRace import RiderInRace
 from riderBuilder import RiderBuilder

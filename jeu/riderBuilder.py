@@ -46,7 +46,6 @@ class RiderBuilder:
         rider = Personnage(self.name, self.movementRules, self.propulsor)
         rider.shade = self.shade
         rider.color = self.color
-        rider.time = 0
         return rider
 
     

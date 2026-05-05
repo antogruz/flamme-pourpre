@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 
 from miniraceObserver import MiniraceObserver
-def createSprintObserver(sprintLastSpot, points):
-    return MiniraceObserver(sprintLastSpot, SprintReward(points))
+def createSprintObserver(sprintLastSpot, points, awardPoints):
+    return MiniraceObserver(sprintLastSpot, SprintReward(points, awardPoints))
 
 class SprintReward:
-    def __init__(self, points):
+    def __init__(self, points, awardPoints):
         self.points = points
+        self.awardPoints = awardPoints
 
     def finished(self):
         return not self.points
 
     def reward(self, rider):
-        rider.score += self.points.pop(0)
+        self.awardPoints(rider, self.points.pop(0))
 
 
 from track import Track

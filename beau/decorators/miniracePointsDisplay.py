@@ -26,8 +26,9 @@ class MiniRaceDisplayTester(VisualTester):
         factory = BoxFactory(self.frame)
         trackDisplay = TrackDisplay(factory, track)
         rd = TokensDecorators(self.frame, trackDisplay)
-        rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(15, [1]), "green", trackDisplay))
-        rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(25, [5]), "red", trackDisplay))
+        noop = lambda *_: None
+        rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(15, [1], noop), "green", trackDisplay))
+        rd.addRoadDecorator(MiniRacePointsDisplay(createClimberObserver(25, [5], noop), "red", trackDisplay))
         rd.update()
 
 

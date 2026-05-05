@@ -34,12 +34,6 @@ class RiderInRace():
     def setArrived(self):
         self.arrived = True
 
-    def addTime(self, time):
-        self.personnage.time += time
-
-    def earnScore(self, score):
-        self.personnage.score += score
-
 from unittests import *
 from riderBuilder import RiderBuilder
 
