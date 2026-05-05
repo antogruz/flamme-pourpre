@@ -8,7 +8,7 @@ from runner import Runner
 from jeu.tour import Tour
 from jeu.teamBuilder import TeamBuilder
 from ridersDirector import RidersDirector
-from riderBuilderWithDisplay import RiderBuilderWithDisplay
+from riderBuilderWithSpecialDisplay import RiderBuilderWithSpecialDisplay
 from displayRegistry import DisplayRegistry
 from teamsDirector import TeamsDirector
 from jeu.propulsion import SequentialPropulsion
@@ -34,7 +34,7 @@ def main():
     for i in range(ridersCount):
         riderType = createSimpleMenu(window, ["Rouleur", "Sprinteur", "Grimpeur", "Opportunistic"], "Add a rider to your team")
 
-        director = RidersDirector(RiderBuilderWithDisplay(displayRegistry, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i]))
+        director = RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i]))
 
         if riderType == "Rouleur":
             rider = director.makeRouleur(oracle)
