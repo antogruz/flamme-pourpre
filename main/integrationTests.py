@@ -44,7 +44,6 @@ def twoRacesOpportunistic(window):
     oracle = FirstOracle()
     for i, color in enumerate(colors):
         tb = TeamBuilder()
-        tb.buildColor(color)
         tb.buildPropulsion(SimpleTeamPropulsion())
         riderDirector = RidersDirector(
             RiderBuilderWithSpecialDisplay(displayRegistry, appearances, layout.cards[i], layout.specials[i])

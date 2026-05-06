@@ -112,7 +112,6 @@ class RaceTest():
         tb = TeamBuilder()
         for i in range(ridersCount):
             tb.addRider(createRider())
-        tb.buildColor("green")
         tb.buildPropulsion(SimpleTeamPropulsion())
         self.team = TeamInRace(tb.getResult())
 

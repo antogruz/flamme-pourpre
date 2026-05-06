@@ -5,12 +5,8 @@ from team import Team
 class TeamBuilder:
     def __init__(self):
         self.riders = []
-        self.color = None
         self.propulsion = None
         self.oracle = None
-
-    def buildColor(self, color):
-        self.color = color
 
     def addRider(self, rider):
         self.riders.append(rider)
@@ -22,4 +18,4 @@ class TeamBuilder:
         self.oracle = oracle
 
     def getResult(self):
-        return Team(self.color, self.riders, self.propulsion, self.oracle)
+        return Team(self.riders, self.propulsion, self.oracle)

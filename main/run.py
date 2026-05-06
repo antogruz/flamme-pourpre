@@ -27,8 +27,8 @@ def main():
     playerLayout = PlayerLayout(newWindow(root), ridersCount)
     appearances = Appearances()
     oracle = createPlayerOracle(root, playerLayout.choices, appearances)
+    teamColor = "green"
     tb = TeamBuilder()
-    tb.buildColor("green")
     tb.buildOracle(oracle)
     tb.buildPropulsion(SequentialPropulsion(oracle))
 
@@ -39,13 +39,13 @@ def main():
         director = RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, appearances, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i]))
 
         if riderType == "Rouleur":
-            rider = director.makeRouleur(oracle, tb.color)
+            rider = director.makeRouleur(oracle, teamColor)
         elif riderType == "Sprinteur":
-            rider = director.makeSprinteur(oracle, tb.color)
+            rider = director.makeSprinteur(oracle, teamColor)
         elif riderType == "Grimpeur":
-            rider = director.makeGrimpeur(oracle, tb.color)
+            rider = director.makeGrimpeur(oracle, teamColor)
         elif riderType == "Opportunistic":
-            rider = director.makeOpportunistic(oracle, tb.color)
+            rider = director.makeOpportunistic(oracle, teamColor)
 
         tb.addRider(rider)
 
