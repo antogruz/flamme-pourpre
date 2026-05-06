@@ -87,7 +87,7 @@ class TeamInRace:
         if not self.ridersToPlace:
             return False
         self.ridersInRace.append(RiderInRace(self.ridersToPlace.pop(0), square, lane))
-        return True
+        return self.ridersInRace[-1]
 
     def pickNextMoves(self):
         self.team.propulsor.pickNextMoves(self.getActiveRiders())
@@ -145,31 +145,29 @@ class RaceTest():
 
     def testArrival(self):
         self.createTeam(2)
-        self.team.placeNextRider(4, 0)
+        champion = self.team.placeNextRider(4, 0)
         self.team.placeNextRider(0, 0)
-        firstPlaced = self.team.ridersInRace[0].personnage
         race = self.createRace()
         race.newTurn()
-        assert_similars([firstPlaced], [r.personnage for r in race.ranking()])
+        assert_similars([champion], race.ranking())
 
     def testDontPlayForArrivedRiders(self):
         self.createTeam(1)
-        self.team.placeNextRider(5, 0)
+        rider = self.team.placeNextRider(5, 0)
         race = self.createRace()
         race.newTurn()
-        assert_equals((5, 0), self.team.ridersInRace[0].position())
+        assert_equals((5, 0), rider.position())
 
     def testRanking(self):
         self.createTeam(4)
-        self.team.placeNextRider(5, 0)
-        self.team.placeNextRider(4, 0)
-        self.team.placeNextRider(3, 0)
-        self.team.placeNextRider(0, 0)
-        expected = [r.personnage for r in self.team.ridersInRace]
+        a = self.team.placeNextRider(5, 0)
+        b = self.team.placeNextRider(4, 0)
+        c = self.team.placeNextRider(3, 0)
+        d = self.team.placeNextRider(0, 0)
         race = self.createRace()
         while not race.isOver():
             race.newTurn()
-        assert_equals(expected, [r.personnage for r in race.ranking()])
+        assert_equals([a, b, c, d], race.ranking())
 
 from riderBuilder import RiderBuilder
 def createRider():
