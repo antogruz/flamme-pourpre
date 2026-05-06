@@ -111,7 +111,7 @@ class RaceTest():
     def createTeam(self, ridersCount):
         tb = TeamBuilder()
         for i in range(ridersCount):
-            tb.addRider(createRider(str(i)))
+            tb.addRider(createRider())
         tb.buildColor("green")
         tb.buildPropulsion(SimpleTeamPropulsion())
         self.team = TeamInRace(tb.getResult())
@@ -148,9 +148,10 @@ class RaceTest():
         self.createTeam(2)
         self.team.placeNextRider(4, 0)
         self.team.placeNextRider(0, 0)
+        firstPlaced = self.team.ridersInRace[0].personnage
         race = self.createRace()
         race.newTurn()
-        assert_similars(["0"], [r.personnage.name for r in race.ranking()])
+        assert_similars([firstPlaced], [r.personnage for r in race.ranking()])
 
     def testDontPlayForArrivedRiders(self):
         self.createTeam(1)
@@ -165,15 +166,15 @@ class RaceTest():
         self.team.placeNextRider(4, 0)
         self.team.placeNextRider(3, 0)
         self.team.placeNextRider(0, 0)
+        expected = [r.personnage for r in self.team.ridersInRace]
         race = self.createRace()
         while not race.isOver():
             race.newTurn()
-        assert_equals(["0", "1", "2", "3"], [r.personnage.name for r in race.ranking()])
+        assert_equals(expected, [r.personnage for r in race.ranking()])
 
 from riderBuilder import RiderBuilder
-def createRider(name):
+def createRider():
     rb = RiderBuilder()
-    rb.buildTexts("o/o", name)
     rb.buildPropulsor(SimplePropulsor(2))
     rb.buildMovementRules(MovementRules())
     return rb.getResult()

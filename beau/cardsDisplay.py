@@ -6,15 +6,16 @@ from cards import Cards
 from beautifulCard import *
 
 class CardsDisplay:
-    def __init__(self, frame, rider):
+    def __init__(self, frame, rider, appearances):
         self.frame = frame
         subFrames = Frames(frame)
         riderFrame = subFrames.new()
         self.deckFrame, self.discardFrame, self.playedFrame = subFrames.newLine(3)
         self.fullDiscardFrame = subFrames.new()
         self.cards = rider.propulsor.cards
-        self.color = rider.color
-        displayRider(riderFrame, rider)
+        self.appearance = appearances.of(rider)
+        self.color = self.appearance.color
+        displayRider(riderFrame, self.appearance)
         self.prepareWidgets()
 
     def prepareWidgets(self):
@@ -43,8 +44,8 @@ class CardsDisplay:
 def getValue(niceCard):
     return int(niceCard.text)
 
-def displayRider(window, rider):
-    tk.Label(window, text = rider.name + " " + rider.shade, fg = rider.color).pack()
+def displayRider(window, appearance):
+    tk.Label(window, text = appearance.name + " " + appearance.shade, fg = appearance.color).pack()
 
 def toggleDiscard(cardLabels):
     for label in cardLabels:
@@ -96,21 +97,28 @@ def resize(label, n):
     label.config(width = n, height = n)
 
 from visualtests import VisualTester, runVisualTestsInWindow
+from appearances import Appearances
+from decorators.riderDisplay import rouleurShade
 class CardsTester(VisualTester):
+    def __before__(self):
+        VisualTester.__before__(self)
+        self.appearances = Appearances()
+
+    def makeRider(self):
+        rider = Rider()
+        self.appearances.register(rider, "Rouleur", rouleurShade, "green")
+        return rider
+
     def testEmpty(self):
-        display = CardsDisplay(self.frame, Rider())
+        display = CardsDisplay(self.frame, self.makeRider(), self.appearances)
         display.displayCards(0, [], [])
 
     def testAfterFirstRound(self):
-        display = CardsDisplay(self.frame, Rider())
+        display = CardsDisplay(self.frame, self.makeRider(), self.appearances)
         display.displayCards(7, [2, 4, 5, "7magenta"], [9, 3, 2, 3, "3goldenrod", 5, 3, 5])
 
-from decorators.riderDisplay import rouleurShade
 class Rider:
     def __init__(self):
-        self.shade = rouleurShade
-        self.name = "Rouleur"
-        self.color = "green"
         self.propulsor = Propulsor()
 
 class Propulsor:

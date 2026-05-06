@@ -9,17 +9,10 @@ from opportunistic import createOpportunisticCards
 
 class RiderBuilder:
     def __init__(self):
-        self.shade = None
-        self.name = None
         self.oracle = None
         self.cards = None
         self.propulsor = None
         self.movementRules = None
-        self.color = None
-
-    def buildTexts(self, shade, name):
-        self.shade = shade
-        self.name = name
 
     def buildOracle(self, oracle):
         self.oracle = oracle
@@ -43,9 +36,4 @@ class RiderBuilder:
         self.movementRules = movementRules
 
     def getResult(self):
-        rider = Personnage(self.name, self.movementRules, self.propulsor)
-        rider.shade = self.shade
-        rider.color = self.color
-        return rider
-
-    
+        return Personnage(self.movementRules, self.propulsor)

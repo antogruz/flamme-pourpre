@@ -22,6 +22,4 @@ class TeamBuilder:
         self.oracle = oracle
 
     def getResult(self):
-        for rider in self.riders:
-            rider.color = self.color
         return Team(self.color, self.riders, self.propulsion, self.oracle)

@@ -5,11 +5,12 @@ from race import RaceObserver
 from path import findPath
 
 class RoadAnimator(RaceObserver):
-    def __init__(self, frame, trackDisplay, track, clock = 0.3):
+    def __init__(self, frame, trackDisplay, track, appearances, clock = 0.3):
         self.frame = frame
         self.display = trackDisplay
         self.clock = clock
         self.track = track
+        self.appearances = appearances
 
     def onRiderMove(self, rider, start, end, obstacles):
         path = findPath(self.track, obstacles, start, end)
@@ -39,8 +40,9 @@ class RoadAnimator(RaceObserver):
         pass
 
     def move(self, rider, start, end):
+        appearance = self.appearances.of(rider)
         self.display.clear(start[0], start[1])
-        self.display.setContent(end[0], end[1], rider.shade, rider.color)
+        self.display.setContent(end[0], end[1], appearance.shade, appearance.color)
 
 
 
@@ -73,6 +75,7 @@ from decorators.riderDisplay import rouleurShade, sprinteurShade, RidersDisplay
 from tokensDecorators import TokensDecorators
 from trackDisplay import TrackDisplay
 from eventDisplay import EventDisplay
+from appearances import Appearances
 
 class AnimateMovesTester(VisualTester):
     def __before__(self):
@@ -82,16 +85,22 @@ class AnimateMovesTester(VisualTester):
         factory = BoxFactory(frames[0])
         self.trackDisplay = TrackDisplay(factory, track)
         self.tokensDecorators = TokensDecorators(frames[0], self.trackDisplay)
-        eventDisplay = EventDisplay(frames[1])
-        self.animators = [EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay, track)]
+        self.appearances = Appearances()
+        eventDisplay = EventDisplay(frames[1], self.appearances)
+        self.animators = [EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay, track, self.appearances)]
 
     def displayRiders(self, riders):
-        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay))
+        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay, self.appearances))
         self.tokensDecorators.update()
 
+    def makeRider(self, shade, color, pos=(0, 0)):
+        rider = Rider(pos)
+        self.appearances.register(rider, "Coureur", shade, color)
+        return rider
+
     def testMove(self):
-        rouleur = Rider(rouleurShade, "green")
-        sprinteur = Rider(sprinteurShade, "red", (1, 0))
+        rouleur = self.makeRider(rouleurShade, "green")
+        sprinteur = self.makeRider(sprinteurShade, "red", (1, 0))
         sprinteur.logCardPlayed = "f"
         rouleur.logCardPlayed = 3
         self.displayRiders([rouleur, sprinteur])
@@ -109,15 +118,21 @@ class AnimateRoadTester(VisualTester):
         factory = BoxFactory(frame)
         self.trackDisplay = TrackDisplay(factory, track)
         self.tokensDecorators = TokensDecorators(frame, self.trackDisplay)
-        self.roadAnimator = RoadAnimator(frame, self.trackDisplay, track)
+        self.appearances = Appearances()
+        self.roadAnimator = RoadAnimator(frame, self.trackDisplay, track, self.appearances)
 
     def displayRiders(self, riders):
-        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay))
+        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay, self.appearances))
         self.tokensDecorators.update()
 
+    def makeRider(self, shade, color, pos=(0, 0)):
+        rider = Rider(pos)
+        self.appearances.register(rider, "Coureur", shade, color)
+        return rider
+
     def testGroup(self):
-        a = Rider(rouleurShade, "green", (0, 0))
-        b = Rider(rouleurShade, "blue", (2, 0))
+        a = self.makeRider(rouleurShade, "green", (0, 0))
+        b = self.makeRider(rouleurShade, "blue", (2, 0))
         self.displayRiders([a, b])
         a.pos = (1, 0)
         self.roadAnimator.onSlipstream([a])
@@ -126,18 +141,15 @@ class AnimateRoadTester(VisualTester):
         self.roadAnimator.onSlipstream([b, a])
 
     def testExhaust(self):
-        a = Rider(rouleurShade, "black")
-        b = Rider(rouleurShade, "blue", (0, 1))
+        a = self.makeRider(rouleurShade, "black")
+        b = self.makeRider(rouleurShade, "blue", (0, 1))
         self.displayRiders([a, b])
         self.roadAnimator.onExhaustion([a, b])
 
 
 class Rider:
-    def __init__(self, shade, color, position = (0, 0)):
-        self.shade = shade
-        self.color = color
+    def __init__(self, position):
         self.pos = position
-        self.name = "Coureur"
         self.arrived = False
 
     def position(self):

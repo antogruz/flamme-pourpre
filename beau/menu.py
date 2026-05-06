@@ -18,9 +18,13 @@ def createMenu(frame, choices, title = ""):
 from beautifulCard import createBeautifulCard
 from functools import partial
 class UserChoice():
-    def __init__(self, frame):
+    def __init__(self, frame, appearances = None):
         self.frame = frame
+        self.appearances = appearances
         self.answer = tk.IntVar()
+
+    def pickRider(self, riders, instruction = ""):
+        return self.pick([self.appearances.of(r).name for r in riders], instruction)
 
     def pick(self, choices, title = ""):
         def setChoice(n):

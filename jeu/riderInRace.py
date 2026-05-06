@@ -5,9 +5,6 @@ from track import streamable
 class RiderInRace():
     def __init__(self, rider, square, lane):
         self.personnage = rider
-        self.name = rider.name
-        self.shade = rider.shade
-        self.color = rider.color
         self.square = square
         self.lane = lane
         self.arrived = False

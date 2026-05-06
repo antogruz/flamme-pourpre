@@ -1,2 +1,4 @@
 - Afficher dans la case de chaque vélo la carte jouée
 - Pouvoir jouer un grand tour avec 2 personnages qui ont des paliers de talents
+- Gérer les ridersDirector qui builds plusieurs riders
+- Simplifier les tests de race (placerider renvoie le rider)

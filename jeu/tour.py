@@ -22,8 +22,7 @@ class Tour:
         self.shiftTimesTowardZero()
         riders = sortDictByValue(self.times)
         return [{
-            'name': rider.name,
-            'color': self.findTeam(rider).color,
+            'rider': rider,
             'time': self.times[rider],
             'score': self.points[rider],
             'climberPoints': self.climberPoints[rider]
@@ -66,8 +65,7 @@ class Tour:
 
     def getTimes(self):
         self.shiftTimesTowardZero()
-        riders = sortDictByValue(self.times)
-        return [(self.findTeam(rider).color + " " + rider.name, time) for rider, time in riders]
+        return sortDictByValue(self.times)
 
     def shiftTimesTowardZero(self):
         bestTime = min(self.times.values())
@@ -75,8 +73,7 @@ class Tour:
             self.times[rider] -= bestTime
 
     def getClimberPoints(self):
-        pointsForEachRider = sortDictByValue(self.climberPoints, reverse = True)
-        return [(self.findTeam(rider).color + " " + rider.name, points) for rider, points in pointsForEachRider if points > 0]
+        return [(rider, points) for rider, points in sortDictByValue(self.climberPoints, reverse = True) if points > 0]
 
     def getRiders(self):
         return [rider for team in self.teams for rider in team.riders]
@@ -139,7 +136,7 @@ class TourTest:
         tour.checkNewArrivals([self.a])
         tour.checkNewArrivals([self.c, self.d])
         tour.checkNewArrivals([self.b])
-        assert_equals([("green a", 0), ("blue c", 50), ("blue d", 60), ("green b", 100)], tour.getTimes())
+        assert_equals([(self.a, 0), (self.c, 50), (self.d, 60), (self.b, 100)], tour.getTimes())
 
     def testTwoRacesTimes(self):
         tour = Tour([self.green, self.blue])
@@ -148,7 +145,7 @@ class TourTest:
         tour.newRace()
         tour.checkNewArrivals([self.b])
         tour.checkNewArrivals([self.a, self.c, self.d])
-        assert_similars([("green a", 0), ("green b", 0), ("blue c", 60), ("blue d", 60)], tour.getTimes())
+        assert_similars([(self.a, 0), (self.b, 0), (self.c, 60), (self.d, 60)], tour.getTimes())
 
     def testArrivalsIsCopied(self):
         tour = Tour([self.green])

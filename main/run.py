@@ -12,6 +12,7 @@ from riderBuilderWithSpecialDisplay import RiderBuilderWithSpecialDisplay
 from displayRegistry import DisplayRegistry
 from teamsDirector import TeamsDirector
 from jeu.propulsion import SequentialPropulsion
+from beau.appearances import Appearances
 from functools import partial
 
 def main():
@@ -24,7 +25,8 @@ def main():
     racesCount = createSimpleMenu(window, range(1, 6), "How many races to play?")
     ridersCount = createSimpleMenu(window, [1, 2, 3, 4], "How many riders in your team?")
     playerLayout = PlayerLayout(newWindow(root), ridersCount)
-    oracle = createPlayerOracle(root, playerLayout.choices)
+    appearances = Appearances()
+    oracle = createPlayerOracle(root, playerLayout.choices, appearances)
     tb = TeamBuilder()
     tb.buildColor("green")
     tb.buildOracle(oracle)
@@ -34,21 +36,21 @@ def main():
     for i in range(ridersCount):
         riderType = createSimpleMenu(window, ["Rouleur", "Sprinteur", "Grimpeur", "Opportunistic"], "Add a rider to your team")
 
-        director = RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i]))
+        director = RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, appearances, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i]))
 
         if riderType == "Rouleur":
-            rider = director.makeRouleur(oracle)
+            rider = director.makeRouleur(oracle, tb.color)
         elif riderType == "Sprinteur":
-            rider = director.makeSprinteur(oracle)
+            rider = director.makeSprinteur(oracle, tb.color)
         elif riderType == "Grimpeur":
-            rider = director.makeGrimpeur(oracle)
+            rider = director.makeGrimpeur(oracle, tb.color)
         elif riderType == "Opportunistic":
-            rider = director.makeOpportunistic(oracle)
+            rider = director.makeOpportunistic(oracle, tb.color)
 
         tb.addRider(rider)
 
     humanTeam = tb.getResult()
-    teamsDirector = TeamsDirector()
+    teamsDirector = TeamsDirector(appearances)
     botTeams = []
     botsFactory = createMenu(window, [("Standard", teamsDirector.makeStandardBots), ("Dice", teamsDirector.makeDiceBots), ("Muscle", teamsDirector.makeMuscleTeam)], "Choose the type of bots")
     for color in ["blue", "red", "black"]:
@@ -59,7 +61,7 @@ def main():
 
     allDisplays = displayRegistry.getAll()
     runner = Runner(window, clock, allDisplays)
-    runner.runTour(tour, tracks)
+    runner.runTour(tour, tracks, appearances)
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
@@ -74,8 +76,8 @@ class PlayerLayout:
         self.ridersCards = frames.newLine(ridersCount)
         self.ridersSpecialFrames = frames.newLine(ridersCount)
 
-def createPlayerOracle(root, window):
-    oracle = UserChoice(window)
+def createPlayerOracle(root, window, appearances):
+    oracle = UserChoice(window, appearances)
     def onExit(oracle):
         oracle.dontWait()
         root.destroy()

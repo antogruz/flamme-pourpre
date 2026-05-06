@@ -10,63 +10,63 @@ class RidersDirector:
     def __init__(self, builder = RiderBuilder()):
         self.builder = builder
 
-    def makeRouleur(self, oracle):
+    def makeRouleur(self, oracle, color):
         builder = self.builder
         builder.buildMovementRules(MovementRules())
-        builder.buildTexts(rouleurShade, "Rouleur")
+        builder.buildAppearance("Rouleur", rouleurShade, color)
         builder.buildOracle(oracle)
         builder.buildDeck(rouleurDeck())
         return builder.getResult()
 
-    def makeSprinteur(self, oracle):
+    def makeSprinteur(self, oracle, color):
         builder = self.builder
         builder.buildMovementRules(MovementRules())
-        builder.buildTexts(sprinteurShade, "Sprinteur")
+        builder.buildAppearance("Sprinteur", sprinteurShade, color)
         builder.buildOracle(oracle)
         builder.buildDeck(sprinteurDeck())
         return builder.getResult()
 
-    def makeGrimpeur(self, oracle):
+    def makeGrimpeur(self, oracle, color):
         builder = self.builder
         builder.buildMovementRules(MovementRules())
-        builder.buildTexts(grimpeurShade, "Grimpeur")
+        builder.buildAppearance("Grimpeur", grimpeurShade, color)
         builder.buildOracle(oracle)
         builder.buildDeck(grimpeurDeck())
         return builder.getResult()
 
-    def makeOpportunistic(self, oracle, sets = ["goldenrod", "magenta"]):
+    def makeOpportunistic(self, oracle, color, sets = ["goldenrod", "magenta"]):
         builder = self.builder
         builder.buildMovementRules(MovementRules())
-        builder.buildTexts(opportunisticShade, "Opportunistic")
+        builder.buildAppearance("Opportunistic", opportunisticShade, color)
         builder.buildOracle(oracle)
         builder.buildOpportunisticDeck([2, 3, 4, 5, 9], sets)
         return builder.getResult()
 
-    def makeDiceRider(self):
+    def makeDiceRider(self, color):
         builder = self.builder
         builder.buildMovementRules(MovementRules())
-        builder.buildTexts(rouleurShade, "Rouleur")
+        builder.buildAppearance("Rouleur", rouleurShade, color)
         builder.buildPropulsor(DicePropulsor([3, 4, 5, 6, 7, 8]))
         return builder.getResult()
 
-    def makeDiceSprinteur(self):
+    def makeDiceSprinteur(self, color):
         builder = self.builder
         builder.buildMovementRules(MovementRules())
-        builder.buildTexts(sprinteurShade, "Sprinteur")
+        builder.buildAppearance("Sprinteur", sprinteurShade, color)
         builder.buildPropulsor(DicePropulsor([2, 3, 4, 5, 6, 10]))
         return builder.getResult()
 
-    def makeMuscleRouleur(self):
+    def makeMuscleRouleur(self, color):
         builder = self.builder
         builder.buildMovementRules(MovementRules())
-        builder.buildTexts(rouleurShade, "Rouleur")
+        builder.buildAppearance("Rouleur", rouleurShade, color)
         builder.buildPropulsor(DrawOnePropulsor(rouleurDeck()))
         return builder.getResult()
 
-    def makeMuscleSprinteur(self):
+    def makeMuscleSprinteur(self, color):
         builder = self.builder
         builder.buildMovementRules(MovementRules())
-        builder.buildTexts(sprinteurShade, "Sprinteur")
+        builder.buildAppearance("Sprinteur", sprinteurShade, color)
         builder.buildPropulsor(DrawOnePropulsor(sprinteurDeck() + [5]))
         return builder.getResult()
 

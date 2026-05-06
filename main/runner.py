@@ -36,18 +36,19 @@ class Runner:
         self.clock = clock
         self.displayers = displayers
 
-    def runTour(self, tour, tracksBuilders):
-        self.displayers.append(ResultsWindow(self.window, tour))
+    def runTour(self, tour, tracksBuilders, appearances):
+        self.displayers.append(ResultsWindow(self.window, tour, appearances))
 
         for trackBuilder in tracksBuilders:
             track = trackBuilder(len(tour.teams))
             tour.newRace()
             self.runRace(track, tour.teams, tour.checkNewArrivals,
                          SpecialModes(bestClimber=tour.addClimberPoints,
-                                      intermediateSprint=tour.addPoints))
+                                      intermediateSprint=tour.addPoints),
+                         appearances)
 
 
-    def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes()):
+    def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes(), appearances = None):
         teamsInRace = [TeamInRace(team) for team in teams]
         setRidersOnStart(teamsInRace)
         riders = [rider for team in teamsInRace for rider in team.ridersInRace]
@@ -55,11 +56,11 @@ class Runner:
             rider.personnage.propulsor.newRace()
 
         layout = RaceLayout(self.window)
-        tokensDecorators, eventAnimator, roadAnimator = createDisplays(track, layout, self.clock)
+        tokensDecorators, eventAnimator, roadAnimator = createDisplays(track, layout, self.clock, appearances)
         raceDisplayers = self.displayers + [tokensDecorators]
-        tokensDecorators.addRoadDecorator(RidersDisplay(riders, tokensDecorators.trackDisplay))
+        tokensDecorators.addRoadDecorator(RidersDisplay(riders, tokensDecorators.trackDisplay, appearances))
         race = Race(track, teamsInRace)
-        tokensDecorators.addRoadDecorator(RankingDisplay(race, tokensDecorators.trackDisplay))
+        tokensDecorators.addRoadDecorator(RankingDisplay(race, tokensDecorators.trackDisplay, appearances))
         race.addObserver(eventAnimator)
         race.addObserver(roadAnimator)
         if modes.bestClimber:
@@ -88,12 +89,12 @@ def createSprintsObservers(track, awardPoints):
     return [ createSprintObserver(lastSquare, points, awardPoints) for (lastSquare, points) in getPointsForSprints(track) ]
 
 
-def createDisplays(track, layout, clock):
+def createDisplays(track, layout, clock, appearances):
     factory = CanvasBoxFactory(layout.getTrackFrame())
     trackDisplay = TrackDisplay(factory, track)
-    eventDisplay = EventDisplay(layout.getEventFrame())
+    eventDisplay = EventDisplay(layout.getEventFrame(), appearances)
     eventAnimator = EventAnimator(eventDisplay)
-    roadAnimator = RoadAnimator(layout.getTrackFrame(), trackDisplay, track, clock)
+    roadAnimator = RoadAnimator(layout.getTrackFrame(), trackDisplay, track, appearances, clock)
     tokensDecorators = TokensDecorators(layout.getTrackFrame(), trackDisplay)
     return tokensDecorators, eventAnimator, roadAnimator
 

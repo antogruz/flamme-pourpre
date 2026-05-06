@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 
-from jeu.riderBuilder import RiderBuilder
+from riderBuilderWithAppearance import RiderBuilderWithAppearance
 from beau.cardsDisplay import CardsDisplay
 from beau.opportunisticDisplay import OpportunisticDisplay
 
 
-class RiderBuilderWithSpecialDisplay(RiderBuilder):
+class RiderBuilderWithSpecialDisplay(RiderBuilderWithAppearance):
     """
     Builder qui construit un rider et enregistre en plus
     les displays "spéciaux" (cartes en main, set opportuniste...)
     associés à ce rider.
     """
 
-    def __init__(self, displayRegistry, cardFrame, specialFrame):
-        super().__init__()
+    def __init__(self, displayRegistry, appearances, cardFrame, specialFrame):
+        super().__init__(appearances)
         self.displayRegistry = displayRegistry
         self.cardFrame = cardFrame
         self.specialFrame = specialFrame
@@ -31,7 +31,7 @@ class RiderBuilderWithSpecialDisplay(RiderBuilder):
     def getResult(self):
         rider = super().getResult()
         for factory in self.displayFactories:
-            self.displayRegistry.register(factory.create(rider))
+            self.displayRegistry.register(factory.create(rider, self.appearances))
         return rider
 
 
@@ -39,8 +39,8 @@ class CardsDisplayFactory:
     def __init__(self, cardFrame):
         self.cardFrame = cardFrame
 
-    def create(self, rider):
-        return CardsDisplay(self.cardFrame, rider)
+    def create(self, rider, appearances):
+        return CardsDisplay(self.cardFrame, rider, appearances)
 
 
 class OpportunisticDisplayFactory:
@@ -48,7 +48,7 @@ class OpportunisticDisplayFactory:
         self.specialFrame = specialFrame
         self.sets = sets
 
-    def create(self, rider):
+    def create(self, rider, appearances):
         sorted_sets = [
             sorted([card for card in rider.propulsor.cards.deck if color in str(card)])
             for color in self.sets

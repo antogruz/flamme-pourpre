@@ -8,40 +8,59 @@ from teamBuilder import TeamBuilder
 from propulsion import SimpleTeamPropulsion
 from teamsDirector import TeamsDirector, FirstOracle
 from ridersDirector import RidersDirector
+from riderBuilderWithAppearance import RiderBuilderWithAppearance
+from riderBuilderWithSpecialDisplay import RiderBuilderWithSpecialDisplay
+from displayRegistry import DisplayRegistry
+from beau.appearances import Appearances
+from beau.frames import Frames
 
 def integrationTests():
     window = tk.Tk()
-    runner = Runner(window, 0.003)
-    testDice(runner)
-    integrationSingle(runner)
-    twoRacesOpportunistic(runner)
+    testDice(window)
+    integrationSingle(window)
+    twoRacesOpportunistic(window)
     window.mainloop()
 
-def integrationSingle(runner):
-    teams = []
-    teamsDirector = TeamsDirector()
-    for color in ["green", "red", "blue", "black", "magenta"]:
-        teams.append(teamsDirector.makeStandardBots(color))
-    runner.runRace(randomPresetTrack(len(teams)), teams)
+def integrationSingle(window):
+    runner = Runner(window, 0.003)
+    appearances = Appearances()
+    teamsDirector = TeamsDirector(appearances)
+    teams = [teamsDirector.makeStandardBots(color) for color in ["green", "red", "blue", "black", "magenta"]]
+    runner.runRace(randomPresetTrack(len(teams)), teams, appearances=appearances)
 
-def testDice(runner):
-    teamsDirector = TeamsDirector()
+def testDice(window):
+    runner = Runner(window, 0.003)
+    appearances = Appearances()
+    teamsDirector = TeamsDirector(appearances)
     teams = [teamsDirector.makeDiceBots(color) for color in ["blue", "red", "black"]]
-    runner.runRace(randomPresetTrack(len(teams)), teams)
+    runner.runRace(randomPresetTrack(len(teams)), teams, appearances=appearances)
 
-def twoRacesOpportunistic(runner):
+def twoRacesOpportunistic(window):
+    appearances = Appearances()
+    displayRegistry = DisplayRegistry()
+    colors = ["blue", "red", "black"]
+    layout = OpportunisticLayout(window, len(colors))
     teams = []
     oracle = FirstOracle()
-    for color in ["blue", "red", "black"]:
+    for i, color in enumerate(colors):
         tb = TeamBuilder()
         tb.buildColor(color)
         tb.buildPropulsion(SimpleTeamPropulsion())
-        riderDirector = RidersDirector()
-        tb.addRider(riderDirector.makeOpportunistic(oracle))
-        team = tb.getResult()
-        teams.append(team)
+        riderDirector = RidersDirector(
+            RiderBuilderWithSpecialDisplay(displayRegistry, appearances, layout.cards[i], layout.specials[i])
+        )
+        tb.addRider(riderDirector.makeOpportunistic(oracle, color))
+        teams.append(tb.getResult())
     tour = Tour(teams)
-    runner.runTour(tour, [randomPresetTrack, randomPresetTrack])
+    runner = Runner(window, 0.003, displayRegistry.getAll())
+    runner.runTour(tour, [randomPresetTrack, randomPresetTrack], appearances)
+
+class OpportunisticLayout:
+    def __init__(self, root, ridersCount):
+        window = tk.Toplevel(root)
+        frames = Frames(window)
+        self.cards = frames.newLine(ridersCount)
+        self.specials = frames.newLine(ridersCount)
 
 if __name__ == "__main__":
     integrationTests()

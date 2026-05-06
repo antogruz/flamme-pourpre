@@ -15,14 +15,10 @@ class SequentialPropulsion():
         rider.logCardPlayed = rider.nextMove
 
     def pickRider(self, riders):
-        choice = self.pick([r.personnage.name for r in riders], "Pick a rider")
+        choice = self.oracle.pickRider(riders, "Pick a rider")
+        if choice < 0 or choice >= len(riders):
+            choice = 0
         return riders.pop(choice)
-
-    def pick(self, list, instruction):
-        choice = self.oracle.pick(list, instruction)
-        if choice < 0 or choice >= len(list):
-            return 0
-        return choice
 
 class SimpleTeamPropulsion():
     def pickNextMoves(self, riders):
