@@ -11,7 +11,7 @@ from jeu.propulsion import SimpleTeamPropulsion
 from jeu.riderBuilder import RiderBuilder
 
 
-class Endurance:
+class EffortLong:
     def applyTo(self, personnage):
         personnage.energyRules = BetterFatigue(personnage.energyRules, 3)
 
@@ -27,8 +27,8 @@ class BetterFatigue:
         return self.base.energyFromCard(card)
 
 
-class EnduranceTest:
-    def testEndurance(self):
+class EffortLongTest:
+    def testEffortLong(self):
         track = Track([(5, "normal"), (3, "end")])
         rb = RiderBuilder()
         rb.buildPropulsor(DrawOnePropulsor(["f"]))
@@ -38,7 +38,7 @@ class EnduranceTest:
         tb.buildPropulsion(SimpleTeamPropulsion())
         team = tb.getResult()
 
-        personnage.gainTalent(Endurance())
+        personnage.gainTalent(EffortLong())
 
         teamInRace = TeamInRace(team)
         teamInRace.placeNextRider(0, 0)
@@ -48,4 +48,4 @@ class EnduranceTest:
 
 
 if __name__ == "__main__":
-    runTests(EnduranceTest())
+    runTests(EffortLongTest())
