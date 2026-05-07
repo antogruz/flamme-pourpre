@@ -5,6 +5,7 @@ import random
 class DrawOnePropulsor:
     def __init__(self, cards):
         self.cards = cards
+        self.newRace()
 
     def generateMove(self):
         move = self.cards[self.index]
