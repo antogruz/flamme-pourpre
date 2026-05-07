@@ -31,7 +31,8 @@ class Race():
 
         for r in headToTail(self.riders):
             start = r.position()
-            r.move(moves[r], self.track, self.obstacles)
+            energy = r.personnage.energyRules.energyFromCard(moves[r])
+            r.move(energy, self.track, self.obstacles)
             for observer in self.observers:
                 observer.onRiderMove(r, start, r.position(), self.obstacles, moves[r])
 

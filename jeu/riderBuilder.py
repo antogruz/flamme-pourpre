@@ -6,6 +6,7 @@ from deckPropulsor import DeckPropulsor
 from dicePropulsor import DicePropulsor
 from personnage import Personnage
 from opportunistic import createOpportunisticCards
+from energyRules import EnergyRules
 
 class RiderBuilder:
     def __init__(self):
@@ -13,6 +14,10 @@ class RiderBuilder:
         self.cards = None
         self.propulsor = None
         self.movementRules = None
+        self.energyRules = EnergyRules()
+
+    def buildEnergyRules(self, energyRules):
+        self.energyRules = energyRules
 
     def buildOracle(self, oracle):
         self.oracle = oracle
@@ -36,4 +41,4 @@ class RiderBuilder:
         self.movementRules = movementRules
 
     def getResult(self):
-        return Personnage(self.movementRules, self.propulsor)
+        return Personnage(self.movementRules, self.propulsor, self.energyRules)

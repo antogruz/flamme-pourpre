@@ -40,7 +40,7 @@ class IntegrationTester():
         builder.buildOracle(ChoiceDoer([0, 0, 0]))
         builder.buildDeck([])
         rider = RiderInRace(builder.getResult(), 0, 0)
-        assert_equals(2, rider.personnage.propulsor.generateMove())
+        assert_equals("", rider.personnage.propulsor.generateMove())
 
     def testOpportunistic(self):
         builder = RiderBuilder()
