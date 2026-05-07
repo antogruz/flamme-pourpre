@@ -175,7 +175,6 @@ from riderBuilder import RiderBuilder
 def createRider():
     rb = RiderBuilder()
     rb.buildPropulsor(SimplePropulsor(2))
-    rb.buildMovementRules(MovementRules())
     return rb.getResult()
 
 class SimplePropulsor():

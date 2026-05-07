@@ -5,3 +5,8 @@ class Personnage():
         self.movementRules = movementRules
         self.propulsor = propulsor
         self.energyRules = energyRules
+        self.talents = []
+
+    def gainTalent(self, talent):
+        self.talents.append(talent)
+        talent.applyTo(self)
