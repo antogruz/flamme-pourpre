@@ -12,7 +12,7 @@ class RoadAnimator(RaceObserver):
         self.track = track
         self.appearances = appearances
 
-    def onRiderMove(self, rider, start, end, obstacles):
+    def onRiderMove(self, rider, start, end, obstacles, card):
         path = findPath(self.track, obstacles, start, end)
         for i in range(len(path) - 1):
             sleep(self.clock)
@@ -50,11 +50,7 @@ class EventAnimator(RaceObserver):
     def __init__(self, display):
         self.display = display
 
-    def onRiderMove(self, rider, start, end, obstacles):
-        try:
-            card = rider.logCardPlayed
-        except:
-            card = ""
+    def onRiderMove(self, rider, start, end, obstacles, card):
         self.display.displayEvent(rider, card)
 
     def animateGroup(self, group):
@@ -101,13 +97,11 @@ class AnimateMovesTester(VisualTester):
     def testMove(self):
         rouleur = self.makeRider(rouleurShade, "green")
         sprinteur = self.makeRider(sprinteurShade, "red", (1, 0))
-        sprinteur.logCardPlayed = "f"
-        rouleur.logCardPlayed = 3
         self.displayRiders([rouleur, sprinteur])
         for animator in self.animators:
-            animator.onRiderMove(sprinteur, (1, 0), (3, 0), Obstacles([]))
+            animator.onRiderMove(sprinteur, (1, 0), (3, 0), Obstacles([]), "f")
         for animator in self.animators:
-            animator.onRiderMove(rouleur, (0, 0), (3, 1), Obstacles([]))
+            animator.onRiderMove(rouleur, (0, 0), (3, 1), Obstacles([]), 3)
         sleep(0.5)
 
 class AnimateRoadTester(VisualTester):

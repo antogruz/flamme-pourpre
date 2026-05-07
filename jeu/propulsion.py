@@ -5,14 +5,12 @@ class SequentialPropulsion():
         self.oracle = oracle
 
     def pickNextMoves(self, riders):
+        moves = {}
         ridersToPick = list(riders)
         while (ridersToPick):
-            self.pickOneMove(ridersToPick)
-
-    def pickOneMove(self, riders):
-        rider = self.pickRider(riders)
-        rider.nextMove = rider.personnage.propulsor.generateMove()
-        rider.logCardPlayed = rider.nextMove
+            rider = self.pickRider(ridersToPick)
+            moves[rider] = rider.personnage.propulsor.generateMove()
+        return moves
 
     def pickRider(self, riders):
         choice = self.oracle.pickRider(riders, "Pick a rider")
@@ -22,7 +20,4 @@ class SequentialPropulsion():
 
 class SimpleTeamPropulsion():
     def pickNextMoves(self, riders):
-        for r in riders:
-            r.nextMove = r.personnage.propulsor.generateMove()
-            r.logCardPlayed = r.nextMove
-    
+        return {r: r.personnage.propulsor.generateMove() for r in riders}

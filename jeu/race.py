@@ -25,14 +25,15 @@ class Race():
         return not self.riders
 
     def newTurn(self):
+        moves = {}
         for team in self.teamsInRace:
-            team.pickNextMoves()
+            moves.update(team.pickNextMoves())
 
         for r in headToTail(self.riders):
             start = r.position()
-            r.move(r.nextMove, self.track, self.obstacles)
+            r.move(moves[r], self.track, self.obstacles)
             for observer in self.observers:
-                observer.onRiderMove(r, start, r.position(), self.obstacles)
+                observer.onRiderMove(r, start, r.position(), self.obstacles, moves[r])
 
         slipstreaming(self.riders, self.track, self.observers)
         self.checkArrivals()
@@ -61,7 +62,7 @@ class RaceObserver:
     such as rider movements, slipstreaming, exhaustion, and turn endings.
     """
 
-    def onRiderMove(self, rider, start, end, obstacles):
+    def onRiderMove(self, rider, start, end, obstacles, card):
         """Called when a rider moves from start to end position."""
         pass
     
@@ -90,7 +91,7 @@ class TeamInRace:
         return self.ridersInRace[-1]
 
     def pickNextMoves(self):
-        self.team.propulsor.pickNextMoves(self.getActiveRiders())
+        return self.team.propulsor.pickNextMoves(self.getActiveRiders())
 
     def getActiveRiders(self):
         return [r for r in self.ridersInRace if not r.arrived]
