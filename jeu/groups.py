@@ -79,7 +79,7 @@ class GroupsTester():
         assert_equals(2, groups[1].head)
         assert_equals([head], groups[2].riders)
 
-    def testComputeGroupsHeadToTailOrder(self):
+    def testComputeGroupsTailToHeadOrder(self):
         head = createRider(4)
         midHead = createRider(3)
         tail = createRider(0)
