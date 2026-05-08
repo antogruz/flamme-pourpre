@@ -5,6 +5,9 @@
 # Elle est consommée par le slipstreaming (qui s'en sert pour déterminer qui peut aspirer qui)
 # et par les talents qui veulent connaître la position relative d'un coureur dans le peloton.
 
+from positions import tailToHead
+
+
 class Group():
     def __init__(self):
         self.riders = []
@@ -39,18 +42,6 @@ def splitByGroupBehind(orderedRiders):
 
 def partOf(rider, group):
     return rider.position()[0] <= group.head + 1
-
-
-def tailToHead(riders):
-    return sorted(riders, key = square)
-
-
-def headToTail(riders):
-    return sorted(riders, key = square, reverse = True)
-
-
-def square(rider):
-    return rider.position()[0]
 
 
 def firstsRemoved(l, count):

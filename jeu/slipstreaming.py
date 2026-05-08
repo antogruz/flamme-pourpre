@@ -4,7 +4,8 @@
 # Elle doit être modifiée si les règles changent.
 # Dans l'état actuel des choses, elle devra aussi être modifiée si certains coureurs ont leurs propres règles d'aspiration, mais il faudra sûrement ajouter des tests pour vérifier cela. Il faudra travailler à définir de nouvelles méthodes à l'interface du rider pour ne pas toucher à cette classe lorsque de nouveaux pouvoirs liés à l'aspiration apparaissent TODO
 
-from groups import splitByGroupBehind, tailToHead, headToTail
+from groups import splitByGroupBehind
+from positions import tailToHead, headToTail
 
 
 def slipstreaming(riders, track, observers = []):
