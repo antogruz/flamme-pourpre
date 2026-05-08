@@ -7,11 +7,18 @@ class DeckPropulsor:
 
     def generateMove(self):
         cards = self.cards.draw()
-        if not cards:
+        choices = self.choicesFrom(cards)
+        if not choices:
             return ""
-        card = self.pickCard(cards)
-        self.cards.play(card)
+        card = self.pickCard(choices)
+        self.applyCard(card)
         return card
+
+    def choicesFrom(self, cards):
+        return list(cards)
+
+    def applyCard(self, card):
+        self.cards.play(card)
 
     def newRace(self):
         self.cards.newRace()

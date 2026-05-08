@@ -46,6 +46,10 @@ class Cards:
             self.played.append(card)
         self.discard += self.hand
 
+    def discardHand(self):
+        self.discard += self.hand
+        self.hand = []
+
     def newRace(self):
         self.deck = self.deck + self.discard
         self.discard = []
