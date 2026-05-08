@@ -5,6 +5,9 @@ class EconomieEnergie:
         personnage.energyRules = BetterEmpty(personnage.energyRules, 3)
         personnage.propulsor.addExtraChoice(SkipProvider())
 
+    def displayRule(self):
+        return "Économie d'énergie: Vous pouvez ne pas jouer de carte et faire 3."
+
 
 class BetterEmpty:
     def __init__(self, base, emptyValue):

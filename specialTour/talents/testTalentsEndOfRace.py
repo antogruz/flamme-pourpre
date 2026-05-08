@@ -33,6 +33,8 @@ class TestTalentsEndOfRace:
         assert_equals(2, personnage.propulsor.cards.deck.count("f"))
     
     def testEnduranceCumulatesBetweenRaces(self):
+        # Le coureur s'endurcit progressivement : chaque fatigue jouée s'ajoute
+        # au compteur, et en fin de course, le compteur entier est retiré du deck.
         personnage = createPersonnage(5, ["f", "f"])
         race = prepareRace(2, personnage, Endurance())
         race.newTurn()

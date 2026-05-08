@@ -5,6 +5,9 @@ class EffortLong:
     def applyTo(self, personnage):
         personnage.energyRules = BetterFatigue(personnage.energyRules, 3)
 
+    def displayRule(self):
+        return "Effort prolongé: Les cartes fatigue font 3"
+
 
 class BetterFatigue:
     def __init__(self, base, fatigueValue):
