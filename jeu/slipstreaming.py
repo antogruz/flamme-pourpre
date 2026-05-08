@@ -4,6 +4,9 @@
 # Elle doit être modifiée si les règles changent.
 # Dans l'état actuel des choses, elle devra aussi être modifiée si certains coureurs ont leurs propres règles d'aspiration, mais il faudra sûrement ajouter des tests pour vérifier cela. Il faudra travailler à définir de nouvelles méthodes à l'interface du rider pour ne pas toucher à cette classe lorsque de nouveaux pouvoirs liés à l'aspiration apparaissent TODO
 
+from groups import splitByGroupBehind, tailToHead, headToTail
+
+
 def slipstreaming(riders, track, observers = []):
     candidates = tailToHead(riders)
     while candidates:
@@ -13,55 +16,19 @@ def slipstreaming(riders, track, observers = []):
             candidates = others
             continue
 
-        streamedRiders = group.getSlipstream(track)
+        streamedRiders = streamGroup(group, track)
         for observer in observers:
-            observer.onSlipstream(headTotail(streamedRiders))
+            observer.onSlipstream(headToTail(streamedRiders))
         candidates = tailToHead(streamedRiders) + others
 
 
-def splitByGroupBehind(orderedRiders):
-    group = Group()
-    group.append(orderedRiders[0])
-    for rider in firstsRemoved(orderedRiders, 1):
-        if partOf(rider, group):
-            group.append(rider)
+def streamGroup(group, track):
+    group.riders = headToTail(group.riders)
+    for i, rider in enumerate(group.riders):
+        if not rider.getSlipstream(track):
+            return keepFirsts(group.riders, i)
+    return group.riders
 
-    return group, firstsRemoved(orderedRiders, len(group.riders))
-
-def partOf(rider, group):
-    return rider.position()[0] <= group.head + 1
-
-class Group():
-    def __init__(self):
-        self.riders = []
-        self.head = -10
-
-    def isEmpty(self):
-        return self.riders
-
-    def append(self, rider):
-        self.riders.append(rider)
-        self.head = rider.position()[0]
-
-    def getSlipstream(self, track):
-        self.riders = headTotail(self.riders)
-        for i, rider in enumerate(self.riders):
-            if not rider.getSlipstream(track):
-                return keepFirsts(self.riders, i)
-
-        return self.riders
-
-def tailToHead(riders):
-    return sorted(riders, key = square)
-
-def headTotail(riders):
-    return sorted(riders, key = square, reverse = True)
-
-def square(rider):
-    return rider.position()[0]
-
-def firstsRemoved(l, count):
-    return l[count:]
 
 def keepFirsts(l, count):
     return l[0:count]
