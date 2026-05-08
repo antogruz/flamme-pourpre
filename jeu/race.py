@@ -17,6 +17,9 @@ class Race():
         self.obstacles = Obstacles(self.riders)
         self.arrivals = []
         self.checkArrivals()
+        for rider in self.riders:
+            for observer in rider.personnage.raceObservers:
+                self.addObserver(observer)
 
     def addObserver(self, observer):
         self.observers.append(observer)
