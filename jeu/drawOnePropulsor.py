@@ -8,6 +8,8 @@ class DrawOnePropulsor:
         self.newRace()
 
     def generateMove(self):
+        if self.index >= len(self.cards):
+            return ""
         move = self.cards[self.index]
         self.index += 1
         return move
