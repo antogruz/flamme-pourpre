@@ -27,7 +27,7 @@ def computeGroups(riders):
     while candidates:
         group, candidates = splitByGroupBehind(candidates)
         groups.append(group)
-    return list(reversed(groups))
+    return list(groups)
 
 
 def splitByGroupBehind(orderedRiders):
@@ -75,9 +75,9 @@ class GroupsTester():
         tail = createRider(0)
         groups = computeGroups([mid, head, tail])
         assert_equals(3, len(groups))
-        assert_equals([head], groups[0].riders)
+        assert_equals(0, groups[0].head)
         assert_equals(2, groups[1].head)
-        assert_equals(0, groups[2].head)
+        assert_equals([head], groups[2].riders)
 
     def testComputeGroupsHeadToTailOrder(self):
         head = createRider(4)
@@ -85,8 +85,8 @@ class GroupsTester():
         tail = createRider(0)
         groups = computeGroups([tail, midHead, head])
         assert_equals(2, len(groups))
-        assert_equals(4, groups[0].head)
-        assert_equals(0, groups[1].head)
+        assert_equals(4, groups[1].head)
+        assert_equals(0, groups[0].head)
 
 
 from riderBuilder import RiderBuilder

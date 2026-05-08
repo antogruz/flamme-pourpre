@@ -5,6 +5,7 @@ class Personnage():
         self.movementRules = movementRules
         self.propulsor = propulsor
         self.energyRules = energyRules
+        self.bonusRules = []
         self.talents = []
         self.raceObservers = []
 
@@ -14,3 +15,6 @@ class Personnage():
 
     def addRaceObserver(self, observer):
         self.raceObservers.append(observer)
+
+    def addBonusRule(self, rule):
+        self.bonusRules.append(rule)

@@ -11,6 +11,8 @@ from jeu.propulsion import SimpleTeamPropulsion
 
 from effortLong import EffortLong
 from economieEnergie import EconomieEnergie
+from poursuivant import Poursuivant
+from echappe import Echappe
 
 
 class TalentsInRaceTest:
@@ -27,6 +29,41 @@ class TalentsInRaceTest:
     def testEconomieEnergieSkipsOnEmptyDeck(self):
         rider = self.runOneTurn(self.makeDeckRider(deck=[], pickedIndex=0), EconomieEnergie())
         assert_equals(3, rider.position()[0])
+
+    def testPoursuivantBonusWhenNotInLeadingGroup(self):
+        rider = self.runMultiRiderTurn(
+            mainCard=2, mainSquare=0,
+            otherCardsAndSquares=[("2", 10)],
+            talents=[Poursuivant()])
+        assert_equals(3, rider.position()[0])
+
+    def testPoursuivantNoBonusWhenInLeadingGroup(self):
+        rider = self.runMultiRiderTurn(
+            mainCard=2, mainSquare=10,
+            otherCardsAndSquares=[("2", 0)],
+            talents=[Poursuivant()])
+        assert_equals(12, rider.position()[0])
+
+    def testEchappeBonusWhenAloneInFront(self):
+        rider = self.runMultiRiderTurn(
+            mainCard=2, mainSquare=10,
+            otherCardsAndSquares=[("2", 0), ("2", 1), ("2", 2)],
+            talents=[Echappe()])
+        assert_equals(13, rider.position()[0])
+
+    def testEchappeNoBonusWhenLeadingGroupIsHalfOrMore(self):
+        rider = self.runMultiRiderTurn(
+            mainCard=2, mainSquare=10,
+            otherCardsAndSquares=[("2", 9), ("2", 0), ("2", 1)],
+            talents=[Echappe()])
+        assert_equals(12, rider.position()[0])
+
+    def testEffortLongAndPoursuivantStack(self):
+        rider = self.runMultiRiderTurn(
+            mainCard="f", mainSquare=0,
+            otherCardsAndSquares=[("2", 10)],
+            talents=[EffortLong(), Poursuivant()])
+        assert_equals(4, rider.position()[0])
 
     def makeDeckRider(self, deck, pickedIndex):
         rb = RiderBuilder()
@@ -48,6 +85,33 @@ class TalentsInRaceTest:
         race = Race(track, [teamInRace])
         race.newTurn()
         return teamInRace.ridersInRace[0]
+
+    def runMultiRiderTurn(self, mainCard, mainSquare, otherCardsAndSquares, talents):
+        track = Track([(30, "normal"), (5, "end")])
+        tb = TeamBuilder()
+        main = buildScriptedRider([mainCard])
+        tb.addRider(main)
+        for card, _ in otherCardsAndSquares:
+            tb.addRider(buildScriptedRider([card]))
+        tb.buildPropulsion(SimpleTeamPropulsion())
+        team = tb.getResult()
+
+        for t in talents:
+            main.gainTalent(t)
+
+        teamInRace = TeamInRace(team)
+        teamInRace.placeNextRider(mainSquare, 0)
+        for _, sq in otherCardsAndSquares:
+            teamInRace.placeNextRider(sq, 0)
+        race = Race(track, [teamInRace])
+        race.newTurn()
+        return teamInRace.ridersInRace[0]
+
+
+def buildScriptedRider(cards):
+    rb = RiderBuilder()
+    rb.buildPropulsor(DrawOnePropulsor(cards))
+    return rb.getResult()
 
 
 class ChoiceDoer:

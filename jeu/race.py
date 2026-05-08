@@ -7,6 +7,7 @@
 from obstacles import Obstacles
 from slipstreaming import slipstreaming
 from exhaust import exhaust
+from raceSnapshot import RaceSnapshot
 
 class Race():
     def __init__(self, track, teamsInRace):
@@ -31,7 +32,8 @@ class Race():
         moves = {}
         for team in self.teamsInRace:
             moves.update(team.pickNextMoves())
-        energies = { r: r.personnage.energyRules.energyFromCard(moves[r]) for r in self.riders }
+        snapshot = RaceSnapshot(list(self.riders))
+        energies = { r: energyOf(r, moves[r], snapshot) for r in self.riders }
 
         for r in headToTail(self.riders):
             start = r.position()
@@ -58,6 +60,11 @@ class Race():
 
 def arrived(rider, track):
     return track.getRoadType(rider.getSquare()) == "end"
+
+def energyOf(rider, card, snapshot):
+    base = rider.personnage.energyRules.energyFromCard(card)
+    bonus = sum(rule.bonusFor(card, rider, snapshot) for rule in rider.personnage.bonusRules)
+    return base + bonus
 
 class RaceObserver:
     """Interface for observing race events.
