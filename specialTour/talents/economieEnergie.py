@@ -8,16 +8,11 @@ from jeu.teamBuilder import TeamBuilder
 from jeu.propulsion import SimpleTeamPropulsion
 from jeu.riderBuilder import RiderBuilder
 from jeu.riderMove import MovementRules
-from jeu.deckPropulsor import DeckPropulsor
-
 
 class EconomieEnergie:
     def applyTo(self, personnage):
         personnage.energyRules = BetterEmpty(personnage.energyRules, 3)
-        personnage.propulsor = SkippableDeckPropulsor(
-            personnage.propulsor.cards,
-            personnage.propulsor.oracle,
-        )
+        personnage.propulsor.addExtraChoice(SkipProvider())
 
 
 class BetterEmpty:
@@ -31,15 +26,15 @@ class BetterEmpty:
         return self.base.energyFromCard(card)
 
 
-class SkippableDeckPropulsor(DeckPropulsor):
-    def choicesFrom(self, cards):
-        return list(cards) + [""]
+class SkipProvider:
+    def label(self):
+        return ""
 
-    def applyCard(self, card):
-        if card == "":
-            self.cards.discardHand()
-        else:
-            self.cards.play(card)
+    def isAvailable(self):
+        return True
+
+    def applyTo(self, propulsor):
+        propulsor.cards.discardHand()
 
 
 class EconomieEnergieTest:
