@@ -16,7 +16,8 @@ def createMenu(frame, choices, title = ""):
 
 
 from beautifulCard import createBeautifulCard
-from functools import partial
+from buttonMaker import makeButton
+
 class UserChoice():
     def __init__(self, frame, appearances = None):
         self.frame = frame
@@ -27,19 +28,17 @@ class UserChoice():
         return self.pick([self.appearances.of(r).name for r in riders], instruction)
 
     def pick(self, choices, title = ""):
-        def setChoice(n):
-            self.answer.set(n)
-
         if title:
             tk.Label(self.frame, text = title).pack()
 
         for i, choice in enumerate(choices):
-            nice = createBeautifulCard(choice)
-            label = tk.Label(self.frame, text = nice.text, fg = nice.color, bg = nice.background,
-                             padx = 10, pady = 5, cursor = "hand2",
-                             relief = "raised", borderwidth = 2)
+            card = createBeautifulCard(choice)
+            label = tk.Label(self.frame, text = card.text,
+                     fg = card.color, bg = card.background,
+                     padx = 10, pady = 5,
+                     relief = "raised", borderwidth = 2)
+            makeButton(label, lambda n = i: self.answer.set(n))
             label.pack(side = "left")
-            label.bind("<Button-1>", lambda e, n = i: setChoice(n))
 
         self.frame.update()
         self.frame.wait_variable(self.answer)
