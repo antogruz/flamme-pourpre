@@ -35,7 +35,11 @@ class UserChoice():
 
         for i, choice in enumerate(choices):
             nice = createBeautifulCard(choice)
-            tk.Button(self.frame, text = nice.text, fg = nice.color, bg = nice.background, command = partial(setChoice, i)).pack(side = "left")
+            label = tk.Label(self.frame, text = nice.text, fg = nice.color, bg = nice.background,
+                             padx = 10, pady = 5, cursor = "hand2",
+                             relief = "raised", borderwidth = 2)
+            label.pack(side = "left")
+            label.bind("<Button-1>", lambda e, n = i: setChoice(n))
 
         self.frame.update()
         self.frame.wait_variable(self.answer)
