@@ -9,13 +9,13 @@ def noop(list):
     pass
 
 class Cards:
-    def __init__(self, deck, shuffle = noop, endOfRaceDecksManagers = []):
+    def __init__(self, deck, shuffle = noop, endOfRaceDecksManagers = None):
         self.deck = deck
         self.discard = []
         self.played = []
         self.shuffle = shuffle
         self.handSize = 4
-        self.endOfRaceDecksManagers = endOfRaceDecksManagers
+        self.endOfRaceDecksManagers = endOfRaceDecksManagers if endOfRaceDecksManagers is not None else []
         shuffle(self.deck)
 
     def inDeck(self):

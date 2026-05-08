@@ -23,13 +23,14 @@ class RiderBuilder:
     def buildOracle(self, oracle):
         self.oracle = oracle
 
-    def buildDeck(self, originalCards, shuffle = random.shuffle, endOfRaceDecksManagers = []):
+    def buildDeck(self, originalCards, shuffle = random.shuffle, endOfRaceDecksManagers = None):
         self.cards = Cards(originalCards, shuffle, endOfRaceDecksManagers)
         self.propulsor = DeckPropulsor(self.cards, self.oracle)
 
-    def buildOpportunisticDeck(self, baseCards, sets = ["goldenrod", "magenta"], shuffle = random.shuffle, endOfRaceDecksManagers = []):
+    def buildOpportunisticDeck(self, baseCards, sets = ["goldenrod", "magenta"], shuffle = random.shuffle, endOfRaceDecksManagers = None):
         self.cards = createOpportunisticCards(baseCards, sets, shuffle)
-        self.cards.endOfRaceDecksManagers += endOfRaceDecksManagers
+        if endOfRaceDecksManagers:
+            self.cards.endOfRaceDecksManagers += endOfRaceDecksManagers
         self.propulsor = DeckPropulsor(self.cards, self.oracle)
 
     def buildDice(self, moves):
