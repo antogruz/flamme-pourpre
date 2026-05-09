@@ -3,8 +3,9 @@
 import random
 
 class DrawOnePropulsor:
-    def __init__(self, cards):
+    def __init__(self, cards, shuffle = random.shuffle):
         self.cards = cards
+        self.shuffle = shuffle
         self.newRace()
 
     def generateMove(self):
@@ -16,7 +17,7 @@ class DrawOnePropulsor:
     
     def newRace(self):
         self.index = 0
-        random.shuffle(self.cards)
+        self.shuffle(self.cards)
     
     def exhaust(self):
         pass
