@@ -6,11 +6,14 @@
 
 from groups import splitByGroupBehind
 from positions import tailToHead, headToTail
+from obstacles import Obstacles
 
 
 def slipstreaming(riders, track, observers = None, obstacles = None):
     if observers is None:
         observers = []
+    if obstacles is None:
+        obstacles = Obstacles(riders)
     applyPersonalRules(riders, track, observers, obstacles)
     candidates = tailToHead(riders)
     while candidates:
@@ -20,16 +23,18 @@ def slipstreaming(riders, track, observers = None, obstacles = None):
             candidates = others
             continue
 
-        streamedRiders = streamGroup(group, track)
+        streamedRiders = streamGroup(group, track, obstacles)
         for observer in observers:
             observer.onSlipstream(headToTail(streamedRiders))
         candidates = tailToHead(streamedRiders) + others
 
 
-def streamGroup(group, track):
+def streamGroup(group, track, obstacles):
     group.riders = headToTail(group.riders)
     for i, rider in enumerate(group.riders):
-        if not rider.getSlipstream(track):
+        if not streamable(track.getRoadType(rider.getSquare())):
+            return keepFirsts(group.riders, i)
+        if rider.earnSquares(1, track, obstacles) is None:
             return keepFirsts(group.riders, i)
     return group.riders
 
@@ -179,6 +184,18 @@ class SlipstremingTester():
         self.addRider(2)
         self.slipstream()
         self.assertPosition(0)
+
+    # --- | o/o |
+    # o/o | o/o | --- | o/o |
+    def testGroupSlipstreamedInRoadReduction(self):
+        self.track = Track([(2, "normal", 2), (2, "normal", 1)])
+        self.others.append(createRider(1, 0))
+        self.others.append(createRider(1, 1))
+        self.addRider(3)
+        self.slipstream()
+        assert_equals((0, 0), self.rider.position())
+        assert_equals((2, 0), self.others[0].position())
+        assert_equals((1, 0), self.others[1].position())
 
     def testRemonteeDePeloton(self):
         self.rider.personnage.gainTalent(RemonteeDePeloton())

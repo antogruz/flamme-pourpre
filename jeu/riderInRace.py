@@ -1,6 +1,5 @@
 #! /usr/bin/env python3
 
-from track import streamable
 
 class RiderInRace():
     def __init__(self, rider, square, lane):
@@ -17,13 +16,6 @@ class RiderInRace():
 
     def move(self, fuel, track, obstacles):
         self.square, self.lane = self.personnage.movementRules.computeNewPosition(self.position(), fuel, track, obstacles)
-
-    def getSlipstream(self, track):
-        if not streamable(track.getRoadType(self.square)):
-            return False
-
-        self.square += 1
-        return True
 
     def earnSquares(self, distance, track, obstacles):
         oldSquare = self.square
