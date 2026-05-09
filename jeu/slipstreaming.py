@@ -35,7 +35,7 @@ def streamGroup(group, track, obstacles):
         if not streamable(track.getRoadType(rider.getSquare())):
             return keepFirsts(group.riders, i)
         if rider.earnSquares(1, track, obstacles) is None:
-            return keepFirsts(group.riders, i)
+            return group.riders
     return group.riders
 
 
@@ -196,6 +196,17 @@ class SlipstremingTester():
         assert_equals((0, 0), self.rider.position())
         assert_equals((2, 0), self.others[0].position())
         assert_equals((1, 0), self.others[1].position())
+
+    # --- | o/o |
+    # o/o | o/o | --- | o/o | --- | o/o |
+    def testRoadReductionThenOtherGroupIncludesAll(self):
+        self.track = Track([(2, "normal", 2), (4, "normal", 1)])
+        self.others.append(createRider(1, 0))
+        self.others.append(createRider(1, 1))
+        self.addRider(3)
+        self.addRider(5)
+        self.slipstream()
+        self.assertPosition(1)
 
     def testRemonteeDePeloton(self):
         self.rider.personnage.gainTalent(RemonteeDePeloton())
