@@ -41,7 +41,7 @@ class Race():
             for observer in self.observers:
                 observer.onRiderMove(r, start, r.position(), self.obstacles, moves[r])
 
-        slipstreaming(self.riders, self.track, self.observers)
+        slipstreaming(self.riders, self.track, self.observers, self.obstacles)
         self.checkArrivals()
 
         exhaust(headToTail(self.riders), self.observers)

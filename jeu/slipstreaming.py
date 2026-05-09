@@ -8,7 +8,10 @@ from groups import splitByGroupBehind
 from positions import tailToHead, headToTail
 
 
-def slipstreaming(riders, track, observers = []):
+def slipstreaming(riders, track, observers = None, obstacles = None):
+    if observers is None:
+        observers = []
+    applyPersonalRules(riders, track, observers, obstacles)
     candidates = tailToHead(riders)
     while candidates:
         group, others = splitByGroupBehind(candidates)
@@ -46,9 +49,24 @@ def couldSlipstream(square, rider, track):
 
     return rider.getSquare() == square + 2
 
+def applyPersonalRules(riders, track, observers, obstacles):
+    for rider in tailToHead(riders):
+        distances = []
+        for rule in rider.personnage.slipstreamRules:
+            distance = rule.squaresEarned(rider, riders, track)
+            if distance > 0:
+                distances.append(distance)
+        if distances:
+            newPosition = rider.earnSquares(max(distances), track, obstacles)
+            if newPosition:
+                for observer in observers:
+                    observer.onSlipstream([rider])
+
+from specialTour.talents.remonteeDePeloton import RemonteeDePeloton
 from unittests import assert_equals, runTests
 from riderInRace import RiderInRace
 from track import Track, streamable
+from obstacles import Obstacles
 class SlipstremingTester():
     def __before__(self):
         self.rider = createRider(0, 0)
@@ -56,7 +74,7 @@ class SlipstremingTester():
         self.others = []
 
     def slipstream(self):
-        slipstreaming([self.rider] + self.others, self.track)
+        slipstreaming([self.rider] + self.others, self.track, None, Obstacles([self.rider] + self.others))
 
     def addRider(self, square):
         self.others.append(createRider(square, 0))
@@ -158,6 +176,44 @@ class SlipstremingTester():
 
     def testRiderOnStoneCannotStreamOthers(self):
         self.track = Track([(2, "normal"), (1, "stone")])
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(0)
+
+    def testRemonteeDePeloton(self):
+        self.rider.personnage.gainTalent(RemonteeDePeloton())
+        self.addRider(1)
+        self.addRider(2)
+        self.slipstream()
+        assert_equals((1, 1), self.rider.position())
+
+    def testRemonteeDePelotonWithOtherRiders(self):
+        self.rider = createRider(2, 0)
+        self.rider.personnage.gainTalent(RemonteeDePeloton())
+        self.addRider(0)
+        self.addRider(4)
+        self.slipstream()
+        self.assertPosition(3)
+        assert_equals((2, 0), self.others[0].position())
+
+    def testRemonteeDePelotonNeedsSomeone2SquaresFront(self):
+        self.rider.personnage.gainTalent(RemonteeDePeloton())
+        self.addRider(1)
+        self.slipstream()
+        self.assertPosition(0)
+
+    def testRemonteeDePelotonNeedsRoomToProgress(self):
+        self.rider.personnage.gainTalent(RemonteeDePeloton())
+        self.others.append(createRider(1, 0))
+        self.others.append(createRider(1, 1))
+        self.others.append(createRider(2, 0))
+        self.slipstream()
+        self.assertPosition(0)
+
+    def testRemonteeDePelotonUselessInAscent(self):
+        self.track = Track([(10, "ascent")])
+        self.rider.personnage.gainTalent(RemonteeDePeloton())
+        self.addRider(1)
         self.addRider(2)
         self.slipstream()
         self.assertPosition(0)

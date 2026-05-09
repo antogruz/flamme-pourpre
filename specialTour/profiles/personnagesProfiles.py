@@ -1,9 +1,9 @@
-from effortLong import EffortLong
-from economieEnergie import EconomieEnergie
-from endurance import Endurance
-from poursuivant import Poursuivant
-from echappe import Echappe
-from rouleRoule import RouleRoule
+from specialTour.talents.effortLong import EffortLong
+from specialTour.talents.economieEnergie import EconomieEnergie
+from specialTour.talents.endurance import Endurance
+from specialTour.talents.poursuivant import Poursuivant
+from specialTour.talents.echappe import Echappe
+from specialTour.talents.rouleRoule import RouleRoule
 class PersonnageProfile:
     def __init__(self, name, tiers):
         self.name = name

@@ -6,6 +6,7 @@ class Personnage():
         self.propulsor = propulsor
         self.energyRules = energyRules
         self.bonusRules = []
+        self.slipstreamRules = []
         self.talents = []
         self.raceObservers = []
 
@@ -18,3 +19,6 @@ class Personnage():
 
     def addBonusRule(self, rule):
         self.bonusRules.append(rule)
+
+    def addSlipstreamRule(self, rule):
+        self.slipstreamRules.append(rule)
