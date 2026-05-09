@@ -73,6 +73,7 @@ def applyPersonalRules(riders, track, observers, obstacles):
                     observer.onSlipstream([(rider, origin, rider.position())])
 
 from specialTour.talents.remonteeDePeloton import RemonteeDePeloton
+from specialTour.talents.inlarguable import Inlarguable
 from unittests import assert_equals, runTests
 from riderInRace import RiderInRace
 from track import Track, streamable
@@ -250,6 +251,31 @@ class SlipstremingTester():
         self.addRider(2)
         self.slipstream()
         self.assertPosition(0)
+
+    def testInlarguable(self):
+        self.rider.personnage.gainTalent(Inlarguable())
+        self.addRider(3)
+        self.addRider(4)
+        self.slipstream()
+        self.assertPosition(2)
+
+    def testInlarguableDoesNotWorkWithEscape(self):
+        self.rider = createRider(2, 0)
+        self.addRider(0)
+        self.addRider(1)
+        self.rider.personnage.gainTalent(Inlarguable())
+        self.addRider(5)
+        self.slipstream()
+        self.assertPosition(2)
+
+    def testInlarguableWorkOnPelotonEvenIfThereIsAnEscape(self):
+        self.rider.personnage.gainTalent(Inlarguable())
+        self.addRider(3)
+        self.addRider(4)
+        self.addRider(8)
+        self.addRider(9)
+        self.slipstream()
+        self.assertPosition(2)
 
 from riderBuilder import RiderBuilder
 def createRider(square, lane):
