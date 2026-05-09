@@ -18,11 +18,7 @@ class RiderInRace():
         self.square, self.lane = self.personnage.movementRules.computeNewPosition(self.position(), fuel, track, obstacles)
 
     def earnSquares(self, distance, track, obstacles):
-        oldSquare = self.square
         self.square, self.lane = self.personnage.movementRules.findAvailableSlot(obstacles, self.position(), distance, track)
-        if self.square == oldSquare:
-            return None
-        return self.position()
 
     def exhaust(self):
         self.personnage.propulsor.exhaust()

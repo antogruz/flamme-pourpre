@@ -36,10 +36,10 @@ def streamGroup(group, track, obstacles):
         if not streamable(track.getRoadType(rider.getSquare())):
             return moves, keepFirsts(group.riders, i)
         origin = rider.position()
-        if rider.earnSquares(1, track, obstacles) is None:
-            moves.append((rider, origin, rider.position()))
-            return moves, group.riders
+        rider.earnSquares(1, track, obstacles)
         moves.append((rider, origin, rider.position()))
+        if rider.getSquare() == origin[0]:
+            return moves, group.riders
     return moves, group.riders
 
 
@@ -67,10 +67,10 @@ def applyPersonalRules(riders, track, observers, obstacles):
                 distances.append(distance)
         if distances:
             origin = rider.position()
-            newPosition = rider.earnSquares(max(distances), track, obstacles)
-            if newPosition:
+            rider.earnSquares(max(distances), track, obstacles)
+            if rider.position() != origin:
                 for observer in observers:
-                    observer.onSlipstream([(rider, origin, newPosition)])
+                    observer.onSlipstream([(rider, origin, rider.position())])
 
 from specialTour.talents.remonteeDePeloton import RemonteeDePeloton
 from unittests import assert_equals, runTests
