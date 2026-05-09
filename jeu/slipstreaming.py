@@ -23,20 +23,24 @@ def slipstreaming(riders, track, observers = None, obstacles = None):
             candidates = others
             continue
 
-        streamedRiders = streamGroup(group, track, obstacles)
+        moves, streamedRiders = streamGroup(group, track, obstacles)
         for observer in observers:
-            observer.onSlipstream(headToTail(streamedRiders))
+            observer.onSlipstream(moves)
         candidates = tailToHead(streamedRiders) + others
 
 
 def streamGroup(group, track, obstacles):
+    moves = []
     group.riders = headToTail(group.riders)
     for i, rider in enumerate(group.riders):
         if not streamable(track.getRoadType(rider.getSquare())):
-            return keepFirsts(group.riders, i)
+            return moves, keepFirsts(group.riders, i)
+        origin = rider.position()
         if rider.earnSquares(1, track, obstacles) is None:
-            return group.riders
-    return group.riders
+            moves.append((rider, origin, rider.position()))
+            return moves, group.riders
+        moves.append((rider, origin, rider.position()))
+    return moves, group.riders
 
 
 def keepFirsts(l, count):
@@ -62,10 +66,11 @@ def applyPersonalRules(riders, track, observers, obstacles):
             if distance > 0:
                 distances.append(distance)
         if distances:
+            origin = rider.position()
             newPosition = rider.earnSquares(max(distances), track, obstacles)
             if newPosition:
                 for observer in observers:
-                    observer.onSlipstream([rider])
+                    observer.onSlipstream([(rider, origin, newPosition)])
 
 from specialTour.talents.remonteeDePeloton import RemonteeDePeloton
 from unittests import assert_equals, runTests
@@ -255,8 +260,8 @@ class Logger():
     def __init__(self):
         self.groups = []
 
-    def onSlipstream(self, riders):
-        self.groups.append([r.getSquare() for r in riders])
+    def onSlipstream(self, moves):
+        self.groups.append([end[0] for _, _, end in moves])
 
 
 def display(groups):

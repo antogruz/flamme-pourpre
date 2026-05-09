@@ -19,11 +19,11 @@ class RoadAnimator(RaceObserver):
             self.move(rider, path[i], path[i + 1])
             self.frame.update()
 
-    def onSlipstream(self, group):
+    def onSlipstream(self, moves):
         sleep(self.clock * 2)
-        for rider in group:
-            end = rider.position()
-            start = (end[0] - 1, end[1])
+        for rider, start, end in moves:
+            if start == end:
+                continue
             self.move(rider, start, end)
         self.frame.update()
 
@@ -129,10 +129,10 @@ class AnimateRoadTester(VisualTester):
         b = self.makeRider(rouleurShade, "blue", (2, 0))
         self.displayRiders([a, b])
         a.pos = (1, 0)
-        self.roadAnimator.onSlipstream([a])
+        self.roadAnimator.onSlipstream([(a, (0, 0), (1, 0))])
         a.pos = (2, 0)
         b.pos = (3, 0)
-        self.roadAnimator.onSlipstream([b, a])
+        self.roadAnimator.onSlipstream([(b, (2, 0), (3, 0)), (a, (1, 0), (2, 0))])
 
     def testExhaust(self):
         a = self.makeRider(rouleurShade, "black")
