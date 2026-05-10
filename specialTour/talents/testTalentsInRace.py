@@ -15,6 +15,7 @@ from poursuivant import Poursuivant
 from echappe import Echappe
 from seFaufiler import SeFaufiler
 from sprintFinal import SprintFinal
+from superSprint import SuperSprint
 
 class TalentsInRaceTest():
     def __before__(self):
@@ -144,6 +145,18 @@ class TalentsInRaceTest():
 
     def testSprintFinalWith8CardsLeft(self):
         self.createDeckHero([3, 3, 3, 3, 3, 3, 3, 3], 1, SprintFinal())
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(3, self.mainRider.square)
+
+    def testSuperSprintIncreasesNines(self):
+        self.createHero([9], SuperSprint())
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(11, self.mainRider.square)
+
+    def testSuperSprintDoesNotIncreaseOtherCards(self):
+        self.createHero([3], SuperSprint())
         self.createRace()
         self.race.newTurn()
         assert_equals(3, self.mainRider.square)
