@@ -62,6 +62,9 @@ class Cards:
         self.played = []
         self.shuffle(self.deck)
 
+    def cardsLeft(self):
+        return len(self.deck) + len(self.hand) + len(self.discard)
+
 
 class ExhaustRecovery:
     def __init__(self, percentageToRemove):

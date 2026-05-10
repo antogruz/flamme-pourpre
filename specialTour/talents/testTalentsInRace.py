@@ -14,6 +14,7 @@ from economieEnergie import EconomieEnergie
 from poursuivant import Poursuivant
 from echappe import Echappe
 from seFaufiler import SeFaufiler
+from sprintFinal import SprintFinal
 
 class TalentsInRaceTest():
     def __before__(self):
@@ -128,6 +129,24 @@ class TalentsInRaceTest():
         self.createRace()
         self.race.newTurn()
         assert_equals(8, self.mainRider.square)
+
+    def testSprintFinalWith3CardsLeft(self):
+        self.createDeckHero([3, 3, 3], 1, SprintFinal())
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(5, self.mainRider.square)
+
+    def testSprintFinalWith4CardsLeft(self):
+        self.createDeckHero([3, 3, 3, 3], 1, SprintFinal())
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(4, self.mainRider.square)
+
+    def testSprintFinalWith8CardsLeft(self):
+        self.createDeckHero([3, 3, 3, 3, 3, 3, 3, 3], 1, SprintFinal())
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(3, self.mainRider.square)
 
 class ChoiceDoer:
     def __init__(self, value):
