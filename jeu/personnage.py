@@ -7,6 +7,7 @@ class Personnage():
         self.energyRules = energyRules
         self.bonusRules = []
         self.slipstreamRules = []
+        self.playOrderRules = []
         self.talents = []
         self.raceObservers = []
 
@@ -22,3 +23,6 @@ class Personnage():
 
     def addSlipstreamRule(self, rule):
         self.slipstreamRules.append(rule)
+
+    def addPlayOrderRule(self, rule):
+        self.playOrderRules.append(rule)

@@ -13,6 +13,7 @@ from effortLong import EffortLong
 from economieEnergie import EconomieEnergie
 from poursuivant import Poursuivant
 from echappe import Echappe
+from seFaufiler import SeFaufiler
 
 class TalentsInRaceTest():
     def __before__(self):
@@ -111,6 +112,22 @@ class TalentsInRaceTest():
         self.createRace()
         self.race.newTurn()
         assert_equals(4, self.mainRider.square)
+
+    def testSeFaufilerSimple(self):
+        self.createHero([3], SeFaufiler())
+        self.addMinion((1, 0), 2)
+        self.addMinion((1, 1), 2)
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(3, self.mainRider.square)
+
+    def testSeFaufilerWithSeveralGroups(self):
+        self.createHero([9], SeFaufiler())
+        self.addMinion((7, 0), 2)
+        self.addMinion((7, 1), 2)
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(8, self.mainRider.square)
 
 class ChoiceDoer:
     def __init__(self, value):

@@ -35,7 +35,7 @@ class Race():
         snapshot = RaceSnapshot(list(self.riders))
         energies = { r: energyOf(r, moves[r], snapshot) for r in self.riders }
 
-        for r in headToTail(self.riders):
+        for r in playOrder(self.riders, snapshot):
             start = r.position()
             r.move(energies[r], self.track, self.obstacles)
             for observer in self.observers:
@@ -109,7 +109,7 @@ class TeamInRace:
 
 from unittests import runTests, assert_equals, assert_similars
 from track import Track
-from positions import headToTail
+from positions import headToTail, playOrder
 from riderMove import MovementRules
 from riderInRace import RiderInRace
 from team import Team

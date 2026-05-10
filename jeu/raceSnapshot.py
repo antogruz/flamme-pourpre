@@ -12,9 +12,18 @@ from groups import computeGroups
 class RaceSnapshot:
     def __init__(self, allRiders):
         self.allRiders = allRiders
+        self.groups = None
 
     def getGroups(self):
-        return computeGroups(self.allRiders)
+        if self.groups is None:
+            self.groups = computeGroups(self.allRiders)
+        return self.groups
 
     def leadingGroup(self):
         return self.getGroups()[-1]
+
+    def groupOf(self, rider):
+        for group in self.getGroups():
+            if rider in group.riders:
+                return group
+        return None
