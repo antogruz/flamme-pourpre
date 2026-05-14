@@ -44,6 +44,7 @@ class Cards:
         self.hand.remove(card)
         if card != "f":
             self.played.append(card)
+        self.lastDiscarded = self.hand.copy()
         self.discard += self.hand
 
     def discardHand(self):

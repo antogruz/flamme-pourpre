@@ -21,6 +21,8 @@ class Race():
         for rider in self.riders:
             for observer in rider.personnage.raceObservers:
                 self.addObserver(observer)
+        for observer in self.observers:
+            observer.onRaceStart(self.track)
 
     def addObserver(self, observer):
         self.observers.append(observer)
@@ -72,6 +74,9 @@ class RaceObserver:
     Implement this interface to receive notifications about race events
     such as rider movements, slipstreaming, exhaustion, and turn endings.
     """
+    def onRaceStart(self, track):
+        """Called when the race starts."""
+        pass
 
     def onRiderMove(self, rider, start, end, obstacles, card):
         """Called when a rider moves from start to end position."""

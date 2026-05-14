@@ -25,6 +25,8 @@ def assert_similars(expected, actual):
         raise Exception("Expected size of {}, but got {}. So actual {} is not similar to expected {}".format(len(expected), len(actual), actual, expected))
     for e in expected:
         assert_contains(e, actual)
+    for e in actual:
+        assert_contains(e, expected)
 
 
 def findAllMethods(object):

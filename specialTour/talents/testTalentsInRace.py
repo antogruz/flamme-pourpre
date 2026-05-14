@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from unittests import assert_equals, runTests
+from unittests import assert_equals, assert_contains, assert_similars, runTests
 from jeu.cards import noop
 from jeu.drawOnePropulsor import DrawOnePropulsor
 from jeu.riderBuilder import RiderBuilder
@@ -16,6 +16,7 @@ from echappe import Echappe
 from seFaufiler import SeFaufiler
 from sprintFinal import SprintFinal
 from superSprint import SuperSprint
+from recuperationActive import RecuperationActive
 
 class TalentsInRaceTest():
     def __before__(self):
@@ -31,7 +32,8 @@ class TalentsInRaceTest():
 
     def createDeckHero(self, deck, pickedIndex, talent, position = (0, 0)):
         rb = RiderBuilder()
-        rb.buildOracle(ChoiceDoer(pickedIndex))
+        self.oracle = ChoiceDoer(pickedIndex)
+        rb.buildOracle(self.oracle)
         rb.buildDeck(deck, shuffle=noop)
         self.hero = rb.getResult()
         self.hero.gainTalent(talent)
@@ -161,13 +163,78 @@ class TalentsInRaceTest():
         self.race.newTurn()
         assert_equals(3, self.mainRider.square)
 
+    def prepareRecuperationActive(self, roadType, cards):
+        self.track = Track([(30, roadType)])
+        self.createDeckHero(cards, 0, RecuperationActive())
+        self.createRace()
+        self.race.newTurn()
+
+    def testRecuperationActiveIncreasesACard(self):
+        self.prepareRecuperationActive("refuel", [2, 3])
+        assert_contains(4, self.mainRider.personnage.propulsor.cards.discard)
+
+    def testRecuperationActiveDoesNothingOnStandardRoad(self):
+        self.prepareRecuperationActive("normal", [2, 3])
+        assert_contains(3, self.mainRider.personnage.propulsor.cards.discard)
+
+    def testRecuperationActiveDoesNothingIfRiderGoesTooFast(self):
+        self.prepareRecuperationActive("refuel", [7, 3])
+        assert_contains(3, self.mainRider.personnage.propulsor.cards.discard)
+
+    def testRecuperationActiveOnDescent(self):
+        self.prepareRecuperationActive("descent", [4, 4])
+        assert_contains(5, self.mainRider.personnage.propulsor.cards.discard)
+
+    def testRecuperationActiveAllowsPlayerToChooseWhichCardToIncrement(self):
+        self.track = Track([(30, "refuel")])
+        self.createDeckHero([2, 3, 4, 5], 1, RecuperationActive())
+        self.createRace()
+        self.race.newTurn()
+        assert_similars([2, 5, 5, "f"], self.mainRider.personnage.propulsor.cards.discard)
+        assert_similars([2, 4, 5], self.oracle.choices[1])
+
+    def testRecuperationActiveOnlyAllowToIncrementCardsJustDiscarded(self):
+        self.track = Track([(30, "refuel")])
+        self.createDeckHero([2, 2, 2, 2, 2, 3, 4, 5], 1, RecuperationActive())
+        self.createRace()
+        self.race.newTurn()
+        self.race.newTurn()
+        assert_similars([2, 4, 5], self.oracle.choices[3])
+
+    def testRecuperationActiveCannotIncrementExhaustCards(self):
+        self.prepareRecuperationActive("refuel", [2, "f", "f"])
+        assert_similars(["f", "f", "f"], self.mainRider.personnage.propulsor.cards.discard)
+
+    def testCardsAreResetAfterRace(self):
+        self.prepareRecuperationActive("refuel", [2, 3])
+        self.mainRider.personnage.propulsor.newRace()
+        assert_contains(3, self.mainRider.personnage.propulsor.cards.deck)
+
+    def testCardsAreNotResetAgainAfterEachRace(self):
+        self.prepareRecuperationActive("refuel", [2, 3, 4])
+        self.mainRider.personnage.propulsor.newRace()
+        self.createRace()
+        self.mainRider.personnage.propulsor.newRace()
+        self.createRace()
+        assert_contains(4, self.mainRider.personnage.propulsor.cards.deck)
+
+    def testRecuperationActiveOnBiggerHandSize(self):
+        self.track = Track([(30, "refuel")])
+        self.createDeckHero([2, 3, 4, 5, 6], 1, RecuperationActive())
+        self.hero.propulsor.cards.handSize = 5
+        self.createRace()
+        self.race.newTurn()
+        assert_similars([2, 4, 5, 6], self.oracle.choices[1])
+
+
 class ChoiceDoer:
     def __init__(self, value):
         self.value = value
+        self.choices = []
 
-    def pick(self, *_):
+    def pick(self, possibilities, *_):
+        self.choices.append(possibilities)
         return self.value
-
 
 if __name__ == "__main__":
     runTests(TalentsInRaceTest())
