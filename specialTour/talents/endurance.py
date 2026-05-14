@@ -10,11 +10,14 @@ class Endurance(RaceObserver):
     def applyTo(self, personnage):
         personnage.propulsor.cards.endOfRaceDecksManagers.append(self)
         personnage.addRaceObserver(self)
+        self.personnage = personnage
 
     def modifyCards(self, cards):
         removeExhausts(cards.deck, self.fatiguesCount)
     
     def onRiderMove(self, rider, start, end, obstacles, card):
+        if not rider.personnage == self.personnage:
+            return
         if card == "f":
             self.fatiguesCount += 1
 
