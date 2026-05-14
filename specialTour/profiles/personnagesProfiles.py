@@ -23,3 +23,10 @@ def rouleurStandardProfile():
         [EffortLong, EconomieEnergie, Endurance],
         [Poursuivant, Echappe, RouleRoule]
     ])
+
+def sprinteurStandardProfile():
+    return PersonnageProfile("Sprinteur Standard",
+    tiers = [
+        [RemonteeDePeloton, Inlarguable, SeFaufiler],
+        [SuperSprint, SprintFinal, RecuperationActive, Regularite]
+    ])
