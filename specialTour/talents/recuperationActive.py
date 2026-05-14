@@ -9,10 +9,9 @@ class RecuperationActive(RaceObserver):
 
     def onRaceStart(self, track):
         self.track = track
-        self.history = []
 
     def onRiderMove(self, rider, start, end, obstacles, card):
-        if not rider.personnage == self.personnage:
+        if rider.personnage is not self.personnage:
             return
         if self.track.getRoadType(start[0]) == "refuel":
             if end[0] - start[0] <= 4:
@@ -32,8 +31,12 @@ class RecuperationActive(RaceObserver):
 
     def modifyCards(self, cards):
         for card, incrementedCard in self.history:
-            cards.deck.remove(incrementedCard)
-            cards.deck.append(card)
+            for list in [cards.played, cards.deck]:
+                if incrementedCard in list:
+                    list.remove(incrementedCard)
+                    list.append(card)
+                    break
+        self.history = []
 
 def replaceCard(list, before, after):
     list.remove(before)

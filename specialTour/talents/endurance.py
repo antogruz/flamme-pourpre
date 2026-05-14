@@ -16,7 +16,7 @@ class Endurance(RaceObserver):
         removeExhausts(cards.deck, self.fatiguesCount)
     
     def onRiderMove(self, rider, start, end, obstacles, card):
-        if not rider.personnage == self.personnage:
+        if rider.personnage is not self.personnage:
             return
         if card == "f":
             self.fatiguesCount += 1

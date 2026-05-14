@@ -213,9 +213,7 @@ class TalentsInRaceTest():
     def testCardsAreNotResetAgainAfterEachRace(self):
         self.prepareRecuperationActive("refuel", [2, 3, 4])
         self.mainRider.personnage.propulsor.newRace()
-        self.createRace()
         self.mainRider.personnage.propulsor.newRace()
-        self.createRace()
         assert_contains(4, self.mainRider.personnage.propulsor.cards.deck)
 
     def testRecuperationActiveOnBiggerHandSize(self):
@@ -226,6 +224,11 @@ class TalentsInRaceTest():
         self.race.newTurn()
         assert_similars([2, 4, 5, 6], self.oracle.choices[1])
 
+    def testRecuperationActiveCanResetPlayedCards(self):
+        self.prepareRecuperationActive("refuel", [2, 3])
+        self.race.newTurn()
+        self.mainRider.personnage.propulsor.newRace()
+        assert_contains(3, self.mainRider.personnage.propulsor.cards.deck)
 
 class ChoiceDoer:
     def __init__(self, value):
