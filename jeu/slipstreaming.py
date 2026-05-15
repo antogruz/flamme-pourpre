@@ -6,14 +6,14 @@
 
 from groups import splitByGroupBehind
 from positions import tailToHead, headToTail
-from obstacles import Obstacles
+from obstacles import Obstacles, obstaclesFromRiders
 
 
 def slipstreaming(riders, track, observers = None, obstacles = None):
     if observers is None:
         observers = []
     if obstacles is None:
-        obstacles = Obstacles(riders)
+        obstacles = obstaclesFromRiders(riders)
     applyPersonalRules(riders, track, observers, obstacles)
     candidates = tailToHead(riders)
     while candidates:
@@ -85,7 +85,7 @@ class SlipstremingTester():
         self.others = []
 
     def slipstream(self):
-        slipstreaming([self.rider] + self.others, self.track, None, Obstacles([self.rider] + self.others))
+        slipstreaming([self.rider] + self.others, self.track, None, obstaclesFromRiders([self.rider] + self.others))
 
     def addRider(self, square):
         self.others.append(createRider(square, 0))

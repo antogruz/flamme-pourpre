@@ -8,7 +8,7 @@ class Personnage():
         self.bonusRules = []
         self.slipstreamRules = []
         self.playOrderRules = []
-        self.blockingRules = []
+        self.obstacleFactories = []
         self.talents = []
         self.raceObservers = []
 
@@ -28,5 +28,5 @@ class Personnage():
     def addPlayOrderRule(self, rule):
         self.playOrderRules.append(rule)
 
-    def addBlockingRule(self, rule):
-        self.blockingRules.append(rule)
+    def addObstacleFactory(self, factory):
+        self.obstacleFactories.append(factory)

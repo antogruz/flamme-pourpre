@@ -4,7 +4,7 @@
 # Elle donne le classement de la course. Ce n'est pas sa responsabilité de connaître les règles (de mouvement, d'aspiration, de fatigue...) mais elle connait la procédure.
 # Elle sera amenée à changer si de nouvelles étapes sont décrites dans la procédure, par exemple la phase d'enchères du mode de jeu "échappée" ou l'activation de pouvoirs uniques avant de révéler les cartes, etc.
 
-from obstacles import Obstacles
+from obstacles import Obstacles, DefaultRiderObstacle, obstaclesFromRiders
 from slipstreaming import slipstreaming
 from exhaust import exhaust
 from raceSnapshot import RaceSnapshot
@@ -15,7 +15,7 @@ class Race():
         self.track = track
         self.teamsInRace = teamsInRace
         self.riders = [r for team in teamsInRace for r in team.ridersInRace]
-        self.obstacles = Obstacles(self.riders, self.track)
+        self.obstaclesByRider = self.buildObstaclesByRider()
         self.arrivals = []
         self.checkArrivals()
         for rider in self.riders:
@@ -23,6 +23,20 @@ class Race():
                 self.addObserver(observer)
         for observer in self.observers:
             observer.onRaceStart(self.track)
+
+    def buildObstaclesByRider(self):
+        teamOf = {r: team for team in self.teamsInRace for r in team.ridersInRace}
+        result = {}
+        for asker in self.riders:
+            obstacles = []
+            for r in self.riders:
+                obstacles.append(DefaultRiderObstacle(r))
+                if teamOf[r] is teamOf[asker]:
+                    continue
+                for factory in r.personnage.obstacleFactories:
+                    obstacles.append(factory.createFor(r, self.track))
+            result[asker] = Obstacles(obstacles)
+        return result
 
     def addObserver(self, observer):
         self.observers.append(observer)
@@ -34,17 +48,17 @@ class Race():
         moves = {}
         for team in self.teamsInRace:
             moves.update(team.pickNextMoves())
-        snapshot = RaceSnapshot(list(self.riders), self.track, self.obstacles)
+        snapshot = RaceSnapshot(list(self.riders), self.track, self.obstaclesByRider)
         energies = { r: energyOf(r, moves[r], snapshot) for r in self.riders }
         snapshot.setEnergies(energies)
 
         for r in playOrder(self.riders, snapshot):
             start = r.position()
-            r.move(energies[r], self.track, self.obstacles)
+            r.move(energies[r], self.track, self.obstaclesByRider[r])
             for observer in self.observers:
-                observer.onRiderMove(r, start, r.position(), self.obstacles, moves[r])
+                observer.onRiderMove(r, start, r.position(), self.obstaclesByRider[r], moves[r])
 
-        slipstreaming(self.riders, self.track, self.observers, self.obstacles)
+        slipstreaming(self.riders, self.track, self.observers, obstaclesFromRiders(self.riders))
         self.checkArrivals()
 
         exhaust(headToTail(self.riders), self.observers)
@@ -104,8 +118,9 @@ class TeamInRace:
     def placeNextRider(self, square, lane):
         if not self.ridersToPlace:
             return False
-        self.ridersInRace.append(RiderInRace(self.ridersToPlace.pop(0), square, lane))
-        return self.ridersInRace[-1]
+        rider = RiderInRace(self.ridersToPlace.pop(0), square, lane)
+        self.ridersInRace.append(rider)
+        return rider
 
     def pickNextMoves(self):
         return self.team.propulsor.pickNextMoves(self.getActiveRiders())

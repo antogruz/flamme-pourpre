@@ -1,23 +1,20 @@
 #!/usr/bin/env python3
 
 class Obstacles:
-    def __init__(self, obstacles, track = None):
+    def __init__(self, obstacles):
         self.obstacles = obstacles
-        self.track = track
 
     def isFree(self, slot):
-        for o in self.obstacles:
-            if o.position() == slot:
-                return False
-            if self.track is not None and self.blockedByRules(o, slot):
-                return False
-        return True
+        return all(o.isFree(slot) for o in self.obstacles)
 
-    def blockedByRules(self, blocker, slot):
-        if not hasattr(blocker, "personnage"):
-            return False
-        for rule in blocker.personnage.blockingRules:
-            if rule.blocks(blocker, slot, self.track):
-                return True
-        return False
 
+class DefaultRiderObstacle:
+    def __init__(self, rider):
+        self.rider = rider
+
+    def isFree(self, position):
+        return self.rider.position() != position
+
+
+def obstaclesFromRiders(riders):
+    return Obstacles([DefaultRiderObstacle(r) for r in riders])
