@@ -22,3 +22,15 @@ def playOrderKey(rider, snapshot):
         return (0, -absolutePosition(rider))
     return min(rule.keyFor(rider, snapshot) for rule in rules)
 
+
+class PlayOrderRule:
+    """Interface for influencing a rider's play order priority.
+
+    Implement this to override or refine when a rider plays during a turn.
+    Each rule returns a sort key (tuple); rules attached to the same rider are
+    min-composed, and riders are ordered ascending. Lower key = plays earlier.
+    """
+    def keyFor(self, rider, snapshot):
+        """Return the sort key tuple for `rider` given the race `snapshot`."""
+        pass
+

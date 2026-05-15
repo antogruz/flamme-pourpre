@@ -18,3 +18,14 @@ class DefaultRiderObstacle:
 
 def obstaclesFromRiders(riders):
     return Obstacles([DefaultRiderObstacle(r) for r in riders])
+
+class ObstacleFactory:
+    """Interface for producing extra obstacles attached to a rider.
+
+    Implement this to expose obstacles (mountain blocking, walls, hazard zones, etc.)
+    that other riders should see when computing their movement.
+    Race assembles these obstacles, opt-out for teammates of the rider that owns them.
+    """
+    def createFor(self, rider, track):
+        """Build and return the obstacle that represents `rider` on the given `track`."""
+        pass

@@ -72,6 +72,19 @@ def applyPersonalRules(riders, track, observers, obstacles):
                 for observer in observers:
                     observer.onSlipstream([(rider, origin, rider.position())])
 
+
+class SlipstreamRule:
+    """Interface for personal slipstreaming rules.
+
+    Implement this to grant a rider extra squares beyond standard slipstreaming,
+    based on their personal context (talents like Remontée de Peloton, Inlarguable, etc.).
+    Returned distances of all rules attached to a rider are max-composed.
+    """
+    def squaresEarned(self, rider, riders, track):
+        """Return the number of squares `rider` earns from this rule (0 if none)."""
+        pass
+
+
 from specialTour.talents.remonteeDePeloton import RemonteeDePeloton
 from specialTour.talents.inlarguable import Inlarguable
 from unittests import assert_equals, runTests

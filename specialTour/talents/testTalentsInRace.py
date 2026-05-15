@@ -277,6 +277,15 @@ class TalentsInRaceTest():
         assert_equals(5, self.getMainRider().square)
         assert_equals(5, self.teamsInRace[0].ridersInRace[1].square)
 
+    def testImblocableBlocksInTheSameCaseAsItGetsPriority(self):
+        self.track = Track([(4, "ascent"), (4, "descent")])
+        self.createHero([5], ImblocableClimber())
+        self.addMinion((3, 0), team = 1)
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(5, self.getMainRider().square)
+        assert_equals(4, self.teamsInRace[1].ridersInRace[0].square)
+
 
 class ChoiceDoer:
     def __init__(self, value):

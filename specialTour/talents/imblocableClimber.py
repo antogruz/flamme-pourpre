@@ -1,36 +1,35 @@
 from positions import absolutePosition
+from jeu.obstacles import ObstacleFactory
+from jeu.positions import PlayOrderRule
 
-class ImblocableClimber:
+class ImblocableClimber():
     def applyTo(self, personnage):
-        personnage.addPlayOrderRule(MountainPriority())
-        personnage.addObstacleFactory(MountainObstacleFactory())
+        mountainBehaviour = MountainBehaviour()
+        personnage.addPlayOrderRule(mountainBehaviour)
+        personnage.addObstacleFactory(mountainBehaviour)
 
     def displayRule(self):
         return "Grimpeur Imblocable: En montagne, jouez avant tous les coureurs. Seuls vos équipiers peuvent se placer sur les autres couloirs de votre case."
 
+class MountainBehaviour(PlayOrderRule, ObstacleFactory):
+    def __init__(self):
+        self.willCrossAscent = False
 
-class MountainObstacleFactory:
-    def createFor(self, rider, track):
-        return MountainObstacle(rider, track)
-
-
-class MountainObstacle:
-    def __init__(self, rider, track):
-        self.rider = rider
-        self.track = track
+    def keyFor(self, rider, snapshot):
+        end = rider.personnage.movementRules.computeNewPosition(rider.position(), snapshot.energyOf(rider), snapshot.track, snapshot.obstaclesFor(rider))
+        self.willCrossAscent = anyAscentBetween(snapshot.track, rider.position()[0], end[0])
+        if self.willCrossAscent:
+            return (-1, -absolutePosition(rider))
+        return (0, -absolutePosition(rider))
 
     def isFree(self, position):
-        if self.track.getRoadType(self.rider.getSquare()) != "ascent":
+        if not self.willCrossAscent:
             return True
         return position[0] != self.rider.getSquare()
 
-
-class MountainPriority:
-    def keyFor(self, rider, snapshot):
-        end = rider.personnage.movementRules.computeNewPosition(rider.position(), snapshot.energyOf(rider), snapshot.track, snapshot.obstaclesFor(rider))
-        if anyAscentBetween(snapshot.track, rider.position()[0], end[0]):
-            return (-1, -absolutePosition(rider))
-        return (0, -absolutePosition(rider))
+    def createFor(self, rider, track):
+        self.rider = rider
+        return self
 
 def anyAscentBetween(track, start, end):
     for s in range(start, end + 1):
