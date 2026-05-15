@@ -15,7 +15,7 @@ class Race():
         self.track = track
         self.teamsInRace = teamsInRace
         self.riders = [r for team in teamsInRace for r in team.ridersInRace]
-        self.obstacles = Obstacles(self.riders)
+        self.obstacles = Obstacles(self.riders, self.track)
         self.arrivals = []
         self.checkArrivals()
         for rider in self.riders:

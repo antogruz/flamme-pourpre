@@ -257,16 +257,18 @@ class TalentsInRaceTest():
         self.race.newTurn()
         assert_equals(4, self.getMainRider().square)
 
-    #def testImblocableClimberBlocksOtherRiders(self):
-    #    self.track = Track([(30, "ascent")])
-    #    self.createHero([5], ImblocableClimber())
-    #    self.addMinion((3, 0), team = 1)
-    #    self.addMinion((3, 1), team = 1)
-    #    self.createRace()
-    #    self.race.newTurn()
-    #    assert_equals(5, self.getMainRider().square)
-    #    assert_equals(4, self.teamsInRace[1].ridersInRace[0].square)
-    #    assert_equals(4, self.teamsInRace[1].ridersInRace[1].square)
+    def testImblocableClimberBlocksOtherRiders(self):
+        self.track = Track([(30, "ascent")])
+        self.createHero([5], ImblocableClimber())
+        self.addMinion((3, 0), team = 1)
+        self.addMinion((3, 1), team = 1)
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(5, self.getMainRider().square)
+        assert_equals(4, self.teamsInRace[1].ridersInRace[0].square)
+        assert_equals(4, self.teamsInRace[1].ridersInRace[1].square)
+
+
 
 class ChoiceDoer:
     def __init__(self, value):

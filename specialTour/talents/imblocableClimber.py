@@ -3,9 +3,17 @@ from positions import absolutePosition
 class ImblocableClimber:
     def applyTo(self, personnage):
         personnage.addPlayOrderRule(MountainPriority())
+        personnage.addBlockingRule(MountainBlockingRule())
 
     def displayRule(self):
         return "Grimpeur Imblocable: En montagne, jouez avant tous les coureurs. Seuls vos équipiers peuvent se placer sur les autres couloirs de votre case."
+
+
+class MountainBlockingRule:
+    def blocks(self, blocker, slot, track):
+        if track.getRoadType(blocker.position()[0]) != "ascent":
+            return False
+        return slot[0] == blocker.position()[0]
 
 class MountainPriority:
     def keyFor(self, rider, snapshot):
