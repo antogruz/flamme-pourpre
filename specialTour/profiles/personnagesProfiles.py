@@ -4,6 +4,13 @@ from specialTour.talents.endurance import Endurance
 from specialTour.talents.poursuivant import Poursuivant
 from specialTour.talents.echappe import Echappe
 from specialTour.talents.rouleRoule import RouleRoule
+from specialTour.talents.remonteeDePeloton import RemonteeDePeloton
+from specialTour.talents.inlarguable import Inlarguable
+from specialTour.talents.seFaufiler import SeFaufiler
+from specialTour.talents.superSprint import SuperSprint
+from specialTour.talents.sprintFinal import SprintFinal
+from specialTour.talents.recuperationActive import RecuperationActive
+from specialTour.talents.regularite import Regularite
 class PersonnageProfile:
     def __init__(self, name, tiers):
         self.name = name

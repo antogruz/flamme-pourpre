@@ -5,6 +5,7 @@ from jeu.riderBuilder import RiderBuilder
 from jeu.riderMove import MovementRules
 from jeu.dicePropulsor import DicePropulsor
 from jeu.drawOnePropulsor import DrawOnePropulsor
+from specialTour.profiles.personnagesProfiles import rouleurStandardProfile, sprinteurStandardProfile
 
 class RidersDirector:
     def __init__(self, builder = RiderBuilder()):
@@ -16,7 +17,9 @@ class RidersDirector:
         builder.buildAppearance("Rouleur", rouleurShade, color)
         builder.buildOracle(oracle)
         builder.buildDeck(rouleurDeck())
-        return builder.getResult()
+        rider = builder.getResult()
+        rider.profile = rouleurStandardProfile()
+        return rider
 
     def makeSprinteur(self, oracle, color):
         builder = self.builder
@@ -24,7 +27,9 @@ class RidersDirector:
         builder.buildAppearance("Sprinteur", sprinteurShade, color)
         builder.buildOracle(oracle)
         builder.buildDeck(sprinteurDeck())
-        return builder.getResult()
+        rider = builder.getResult()
+        rider.profile = sprinteurStandardProfile()
+        return rider
 
     def makeGrimpeur(self, oracle, color):
         builder = self.builder

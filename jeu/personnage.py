@@ -11,6 +11,7 @@ class Personnage():
         self.obstacleFactories = []
         self.talents = []
         self.raceObservers = []
+        self.profile = None
 
     def gainTalent(self, talent):
         self.talents.append(talent)
