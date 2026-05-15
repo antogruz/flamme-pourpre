@@ -17,18 +17,21 @@ from seFaufiler import SeFaufiler
 from sprintFinal import SprintFinal
 from superSprint import SuperSprint
 from recuperationActive import RecuperationActive
+from imblocableClimber import ImblocableClimber
 
 class TalentsInRaceTest():
     def __before__(self):
         self.track = Track([(30, "normal")])
-        self.minions = []
+        self.preparedTeams = [[], []]
+        self.teamsInRace = []
 
     def createHero(self, cards, talent, position = (0, 0)):
         rb = RiderBuilder()
         rb.buildPropulsor(DrawOnePropulsor(cards, shuffle=noop))
         self.hero = rb.getResult()
         self.hero.gainTalent(talent)
-        self.heroPosition = position
+        self.hero.position = position
+        self.preparedTeams[0].append(self.hero)
 
     def createDeckHero(self, deck, pickedIndex, talent, position = (0, 0)):
         rb = RiderBuilder()
@@ -37,59 +40,65 @@ class TalentsInRaceTest():
         rb.buildDeck(deck, shuffle=noop)
         self.hero = rb.getResult()
         self.hero.gainTalent(talent)
-        self.heroPosition = position
+        self.hero.position = position
+        self.preparedTeams[0].append(self.hero)
 
-    def addMinion(self, position, move = 2):
+    def getMainRider(self):
+        return self.teamsInRace[0].ridersInRace[0]
+
+    def addMinion(self, position, move = 2, team = 0):
+        self.addPersonnage(self.preparedTeams[team], position, move)
+
+    def addPersonnage(self, list, position, move = 2):
         rb = RiderBuilder()
         rb.buildPropulsor(DrawOnePropulsor([move] * 10))
-        minion = rb.getResult()
-        minion.position = position
-        self.minions.append(minion)
+        personnage = rb.getResult()
+        personnage.position = position
+        list.append(personnage)
 
     def createRace(self):
-        tb = TeamBuilder()
-        tb.addRider(self.hero)
-        for rider in self.minions:
-            tb.addRider(rider)
-        tb.buildPropulsion(SimpleTeamPropulsion())
-        self.team = TeamInRace(tb.getResult())
-        self.mainRider = self.team.placeNextRider(self.heroPosition[0], self.heroPosition[1])
-        for minion in self.minions:
-            self.team.placeNextRider(minion.position[0], minion.position[1])
-        self.race = Race(self.track, [self.team])
-
+        for team in self.preparedTeams:
+            tb = TeamBuilder()
+            for rider in team:
+                tb.addRider(rider)
+            tb.buildPropulsion(SimpleTeamPropulsion())
+            teamInRace = TeamInRace(tb.getResult())
+            self.teamsInRace.append(teamInRace)
+            for rider in team:
+                teamInRace.placeNextRider(rider.position[0], rider.position[1])
+        self.race = Race(self.track, self.teamsInRace)
 
     def testEffortLong(self):
         self.createHero(["f"], EffortLong())
         self.createRace()
         self.race.newTurn()
-        assert_equals(3, self.mainRider.square)
+        assert_equals(3, self.getMainRider().square)
 
     def testEconomieEnergieSkipsHand(self):
         self.createDeckHero([5], 1, EconomieEnergie())
         self.createRace()
         self.race.newTurn()
-        assert_equals(3, self.mainRider.square)
+        assert_equals(3, self.getMainRider().square)
 
     def testEconomieEnergieSkipsOnEmptyDeck(self):
         self.createDeckHero([], 0, EconomieEnergie())
         self.createRace()
         self.race.newTurn()
-        assert_equals(3, self.mainRider.square)
+        assert_equals(3, self.getMainRider().square)
 
     def testPoursuivantBonusWhenNotInLeadingGroup(self):
         self.createHero([2], Poursuivant())
         self.addMinion((10, 0))
         self.createRace()
         self.race.newTurn()
-        assert_equals(3, self.mainRider.square)
+        assert_equals(3, self.getMainRider().square)
 
     def testPoursuivantNoBonusWhenInLeadingGroup(self):
         self.createHero([2], Poursuivant())
         self.addMinion((1, 0))
         self.createRace()
         self.race.newTurn()
-        assert_equals(2, self.mainRider.square)
+        assert_equals(2, self.getMainRider().square)
 
     def testEchappeBonusWhenAloneInFront(self):
         self.createHero([2], Echappe(), (10, 0))
@@ -98,7 +107,7 @@ class TalentsInRaceTest():
         self.addMinion((2, 0))
         self.createRace()
         self.race.newTurn()
-        assert_equals(13, self.mainRider.square)
+        assert_equals(13, self.getMainRider().square)
 
     def testEchappeNoBonusWhenLeadingGroupIsHalfOrMore(self):
         self.createHero([2], Echappe(), (10, 0))
@@ -107,7 +116,7 @@ class TalentsInRaceTest():
         self.addMinion((1, 0))
         self.createRace()
         self.race.newTurn()
-        assert_equals(12, self.mainRider.square)
+        assert_equals(12, self.getMainRider().square)
 
     def testEffortLongAndPoursuivantStack(self):
         self.createHero(["f"], EffortLong())
@@ -115,7 +124,7 @@ class TalentsInRaceTest():
         self.addMinion((10, 0))
         self.createRace()
         self.race.newTurn()
-        assert_equals(4, self.mainRider.square)
+        assert_equals(4, self.getMainRider().square)
 
     def testSeFaufilerSimple(self):
         self.createHero([3], SeFaufiler())
@@ -123,7 +132,7 @@ class TalentsInRaceTest():
         self.addMinion((1, 1), 2)
         self.createRace()
         self.race.newTurn()
-        assert_equals(3, self.mainRider.square)
+        assert_equals(3, self.getMainRider().square)
 
     def testSeFaufilerWithSeveralGroups(self):
         self.createHero([9], SeFaufiler())
@@ -131,37 +140,37 @@ class TalentsInRaceTest():
         self.addMinion((7, 1), 2)
         self.createRace()
         self.race.newTurn()
-        assert_equals(8, self.mainRider.square)
+        assert_equals(8, self.getMainRider().square)
 
     def testSprintFinalWith3CardsLeft(self):
         self.createDeckHero([3, 3, 3], 1, SprintFinal())
         self.createRace()
         self.race.newTurn()
-        assert_equals(5, self.mainRider.square)
+        assert_equals(5, self.getMainRider().square)
 
     def testSprintFinalWith4CardsLeft(self):
         self.createDeckHero([3, 3, 3, 3], 1, SprintFinal())
         self.createRace()
         self.race.newTurn()
-        assert_equals(4, self.mainRider.square)
+        assert_equals(4, self.getMainRider().square)
 
     def testSprintFinalWith8CardsLeft(self):
         self.createDeckHero([3, 3, 3, 3, 3, 3, 3, 3], 1, SprintFinal())
         self.createRace()
         self.race.newTurn()
-        assert_equals(3, self.mainRider.square)
+        assert_equals(3, self.getMainRider().square)
 
     def testSuperSprintIncreasesNines(self):
         self.createHero([9], SuperSprint())
         self.createRace()
         self.race.newTurn()
-        assert_equals(11, self.mainRider.square)
+        assert_equals(11, self.getMainRider().square)
 
     def testSuperSprintDoesNotIncreaseOtherCards(self):
         self.createHero([3], SuperSprint())
         self.createRace()
         self.race.newTurn()
-        assert_equals(3, self.mainRider.square)
+        assert_equals(3, self.getMainRider().square)
 
     def prepareRecuperationActive(self, roadType, cards):
         self.track = Track([(30, roadType)])
@@ -171,26 +180,26 @@ class TalentsInRaceTest():
 
     def testRecuperationActiveIncreasesACard(self):
         self.prepareRecuperationActive("refuel", [2, 3])
-        assert_contains(4, self.mainRider.personnage.propulsor.cards.discard)
+        assert_contains(4, self.getMainRider().personnage.propulsor.cards.discard)
 
     def testRecuperationActiveDoesNothingOnStandardRoad(self):
         self.prepareRecuperationActive("normal", [2, 3])
-        assert_contains(3, self.mainRider.personnage.propulsor.cards.discard)
+        assert_contains(3, self.getMainRider().personnage.propulsor.cards.discard)
 
     def testRecuperationActiveDoesNothingIfRiderGoesTooFast(self):
         self.prepareRecuperationActive("refuel", [7, 3])
-        assert_contains(3, self.mainRider.personnage.propulsor.cards.discard)
+        assert_contains(3, self.getMainRider().personnage.propulsor.cards.discard)
 
     def testRecuperationActiveOnDescent(self):
         self.prepareRecuperationActive("descent", [4, 4])
-        assert_contains(5, self.mainRider.personnage.propulsor.cards.discard)
+        assert_contains(5, self.getMainRider().personnage.propulsor.cards.discard)
 
     def testRecuperationActiveAllowsPlayerToChooseWhichCardToIncrement(self):
         self.track = Track([(30, "refuel")])
         self.createDeckHero([2, 3, 4, 5], 1, RecuperationActive())
         self.createRace()
         self.race.newTurn()
-        assert_similars([2, 5, 5, "f"], self.mainRider.personnage.propulsor.cards.discard)
+        assert_similars([2, 5, 5, "f"], self.getMainRider().personnage.propulsor.cards.discard)
         assert_similars([2, 4, 5], self.oracle.choices[1])
 
     def testRecuperationActiveOnlyAllowToIncrementCardsJustDiscarded(self):
@@ -203,18 +212,18 @@ class TalentsInRaceTest():
 
     def testRecuperationActiveCannotIncrementExhaustCards(self):
         self.prepareRecuperationActive("refuel", [2, "f", "f"])
-        assert_similars(["f", "f", "f"], self.mainRider.personnage.propulsor.cards.discard)
+        assert_similars(["f", "f", "f"], self.getMainRider().personnage.propulsor.cards.discard)
 
     def testCardsAreResetAfterRace(self):
         self.prepareRecuperationActive("refuel", [2, 3])
-        self.mainRider.personnage.propulsor.newRace()
-        assert_contains(3, self.mainRider.personnage.propulsor.cards.deck)
+        self.getMainRider().personnage.propulsor.newRace()
+        assert_contains(3, self.getMainRider().personnage.propulsor.cards.deck)
 
     def testCardsAreNotResetAgainAfterEachRace(self):
         self.prepareRecuperationActive("refuel", [2, 3, 4])
-        self.mainRider.personnage.propulsor.newRace()
-        self.mainRider.personnage.propulsor.newRace()
-        assert_contains(4, self.mainRider.personnage.propulsor.cards.deck)
+        self.getMainRider().personnage.propulsor.newRace()
+        self.getMainRider().personnage.propulsor.newRace()
+        assert_contains(4, self.getMainRider().personnage.propulsor.cards.deck)
 
     def testRecuperationActiveOnBiggerHandSize(self):
         self.track = Track([(30, "refuel")])
@@ -227,8 +236,37 @@ class TalentsInRaceTest():
     def testRecuperationActiveCanResetPlayedCards(self):
         self.prepareRecuperationActive("refuel", [2, 3])
         self.race.newTurn()
-        self.mainRider.personnage.propulsor.newRace()
-        assert_contains(3, self.mainRider.personnage.propulsor.cards.deck)
+        self.getMainRider().personnage.propulsor.newRace()
+        assert_contains(3, self.getMainRider().personnage.propulsor.cards.deck)
+
+    def testImblocableClimber(self):
+        self.track = Track([(30, "ascent")])
+        self.createHero([5], ImblocableClimber())
+        self.addMinion((3, 0))
+        self.addMinion((3, 1))
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(5, self.getMainRider().square)
+
+    def testImblocableClimberOnNormalRoad(self):
+        self.track = Track([(30, "normal")])
+        self.createHero([5], ImblocableClimber())
+        self.addMinion((3, 0))
+        self.addMinion((3, 1))
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(4, self.getMainRider().square)
+
+    #def testImblocableClimberBlocksOtherRiders(self):
+    #    self.track = Track([(30, "ascent")])
+    #    self.createHero([5], ImblocableClimber())
+    #    self.addMinion((3, 0), team = 1)
+    #    self.addMinion((3, 1), team = 1)
+    #    self.createRace()
+    #    self.race.newTurn()
+    #    assert_equals(5, self.getMainRider().square)
+    #    assert_equals(4, self.teamsInRace[1].ridersInRace[0].square)
+    #    assert_equals(4, self.teamsInRace[1].ridersInRace[1].square)
 
 class ChoiceDoer:
     def __init__(self, value):

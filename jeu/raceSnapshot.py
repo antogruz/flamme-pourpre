@@ -10,9 +10,18 @@ from groups import computeGroups
 
 
 class RaceSnapshot:
-    def __init__(self, allRiders):
+    def __init__(self, allRiders, track, obstacles):
         self.allRiders = allRiders
+        self.track = track
+        self.obstacles = obstacles
         self.groups = None
+        self.energies = None
+
+    def setEnergies(self, energies):
+        self.energies = energies
+
+    def energyOf(self, rider):
+        return self.energies[rider]
 
     def getGroups(self):
         if self.groups is None:

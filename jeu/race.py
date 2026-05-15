@@ -34,8 +34,9 @@ class Race():
         moves = {}
         for team in self.teamsInRace:
             moves.update(team.pickNextMoves())
-        snapshot = RaceSnapshot(list(self.riders))
+        snapshot = RaceSnapshot(list(self.riders), self.track, self.obstacles)
         energies = { r: energyOf(r, moves[r], snapshot) for r in self.riders }
+        snapshot.setEnergies(energies)
 
         for r in playOrder(self.riders, snapshot):
             start = r.position()
