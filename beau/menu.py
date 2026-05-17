@@ -25,7 +25,7 @@ class UserChoice():
         self.answer = tk.IntVar()
 
     def pickRider(self, riders, instruction = ""):
-        return self.pick([self.appearances.of(r).name for r in riders], instruction)
+        return self.pickWithRiders([(r, "") for r in riders], instruction)
 
     def pick(self, choices, title = ""):
         if title:
@@ -45,6 +45,19 @@ class UserChoice():
 
         clear(self.frame)
         return self.answer.get()
+
+    def pickWithRiders(self, choices, instruction = ""):
+        return self.pick([self.nicePrefix(rider) + " - " + choice for rider, choice in choices], instruction)
+
+    def nicePrefix(self, rider):
+        appearance = self.appearances.of(rider)
+        return appearance.name + " " + appearance.shade
+
+    def niceChoice(self, rider, choice):
+        if not choice:
+            return self.nicePrefix(rider)
+        return self.nicePrefix(rider) + " - " + choice
+
 
     def dontWait(self):
         self.answer.set(-1)

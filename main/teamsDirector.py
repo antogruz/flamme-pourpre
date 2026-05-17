@@ -39,3 +39,6 @@ class FirstOracle():
 
     def pickRider(self, *_):
         return 0
+
+    def pickWithRiders(self, *_):
+        return 0

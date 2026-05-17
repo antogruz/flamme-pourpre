@@ -20,10 +20,8 @@ class TalentTeamProgression(TeamProgression):
         if not choices:
             return
         instantiated = [(personnage, talentClass()) for (personnage, talentClass) in choices]
-        index = self.oracle.pick(
-            [talent.displayRule() for (_, talent) in instantiated],
-            "Choisissez un talent",
-        )
+        items = [(personnage, talent.displayRule()) for (personnage, talent) in instantiated]
+        index = self.oracle.pickWithRiders(items, "Choisissez un talent")
         personnage, talent = instantiated[index]
         personnage.gainTalent(talent)
         personnage.profile.nextTier()
