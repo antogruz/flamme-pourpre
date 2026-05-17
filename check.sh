@@ -2,6 +2,6 @@
 
 set -e
 
-for f in jeu/*.py specialTour/**/*.py; do
+for f in jeu/*.py specialTour/*.py specialTour/**/*.py; do
     PYTHONPATH=$PYTHONPATH:jeu/ python3 $f
 done

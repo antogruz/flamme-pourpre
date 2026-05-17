@@ -18,7 +18,10 @@ class PersonnageProfile:
         self.currentTier = 0
 
     def getAccessibleTalents(self):
-        return self.tiers[self.currentTier]
+        return self.tiers[self.getCurrentTier()]
+
+    def getCurrentTier(self):
+        return self.currentTier
 
     def nextTier(self):
         self.currentTier += 1
