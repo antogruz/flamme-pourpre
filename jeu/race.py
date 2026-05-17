@@ -45,6 +45,7 @@ class Race():
         return not self.riders
 
     def newTurn(self):
+        self.obstaclesByRider = self.buildObstaclesByRider()
         moves = {}
         for team in self.teamsInRace:
             moves.update(team.pickNextMoves())
