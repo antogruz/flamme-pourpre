@@ -21,6 +21,7 @@ from decorators.riderDisplay import RidersDisplay
 from decorators.rankingDisplay import RankingDisplay
 from intermediateSprintObserver import createSprintObserver, getPointsForSprints
 from race import TeamInRace
+from specialTour.extendTrack import extendTrack
 
 def noLog(ranking):
     pass
@@ -36,16 +37,19 @@ class Runner:
         self.clock = clock
         self.displayers = displayers
 
-    def runTour(self, tour, tracksBuilders, appearances):
+    def runTour(self, tour, tracksBuilders, appearances, bonusPerRace = 0):
         self.displayers.append(ResultsWindow(self.window, tour, appearances))
-
+        bonusSquares = 0
         for trackBuilder in tracksBuilders:
-            track = trackBuilder(len(tour.teams))
+            track = extendTrack(trackBuilder(len(tour.teams)), bonusSquares)
             tour.newRace()
             self.runRace(track, tour.teams, tour.checkNewArrivals,
                          SpecialModes(bestClimber=tour.addClimberPoints,
                                       intermediateSprint=tour.addPoints),
                          appearances)
+            for team in tour.teams:
+                team.progression.progress()
+            bonusSquares += bonusPerRace
 
 
     def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes(), appearances = None):

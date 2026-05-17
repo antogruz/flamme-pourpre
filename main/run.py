@@ -13,6 +13,7 @@ from displayRegistry import DisplayRegistry
 from teamsDirector import TeamsDirector
 from jeu.propulsion import SequentialPropulsion
 from beau.appearances import Appearances
+from specialTour.teamProgression import TalentTeamProgression
 from functools import partial
 
 def main():
@@ -22,6 +23,7 @@ def main():
     window.grid()
     clock = 0.3
 
+    gameMode = createSimpleMenu(window, ["Tour", "Special Tour"], "Game mode")
     racesCount = createSimpleMenu(window, range(1, 6), "How many races to play?")
     ridersCount = createSimpleMenu(window, [1, 2, 3, 4], "How many riders in your team?")
     playerLayout = PlayerLayout(newWindow(root), ridersCount)
@@ -49,6 +51,8 @@ def main():
 
         tb.addRider(rider)
 
+    if gameMode == "Special Tour":
+        tb.buildProgression(TalentTeamProgression(tb.riders, oracle))
     humanTeam = tb.getResult()
     teamsDirector = TeamsDirector(appearances)
     botTeams = []
@@ -61,7 +65,8 @@ def main():
 
     allDisplays = displayRegistry.getAll()
     runner = Runner(window, clock, allDisplays)
-    runner.runTour(tour, tracks, appearances)
+    bonusPerRace = 4 if gameMode == "Special Tour" else 0
+    runner.runTour(tour, tracks, appearances, bonusPerRace)
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()
