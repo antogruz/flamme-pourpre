@@ -1,6 +1,9 @@
 from jeu.race import RaceObserver
 
 class RecuperationActive(RaceObserver):
+    def displayRule(self):
+        return "Récupération active: si on avance du minimum en ravitaillement ou en descente, on peut augmenter de 1 une carte de sa main. (pour la course en cours)"
+
     def applyTo(self, personnage):
         personnage.addRaceObserver(self)
         personnage.propulsor.cards.endOfRaceDecksManagers.append(self)
