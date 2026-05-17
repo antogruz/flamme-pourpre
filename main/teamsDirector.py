@@ -2,19 +2,18 @@ from teamBuilder import TeamBuilder
 from propulsion import SimpleTeamPropulsion
 from ridersDirector import RidersDirector
 from riderBuilderWithAppearance import RiderBuilderWithAppearance
+from team import DefaultOracle
 
 class TeamsDirector:
     def __init__(self, appearances):
         self.appearances = appearances
 
     def makeStandardBots(self, color):
-        oracle = FirstOracle()
         tb = TeamBuilder()
         tb.buildPropulsion(SimpleTeamPropulsion())
-        tb.buildOracle(oracle)
         director = RidersDirector(RiderBuilderWithAppearance(self.appearances))
-        tb.addRider(director.makeRouleur(oracle, color))
-        tb.addRider(director.makeSprinteur(oracle, color))
+        tb.addRider(director.makeRouleur(DefaultOracle(), color))
+        tb.addRider(director.makeSprinteur(DefaultOracle(), color))
         return tb.getResult()
 
     def makeDiceBots(self, color):
@@ -32,13 +31,3 @@ class TeamsDirector:
         tb.addRider(riderDirector.makeMuscleRouleur(color))
         tb.addRider(riderDirector.makeMuscleSprinteur(color))
         return tb.getResult()
-
-class FirstOracle():
-    def pick(self, *_):
-        return 0
-
-    def pickRider(self, *_):
-        return 0
-
-    def pickWithRiders(self, *_):
-        return 0

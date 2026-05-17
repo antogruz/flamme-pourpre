@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 
-from team import Team, TeamProgression
+from team import Team, TeamProgression, DefaultOracle
 
 class TeamBuilder:
     def __init__(self):
         self.riders = []
         self.propulsion = None
-        self.oracle = None
+        self.oracle = DefaultOracle()
         self.progression = TeamProgression()
 
     def addRider(self, rider):

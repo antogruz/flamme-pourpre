@@ -9,7 +9,7 @@ from tokensDecorators import TokensDecorators
 
 class RidersDisplay:
     def __init__(self, riders, trackDisplay, appearances):
-        self.riders = list(riders)
+        self.riders = riders
         self.trackDisplay = trackDisplay
         self.appearances = appearances
 

@@ -47,7 +47,7 @@ class UserChoice():
         return self.answer.get()
 
     def pickWithRiders(self, choices, instruction = ""):
-        return self.pick([self.nicePrefix(rider) + " - " + choice for rider, choice in choices], instruction)
+        return self.pick([self.niceChoice(rider, choice) for rider, choice in choices], instruction)
 
     def nicePrefix(self, rider):
         appearance = self.appearances.of(rider)

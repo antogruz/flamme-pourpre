@@ -123,6 +123,14 @@ class TeamInRace:
         self.ridersInRace.append(rider)
         return rider
 
+    def placeChosenRider(self, square, lane):
+        if not self.ridersToPlace:
+            return False
+        index = self.team.oracle.pickRider(self.ridersToPlace, "Choisissez un coureur a placer")
+        rider = RiderInRace(self.ridersToPlace.pop(index), square, lane)
+        self.ridersInRace.append(rider)
+        return rider
+
     def pickNextMoves(self):
         return self.team.propulsor.pickNextMoves(self.getActiveRiders())
 

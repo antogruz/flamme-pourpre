@@ -22,6 +22,7 @@ from decorators.rankingDisplay import RankingDisplay
 from intermediateSprintObserver import createSprintObserver, getPointsForSprints
 from race import TeamInRace
 from specialTour.extendTrack import extendTrack
+from trackAnalysis import getSections
 
 def noLog(ranking):
     pass
@@ -54,15 +55,27 @@ class Runner:
 
     def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes(), appearances = None):
         teamsInRace = [TeamInRace(team) for team in teams]
-        setRidersOnStart(teamsInRace)
-        riders = [rider for team in teamsInRace for rider in team.ridersInRace]
-        for rider in riders:
-            rider.personnage.propulsor.newRace()
 
         layout = RaceLayout(self.window)
         tokensDecorators, eventAnimator, roadAnimator = createDisplays(track, layout, self.clock, appearances)
         raceDisplayers = self.displayers + [tokensDecorators]
-        tokensDecorators.addRoadDecorator(RidersDisplay(riders, tokensDecorators.trackDisplay, appearances))
+        placedRiders = []
+        tokensDecorators.addRoadDecorator(RidersDisplay(placedRiders, tokensDecorators.trackDisplay, appearances))
+
+        def refresh():
+            for d in raceDisplayers:
+                d.update()
+
+        refresh()
+
+        def onPlaced(rider):
+            placedRiders.append(rider)
+            refresh()
+
+        setRidersOnStart(teamsInRace, track, onPlaced)
+        for rider in placedRiders:
+            rider.personnage.propulsor.newRace()
+
         race = Race(track, teamsInRace)
         tokensDecorators.addRoadDecorator(RankingDisplay(race, tokensDecorators.trackDisplay, appearances))
         race.addObserver(eventAnimator)
@@ -72,14 +85,12 @@ class Runner:
         if modes.intermediateSprint:
             createMiniRaces(tokensDecorators, race, createSprintsObservers(track, modes.intermediateSprint), "green")
 
-        for d in raceDisplayers:
-            d.update()
+        refresh()
 
         while not race.isOver():
             race.newTurn()
             logRanking(race.ranking())
-            for d in raceDisplayers:
-                d.update()
+            refresh()
 
 def createMiniRaces(tokensDecorators, race, observers, decoratorColor):
     for observer in observers:
@@ -103,21 +114,28 @@ def createDisplays(track, layout, clock, appearances):
     return tokensDecorators, eventAnimator, roadAnimator
 
 
-def setRidersOnStart(teamsInRace):
-    teamsWithRidersWaiting = list(teamsInRace)
-    random.shuffle(teamsWithRidersWaiting)
-    square, lane = 0, 0
-    while teamsWithRidersWaiting:
-        team = teamsWithRidersWaiting[0]
-        if team.placeNextRider(square, lane):
-            square, lane = next(square, lane)
-        else:
-            teamsWithRidersWaiting.pop(0)
+def setRidersOnStart(teamsInRace, track, onPlaced = lambda rider: None):
+    spots = startSpots(track)
+    teamsToPlace = [t for t in teamsInRace if t.ridersToPlace]
+    while teamsToPlace and spots:
+        team = random.choice(teamsToPlace)
+        square, lane = spots.pop(0)
+        rider = team.placeChosenRider(square, lane)
+        if rider:
+            onPlaced(rider)
+        if not team.ridersToPlace:
+            teamsToPlace.remove(team)
 
-def next(square, lane):
-    if lane == 0:
-        return square, lane + 1
-    return square + 1, 0
+def startSpots(track):
+    sections = getSections(track, ["start"])
+    if not sections:
+        return []
+    first, last = sections[0]
+    spots = []
+    for square in range(last, first - 1, -1):
+        for lane in range(track.getLaneCount(square)):
+            spots.append((square, lane))
+    return spots
 
 
 def pickTrack(window):
