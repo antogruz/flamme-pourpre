@@ -38,7 +38,7 @@ def main():
     for i in range(ridersCount):
         riderType = createSimpleMenu(window, ["Rouleur", "Sprinteur", "Grimpeur", "Opportunistic"], "Add a rider to your team")
 
-        director = RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, appearances, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i]))
+        director = RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, appearances, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i], playerLayout.ridersTalentsFrames[i]))
 
         if riderType == "Rouleur":
             rider = director.makeRouleur(oracle, teamColor)
@@ -80,6 +80,7 @@ class PlayerLayout:
         self.choices = frames.new()
         self.ridersCards = frames.newLine(ridersCount)
         self.ridersSpecialFrames = frames.newLine(ridersCount)
+        self.ridersTalentsFrames = frames.newLine(ridersCount)
 
 def createPlayerOracle(root, window, appearances):
     oracle = UserChoice(window, appearances)

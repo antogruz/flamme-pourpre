@@ -1,6 +1,7 @@
 from positions import absolutePosition
+from talent import Talent
 
-class SeFaufiler:
+class SeFaufiler(Talent):
     def applyTo(self, personnage):
         personnage.addPlayOrderRule(SeFaufilerRule())
 

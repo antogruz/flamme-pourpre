@@ -1,4 +1,6 @@
-class Regularite:
+from talent import Talent
+
+class Regularite(Talent):
     def applyTo(self, personnage):
         personnage.propulsor.cards.deck.remove(9)
         personnage.propulsor.cards.deck.append(6)

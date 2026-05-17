@@ -6,7 +6,8 @@ from jeu.tour import Tour
 from jeu.tracks import randomPresetTrack
 from teamBuilder import TeamBuilder
 from propulsion import SimpleTeamPropulsion
-from teamsDirector import TeamsDirector, FirstOracle
+from teamsDirector import TeamsDirector
+from team import DefaultOracle
 from ridersDirector import RidersDirector
 from riderBuilderWithAppearance import RiderBuilderWithAppearance
 from riderBuilderWithSpecialDisplay import RiderBuilderWithSpecialDisplay
@@ -41,12 +42,12 @@ def twoRacesOpportunistic(window):
     colors = ["blue", "red", "black"]
     layout = OpportunisticLayout(window, len(colors))
     teams = []
-    oracle = FirstOracle()
+    oracle = DefaultOracle()
     for i, color in enumerate(colors):
         tb = TeamBuilder()
         tb.buildPropulsion(SimpleTeamPropulsion())
         riderDirector = RidersDirector(
-            RiderBuilderWithSpecialDisplay(displayRegistry, appearances, layout.cards[i], layout.specials[i])
+            RiderBuilderWithSpecialDisplay(displayRegistry, appearances, layout.cards[i], layout.specials[i], layout.talents[i])
         )
         tb.addRider(riderDirector.makeOpportunistic(oracle, color))
         teams.append(tb.getResult())
@@ -60,6 +61,7 @@ class OpportunisticLayout:
         frames = Frames(window)
         self.cards = frames.newLine(ridersCount)
         self.specials = frames.newLine(ridersCount)
+        self.talents = frames.newLine(ridersCount)
 
 if __name__ == "__main__":
     integrationTests()

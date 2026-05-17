@@ -1,7 +1,9 @@
 #! /usr/bin/env python3
 
+from talent import Talent
 
-class Poursuivant:
+
+class Poursuivant(Talent):
     def applyTo(self, personnage):
         personnage.addBonusRule(NotInLeadingGroupBonus())
 

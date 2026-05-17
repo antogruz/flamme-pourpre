@@ -3,3 +3,6 @@
 - Gérer les ridersDirector qui builds plusieurs riders
 - Pouvoir sauvegarder un grand tour
 - Les cartes sont moins manipulées en interne par tout le monde
+
+Il manque pour les règles du tour:
+ - Les 2 fatigue de handicap de base (peut-être ascension 1)

@@ -1,11 +1,15 @@
 from race import RaceObserver
+from talent import Talent
 
-class Endurance(RaceObserver):
+class Endurance(Talent, RaceObserver):
     def __init__(self):
         self.fatiguesCount = 0
 
     def displayRule(self):
         return "Endurance à la fatigue: Quête. Jouer des cartes fatigue. Entre 2 courses, enlevez du deck autant de carte fatigue que le total des cartes fatigue jouées"
+
+    def stats(self):
+        return ["Fatigues jouées: " + str(self.fatiguesCount)]
 
     def applyTo(self, personnage):
         personnage.propulsor.cards.endOfRaceDecksManagers.append(self)

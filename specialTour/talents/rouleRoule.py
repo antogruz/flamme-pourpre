@@ -1,4 +1,6 @@
-class RouleRoule:
+from talent import Talent
+
+class RouleRoule(Talent):
     def applyTo(self, personnage):
         personnage.propulsor.cards.deck.append(7)
 

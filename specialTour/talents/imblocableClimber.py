@@ -1,8 +1,9 @@
 from positions import absolutePosition
 from jeu.obstacles import ObstacleFactory
 from jeu.positions import PlayOrderRule
+from jeu.talent import Talent
 
-class ImblocableClimber():
+class ImblocableClimber(Talent):
     def applyTo(self, personnage):
         mountainBehaviour = MountainBehaviour()
         personnage.addPlayOrderRule(mountainBehaviour)

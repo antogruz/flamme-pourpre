@@ -1,6 +1,7 @@
 from track import streamable
+from talent import Talent
 
-class RemonteeDePeloton:
+class RemonteeDePeloton(Talent):
     def applyTo(self, personnage):
         personnage.addSlipstreamRule(RemonteeDePelotonRule())
 

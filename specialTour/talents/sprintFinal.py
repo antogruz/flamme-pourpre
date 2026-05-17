@@ -1,4 +1,6 @@
-class SprintFinal:
+from talent import Talent
+
+class SprintFinal(Talent):
     def applyTo(self, personnage):
         personnage.addBonusRule(SprintFinalBonus())
     

@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 
-class EconomieEnergie:
+from talent import Talent
+
+class EconomieEnergie(Talent):
     def applyTo(self, personnage):
         personnage.energyRules = BetterEmpty(personnage.energyRules, 3)
         personnage.propulsor.addExtraChoice(SkipProvider())

@@ -1,4 +1,6 @@
-class SuperSprint:
+from talent import Talent
+
+class SuperSprint(Talent):
     def applyTo(self, personnage):
         personnage.addBonusRule(SuperSprintBonus())
 

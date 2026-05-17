@@ -1,7 +1,8 @@
 from track import streamable
 from groups import computeGroups
+from talent import Talent
 
-class Inlarguable:
+class Inlarguable(Talent):
     def applyTo(self, personnage):
         personnage.addSlipstreamRule(InlarguableRule())
 

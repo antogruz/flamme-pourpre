@@ -1,7 +1,9 @@
 #! /usr/bin/env python3
 
+from talent import Talent
 
-class EffortLong:
+
+class EffortLong(Talent):
     def applyTo(self, personnage):
         personnage.energyRules = BetterFatigue(personnage.energyRules, 3)
 

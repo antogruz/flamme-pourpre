@@ -1,7 +1,9 @@
 #! /usr/bin/env python3
 
+from talent import Talent
 
-class Echappe:
+
+class Echappe(Talent):
     def applyTo(self, personnage):
         personnage.addBonusRule(InSmallLeadingGroupBonus())
 

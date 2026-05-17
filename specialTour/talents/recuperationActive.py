@@ -1,6 +1,7 @@
 from jeu.race import RaceObserver
+from jeu.talent import Talent
 
-class RecuperationActive(RaceObserver):
+class RecuperationActive(Talent, RaceObserver):
     def displayRule(self):
         return "Récupération active: si on avance du minimum en ravitaillement ou en descente, on peut augmenter de 1 une carte de sa main. (pour la course en cours)"
 
