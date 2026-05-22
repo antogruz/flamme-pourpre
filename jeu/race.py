@@ -94,6 +94,10 @@ class RaceObserver:
         """Called when the race starts."""
         pass
 
+    def onRiderPlaced(self, rider, square, lane):
+        """Called during the setup phase, after each rider is placed on the track."""
+        pass
+
     def onRiderMove(self, rider, start, end, obstacles, card):
         """Called when a rider moves from start to end position."""
         pass

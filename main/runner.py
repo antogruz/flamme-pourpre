@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 from jeu.tracks import *
-from race import Race
+from race import Race, RaceObserver
 import riderMove
-import random
 from tokensDecorators import TokensDecorators
 from trackDisplay import TrackDisplay
 from tkinterSpecific.canvasBoxFactory import CanvasBoxFactory
@@ -22,7 +21,7 @@ from decorators.rankingDisplay import RankingDisplay
 from intermediateSprintObserver import createSprintObserver, getPointsForSprints
 from race import TeamInRace
 from specialTour.extendTrack import extendTrack
-from trackAnalysis import getSections
+from raceSetup import setRidersOnStart
 
 def noLog(ranking):
     pass
@@ -68,11 +67,7 @@ class Runner:
 
         refresh()
 
-        def onPlaced(rider):
-            placedRiders.append(rider)
-            refresh()
-
-        setRidersOnStart(teamsInRace, track, onPlaced)
+        setRidersOnStart(teamsInRace, track, [PlacementWatcher(placedRiders, refresh)])
         for rider in placedRiders:
             rider.personnage.propulsor.newRace()
 
@@ -114,28 +109,14 @@ def createDisplays(track, layout, clock, appearances):
     return tokensDecorators, eventAnimator, roadAnimator
 
 
-def setRidersOnStart(teamsInRace, track, onPlaced = lambda rider: None):
-    spots = startSpots(track)
-    teamsToPlace = [t for t in teamsInRace if t.ridersToPlace]
-    while teamsToPlace and spots:
-        team = random.choice(teamsToPlace)
-        square, lane = spots.pop(0)
-        rider = team.placeChosenRider(square, lane)
-        if rider:
-            onPlaced(rider)
-        if not team.ridersToPlace:
-            teamsToPlace.remove(team)
+class PlacementWatcher(RaceObserver):
+    def __init__(self, placedRiders, refresh):
+        self.placedRiders = placedRiders
+        self.refresh = refresh
 
-def startSpots(track):
-    sections = getSections(track, ["start"])
-    if not sections:
-        return []
-    first, last = sections[0]
-    spots = []
-    for square in range(last, first - 1, -1):
-        for lane in range(track.getLaneCount(square)):
-            spots.append((square, lane))
-    return spots
+    def onRiderPlaced(self, rider, square, lane):
+        self.placedRiders.append(rider)
+        self.refresh()
 
 
 def pickTrack(window):
