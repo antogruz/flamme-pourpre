@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from runner import Runner
+from engineRunner import EngineRunner
+from tkUIBackend import TkUIBackend
 from jeu.tour import Tour
 from jeu.tracks import randomPresetTrack
 from teamBuilder import TeamBuilder
@@ -23,18 +24,18 @@ def integrationTests():
     window.mainloop()
 
 def integrationSingle(window):
-    runner = Runner(window, 0.003)
     appearances = Appearances()
+    runner = EngineRunner(TkUIBackend(window, 0.003, [], appearances))
     teamsDirector = TeamsDirector(appearances)
     teams = [teamsDirector.makeStandardBots(color) for color in ["green", "red", "blue", "black", "magenta"]]
-    runner.runRace(randomPresetTrack(len(teams)), teams, appearances=appearances)
+    runner.runRace(randomPresetTrack(len(teams)), teams)
 
 def testDice(window):
-    runner = Runner(window, 0.003)
     appearances = Appearances()
+    runner = EngineRunner(TkUIBackend(window, 0.003, [], appearances))
     teamsDirector = TeamsDirector(appearances)
     teams = [teamsDirector.makeDiceBots(color) for color in ["blue", "red", "black"]]
-    runner.runRace(randomPresetTrack(len(teams)), teams, appearances=appearances)
+    runner.runRace(randomPresetTrack(len(teams)), teams)
 
 def twoRacesOpportunistic(window):
     appearances = Appearances()
@@ -52,8 +53,8 @@ def twoRacesOpportunistic(window):
         tb.addRider(riderDirector.makeOpportunistic(oracle, color))
         teams.append(tb.getResult())
     tour = Tour(teams)
-    runner = Runner(window, 0.003, displayRegistry.getAll())
-    runner.runTour(tour, [randomPresetTrack, randomPresetTrack], appearances)
+    runner = EngineRunner(TkUIBackend(window, 0.003, displayRegistry.getAll(), appearances))
+    runner.runTour(tour, [randomPresetTrack, randomPresetTrack])
 
 class OpportunisticLayout:
     def __init__(self, root, ridersCount):

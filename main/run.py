@@ -4,7 +4,8 @@ import tkinter as tk
 from jeu.tracks import randomPresetTrack
 from beau.menu import *
 from beau.frames import Frames
-from runner import Runner
+from engineRunner import EngineRunner
+from tkUIBackend import TkUIBackend
 from jeu.tour import Tour
 from jeu.teamBuilder import TeamBuilder
 from ridersDirector import RidersDirector
@@ -64,9 +65,9 @@ def main():
     tracks = [ randomPresetTrack for i in range(racesCount) ]
 
     allDisplays = displayRegistry.getAll()
-    runner = Runner(window, clock, allDisplays)
+    runner = EngineRunner(TkUIBackend(window, clock, allDisplays, appearances))
     bonusPerRace = 2 if gameMode == "Special Tour" else 0
-    runner.runTour(tour, tracks, appearances, bonusPerRace)
+    runner.runTour(tour, tracks, bonusPerRace)
 
     window.bind("<Escape>", lambda e: window.destroy())
     window.mainloop()

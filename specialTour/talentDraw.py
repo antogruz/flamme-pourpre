@@ -112,6 +112,14 @@ class TalentDrawTest:
         result = TalentDraw(reverseShuffle).drawTalents([a])
         assert_similars([(a, TalentB), (a, TalentC), (a, TalentD)], result)
 
+    def testNoTalentsLeftWhenAllTiersExhausted(self):
+        a = fakePersonnage([[TalentA]])
+        a.profile.nextTier()
+        b = fakePersonnage([[TalentB]])
+        b.profile.nextTier()
+        result = TalentDraw(reverseShuffle).drawTalents([a, b])
+        assert_equals([], result)
+
 
 if __name__ == "__main__":
     runTests(TalentDrawTest())
