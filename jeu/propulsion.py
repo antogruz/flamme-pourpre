@@ -13,7 +13,7 @@ class SequentialPropulsion():
         return moves
 
     def pickRider(self, riders):
-        choice = self.oracle.pickRider(riders, "Pick a rider")
+        choice = self.oracle.pickWithRiders([(r, "") for r in riders], "Pick a rider")
         if choice < 0 or choice >= len(riders):
             choice = 0
         return riders.pop(choice)

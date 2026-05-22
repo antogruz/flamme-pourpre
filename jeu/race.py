@@ -130,7 +130,7 @@ class TeamInRace:
     def placeChosenRider(self, square, lane):
         if not self.ridersToPlace:
             return False
-        index = self.team.oracle.pickRider(self.ridersToPlace, "Choisissez un coureur a placer")
+        index = self.team.oracle.pickWithRiders([(r, "") for r in self.ridersToPlace], "Choisissez un coureur a placer")
         rider = RiderInRace(self.ridersToPlace.pop(index), square, lane)
         self.ridersInRace.append(rider)
         return rider

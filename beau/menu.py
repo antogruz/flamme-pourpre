@@ -3,6 +3,7 @@
 from visualtests import VisualTester, runVisualTestsInWindow
 import tkinter as tk
 from frames import clear
+from oracle import Oracle
 
 def createSimpleMenu(frame, choices, title = ""):
     optionsSelector = UserChoice(frame)
@@ -18,14 +19,11 @@ def createMenu(frame, choices, title = ""):
 from beautifulCard import createBeautifulCard
 from buttonMaker import makeButton
 
-class UserChoice():
+class UserChoice(Oracle):
     def __init__(self, frame, appearances = None):
         self.frame = frame
         self.appearances = appearances
         self.answer = tk.IntVar()
-
-    def pickRider(self, riders, instruction = ""):
-        return self.pickWithRiders([(r, "") for r in riders], instruction)
 
     def pick(self, choices, title = ""):
         if title:

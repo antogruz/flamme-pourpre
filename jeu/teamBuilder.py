@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
-from team import Team, TeamProgression, DefaultOracle
+from team import Team, TeamProgression
+from oracle import DefaultOracle
 
 class TeamBuilder:
     def __init__(self):

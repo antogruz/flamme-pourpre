@@ -16,19 +16,3 @@ class TeamProgression:
     def progress(self):
         """Called after each race to apply progression."""
         pass
-
-
-class DefaultOracle:
-    """Trivial oracle for teams that don't need user input.
-
-    Always picks the first option. Suitable for bots whose propulsion
-    doesn't query the oracle (e.g. DicePropulsor, DrawOnePropulsor).
-    """
-    def pick(self, *_):
-        return 0
-
-    def pickRider(self, *_):
-        return 0
-
-    def pickWithRiders(self, *_):
-        return 0

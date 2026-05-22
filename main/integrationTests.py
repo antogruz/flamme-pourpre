@@ -8,7 +8,7 @@ from jeu.tracks import randomPresetTrack
 from teamBuilder import TeamBuilder
 from propulsion import SimpleTeamPropulsion
 from teamsDirector import TeamsDirector
-from team import DefaultOracle
+from oracle import DefaultOracle
 from ridersDirector import RidersDirector
 from riderBuilderWithAppearance import RiderBuilderWithAppearance
 from riderBuilderWithSpecialDisplay import RiderBuilderWithSpecialDisplay

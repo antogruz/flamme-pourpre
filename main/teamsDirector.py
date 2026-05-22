@@ -2,7 +2,7 @@ from teamBuilder import TeamBuilder
 from propulsion import SimpleTeamPropulsion
 from ridersDirector import RidersDirector
 from riderBuilderWithAppearance import RiderBuilderWithAppearance
-from team import DefaultOracle
+from oracle import DefaultOracle
 
 class TeamsDirector:
     def __init__(self, appearances):
