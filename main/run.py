@@ -65,7 +65,7 @@ def main():
 
     allDisplays = displayRegistry.getAll()
     runner = Runner(window, clock, allDisplays)
-    bonusPerRace = 4 if gameMode == "Special Tour" else 0
+    bonusPerRace = 2 if gameMode == "Special Tour" else 0
     runner.runTour(tour, tracks, appearances, bonusPerRace)
 
     window.bind("<Escape>", lambda e: window.destroy())

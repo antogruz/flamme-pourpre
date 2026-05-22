@@ -5,4 +5,5 @@
 - Les cartes sont moins manipulées en interne par tout le monde
 
 Il manque pour les règles du tour:
+ - Peut-être étendre le track par sa section de sprint intermédiaire? (Ou bien calculer cette section avant l’ajout, sinon le sprint intermédiaire est toujours au début de la course)
  - Les 2 fatigue de handicap de base (peut-être ascension 1)
