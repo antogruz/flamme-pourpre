@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 
+# Builder Tk qui construit un Personnage et l'enregistre dans le registre
+# Appearances avec son nom, sa shade et sa couleur.
+# Utilisé pour les riders qui doivent être affichés (track, classement…)
+# sans avoir de widget propre.
+
 from jeu.riderBuilder import RiderBuilder
 
 
 class RiderBuilderWithAppearance(RiderBuilder):
-    """
-    Builder qui construit un Personnage et l'enregistre dans le registre
-    Appearances avec son nom, sa shade et sa couleur.
-    Utilisé pour les riders qui doivent être affichés (track, classement…)
-    sans avoir de widget propre.
-    """
-
     def __init__(self, appearances):
         super().__init__()
         self.appearances = appearances

@@ -10,7 +10,7 @@ from propulsion import SimpleTeamPropulsion
 from teamsDirector import TeamsDirector
 from oracle import DefaultOracle
 from ridersDirector import RidersDirector
-from riderBuilderWithAppearance import RiderBuilderWithAppearance
+from tkRidersDirector import TkRidersDirector
 from riderBuilderWithSpecialDisplay import RiderBuilderWithSpecialDisplay
 from displayRegistry import DisplayRegistry
 from beau.appearances import Appearances
@@ -47,8 +47,9 @@ def twoRacesOpportunistic(window):
     for i, color in enumerate(colors):
         tb = TeamBuilder()
         tb.buildPropulsion(SimpleTeamPropulsion())
-        riderDirector = RidersDirector(
-            RiderBuilderWithSpecialDisplay(displayRegistry, appearances, layout.cards[i], layout.specials[i], layout.talents[i])
+        riderDirector = TkRidersDirector(
+            RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, appearances, layout.cards[i], layout.specials[i], layout.talents[i])),
+            appearances,
         )
         tb.addRider(riderDirector.makeOpportunistic(oracle, color))
         teams.append(tb.getResult())

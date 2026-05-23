@@ -9,6 +9,7 @@ from tkUIBackend import TkUIBackend
 from jeu.tour import Tour
 from jeu.teamBuilder import TeamBuilder
 from ridersDirector import RidersDirector
+from tkRidersDirector import TkRidersDirector
 from riderBuilderWithSpecialDisplay import RiderBuilderWithSpecialDisplay
 from displayRegistry import DisplayRegistry
 from teamsDirector import TeamsDirector
@@ -39,7 +40,10 @@ def main():
     for i in range(ridersCount):
         riderType = createSimpleMenu(window, ["Rouleur", "Sprinteur", "Grimpeur", "Opportunistic"], "Add a rider to your team")
 
-        director = RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, appearances, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i], playerLayout.ridersTalentsFrames[i]))
+        director = TkRidersDirector(
+            RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, appearances, playerLayout.ridersCards[i], playerLayout.ridersSpecialFrames[i], playerLayout.ridersTalentsFrames[i])),
+            appearances,
+        )
 
         if riderType == "Rouleur":
             rider = director.makeRouleur(oracle, teamColor)
