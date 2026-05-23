@@ -144,7 +144,6 @@ class AnimateRoadTester(VisualTester):
 class Rider:
     def __init__(self, position):
         self.pos = position
-        self.arrived = False
 
     def position(self):
         return self.pos

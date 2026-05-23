@@ -6,7 +6,6 @@ class RiderInRace():
         self.personnage = rider
         self.square = square
         self.lane = lane
-        self.arrived = False
 
     def position(self):
         return (self.square, self.lane)
@@ -22,9 +21,6 @@ class RiderInRace():
 
     def exhaust(self):
         self.personnage.propulsor.exhaust()
-
-    def setArrived(self):
-        self.arrived = True
 
 from unittests import *
 from riderBuilder import RiderBuilder

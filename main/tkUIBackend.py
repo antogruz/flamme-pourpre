@@ -36,6 +36,7 @@ class TkUIBackend(UIBackend):
         self.roadAnimator = None
         self.raceDisplayers = []
         self.placedRiders = []
+        self.ridersDisplay = None
 
     def beforeTour(self, tour):
         self.displayers.append(ResultsWindow(self.window, tour, self.appearances))
@@ -45,14 +46,15 @@ class TkUIBackend(UIBackend):
         layout = RaceLayout(self.window)
         self.tokensDecorators, self.eventAnimator, self.roadAnimator = createDisplays(track, layout, self.clock, self.appearances)
         self.raceDisplayers = self.displayers + [self.tokensDecorators]
-        self.tokensDecorators.addRoadDecorator(RidersDisplay(self.placedRiders, self.tokensDecorators.trackDisplay, self.appearances))
+        self.ridersDisplay = RidersDisplay(self.placedRiders, self.tokensDecorators.trackDisplay, self.appearances)
+        self.tokensDecorators.addRoadDecorator(self.ridersDisplay)
 
     def placementObservers(self):
         return [PlacementWatcher(self.placedRiders, self.refresh)]
 
     def raceObservers(self, race):
         self.tokensDecorators.addRoadDecorator(RankingDisplay(race, self.tokensDecorators.trackDisplay, self.appearances))
-        return [self.eventAnimator, self.roadAnimator]
+        return [self.eventAnimator, self.roadAnimator, self.ridersDisplay]
 
     def onClimberObserver(self, observer):
         self.tokensDecorators.addRoadDecorator(MiniRacePointsDisplay(observer, "red", self.tokensDecorators.trackDisplay))

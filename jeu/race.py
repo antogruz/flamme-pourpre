@@ -74,7 +74,14 @@ class Race():
             if arrived(r, self.track):
                 self.riders.remove(r)
                 self.arrivals.append(r)
-                r.setArrived()
+                self.teamOf(r).ridersInRace.remove(r)
+                for observer in self.observers:
+                    observer.onRiderArrived(r, r.getSquare(), len(self.arrivals))
+
+    def teamOf(self, rider):
+        for team in self.teamsInRace:
+            if rider in team.ridersInRace:
+                return team
 
 def arrived(rider, track):
     return track.getRoadType(rider.getSquare()) == "end"
@@ -101,7 +108,11 @@ class RaceObserver:
     def onRiderMove(self, rider, start, end, obstacles, card):
         """Called when a rider moves from start to end position."""
         pass
-    
+
+    def onRiderArrived(self, rider, square, rank):
+        """Called when a rider crosses the finish line. `rank` is 1-indexed (1 = winner)."""
+        pass
+
     def onSlipstream(self, riders):
         """Called when riders benefit from slipstream."""
         pass
@@ -136,10 +147,7 @@ class TeamInRace:
         return rider
 
     def pickNextMoves(self):
-        return self.team.propulsor.pickNextMoves(self.getActiveRiders())
-
-    def getActiveRiders(self):
-        return [r for r in self.ridersInRace if not r.arrived]
+        return self.team.propulsor.pickNextMoves(self.ridersInRace)
 
 from unittests import runTests, assert_equals, assert_similars
 from track import Track
