@@ -6,22 +6,17 @@ grimpeurShade = "o|ỏ"
 opportunisticShade = "o\\ỏ"
 
 from tokensDecorators import TokensDecorators
-from race import RaceObserver
 
-class RidersDisplay(RaceObserver):
-    def __init__(self, riders, trackDisplay, appearances):
-        self.riders = riders
+class RidersDisplay:
+    def __init__(self, getRiders, trackDisplay, appearances):
+        self.getRiders = getRiders
         self.trackDisplay = trackDisplay
         self.appearances = appearances
 
     def displayOnTrack(self):
-        for r in self.riders:
+        for r in self.getRiders():
             appearance = self.appearances.of(r)
             self.trackDisplay.setContent(r.position()[0], r.position()[1], appearance.shade, appearance.color)
-
-    def onRiderArrived(self, rider, square, rank):
-        if rider in self.riders:
-            self.riders.remove(rider)
 
 
 
@@ -51,7 +46,7 @@ class DisplayTester(VisualTester):
         factory = BoxFactory(self.frame)
         trackDisplay = TrackDisplay(factory, track)
         rd = TokensDecorators(self.frame, trackDisplay)
-        rd.addRoadDecorator(RidersDisplay(riders, trackDisplay, appearances))
+        rd.addRoadDecorator(RidersDisplay(lambda: riders, trackDisplay, appearances))
         rd.update()
 
 

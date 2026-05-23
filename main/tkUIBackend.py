@@ -35,8 +35,6 @@ class TkUIBackend(UIBackend):
         self.eventAnimator = None
         self.roadAnimator = None
         self.raceDisplayers = []
-        self.placedRiders = []
-        self.ridersDisplay = None
 
     def beforeTour(self, tour):
         self.displayers.append(ResultsWindow(self.window, tour, self.appearances))
@@ -46,15 +44,14 @@ class TkUIBackend(UIBackend):
         layout = RaceLayout(self.window)
         self.tokensDecorators, self.eventAnimator, self.roadAnimator = createDisplays(track, layout, self.clock, self.appearances)
         self.raceDisplayers = self.displayers + [self.tokensDecorators]
-        self.ridersDisplay = RidersDisplay(self.placedRiders, self.tokensDecorators.trackDisplay, self.appearances)
-        self.tokensDecorators.addRoadDecorator(self.ridersDisplay)
+        self.tokensDecorators.addRoadDecorator(RidersDisplay(activeRidersOf(teamsInRace), self.tokensDecorators.trackDisplay, self.appearances))
 
     def placementObservers(self):
-        return [PlacementWatcher(self.placedRiders, self.refresh)]
+        return [PlacementRefresher(self.refresh)]
 
     def raceObservers(self, race):
         self.tokensDecorators.addRoadDecorator(RankingDisplay(race, self.tokensDecorators.trackDisplay, self.appearances))
-        return [self.eventAnimator, self.roadAnimator, self.ridersDisplay]
+        return [self.eventAnimator, self.roadAnimator]
 
     def onClimberObserver(self, observer):
         self.tokensDecorators.addRoadDecorator(MiniRacePointsDisplay(observer, "red", self.tokensDecorators.trackDisplay))
@@ -67,14 +64,19 @@ class TkUIBackend(UIBackend):
             d.update()
 
 
-class PlacementWatcher(RaceObserver):
-    def __init__(self, placedRiders, refresh):
-        self.placedRiders = placedRiders
+class PlacementRefresher(RaceObserver):
+    """Déclenche un refresh global après chaque rider placé. Permet de voir
+    les riders apparaître un à un sans coupler RidersDisplay à l'event."""
+    def __init__(self, refresh):
         self.refresh = refresh
 
     def onRiderPlaced(self, rider, square, lane):
-        self.placedRiders.append(rider)
         self.refresh()
+
+
+def activeRidersOf(teamsInRace):
+    """Renvoie un callable qui itère les riders encore en course à chaque appel."""
+    return lambda: [r for team in teamsInRace for r in team.ridersInRace]
 
 
 def createDisplays(track, layout, clock, appearances):

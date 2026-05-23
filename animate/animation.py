@@ -86,7 +86,7 @@ class AnimateMovesTester(VisualTester):
         self.animators = [EventAnimator(eventDisplay), RoadAnimator(frames[0], self.trackDisplay, track, self.appearances)]
 
     def displayRiders(self, riders):
-        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay, self.appearances))
+        self.tokensDecorators.addRoadDecorator(RidersDisplay(lambda: riders, self.trackDisplay, self.appearances))
         self.tokensDecorators.update()
 
     def makeRider(self, shade, color, pos=(0, 0)):
@@ -116,7 +116,7 @@ class AnimateRoadTester(VisualTester):
         self.roadAnimator = RoadAnimator(frame, self.trackDisplay, track, self.appearances)
 
     def displayRiders(self, riders):
-        self.tokensDecorators.addRoadDecorator(RidersDisplay(riders, self.trackDisplay, self.appearances))
+        self.tokensDecorators.addRoadDecorator(RidersDisplay(lambda: riders, self.trackDisplay, self.appearances))
         self.tokensDecorators.update()
 
     def makeRider(self, shade, color, pos=(0, 0)):
