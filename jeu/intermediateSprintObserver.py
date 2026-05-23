@@ -21,7 +21,7 @@ from trackAnalysis import getSections, countSquaresExcept
 def getPointsForSprints(track):
     trackRealLength = countSquaresExcept(track, ["end"])
     farthestPossibleSprintLine = int((2 * trackRealLength) / 3)
-    sections = getSections(track, ["normal", "descent"])
+    sections = getSections(track, ["normal", "descent", "refuel"])
     sections = cutSectionsTo(sections, farthestPossibleSprintLine)
     sections = [ section for section in sections if length(section) >= 12 ]
 
@@ -64,6 +64,10 @@ class SprintsDetectorTest:
 
     def testDescent(self):
         track = Track([(12, "normal"), (1, "ascent"), (3, "normal"), (3, "descent"), (9, "normal"), (1, "ascent"), (12, "normal")])
+        assert_sprint_last_square(26, track)
+
+    def testRefuel(self):
+        track = Track([(12, "normal"), (1, "ascent"), (3, "normal"), (3, "refuel"), (9, "normal"), (1, "ascent"), (12, "normal")])
         assert_sprint_last_square(26, track)
 
     def testNoSectionTooCloseOfTheEnd(self):
