@@ -21,6 +21,9 @@ class Cards:
     def inDeck(self):
         return len(self.deck)
 
+    def discardCount(self):
+        return len(self.discard)
+
     def draw(self):
         self.hand = []
         for i in range(self.handSize):
