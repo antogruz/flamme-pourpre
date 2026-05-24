@@ -7,7 +7,9 @@
 # la boucle de tours, et la progression entre courses du SpecialTour.
 #
 # Il ne dépend pas de tkinter ni d'aucune autre techno d'affichage.
-# Toute interaction avec l'UI passe par l'objet `ui` (cf. uiBackend.UIBackend).
+# Toute interaction UI passe par deux interfaces distinctes :
+#   - displays : DisplayBinder (côté pull, refresh régulier)
+#   - animations : AnimationBinder (côté push, RaceObservers d'animation)
 
 from race import Race, TeamInRace
 from raceSetup import setRidersOnStart
@@ -28,11 +30,12 @@ class SpecialModes:
 
 
 class EngineRunner:
-    def __init__(self, ui):
-        self.ui = ui
+    def __init__(self, displays, animations):
+        self.displays = displays
+        self.animations = animations
 
     def runTour(self, tour, tracksBuilders, bonusPerRace = 0):
-        self.ui.beforeTour(tour)
+        self.displays.bindTour(tour)
         bonusSquares = 0
         for trackBuilder in tracksBuilders:
             track = extendTrack(trackBuilder(len(tour.teams)), bonusSquares)
@@ -43,47 +46,42 @@ class EngineRunner:
             for team in tour.teams:
                 team.progression.progress()
             bonusSquares += bonusPerRace
-        self.ui.afterTour(tour)
 
     def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes()):
         teamsInRace = [TeamInRace(team) for team in teams]
-        self.ui.beforeRace(track, teamsInRace, modes)
-        self.ui.refresh()
+        climberObservers = self._createClimberObservers(track, modes)
+        sprintObservers = self._createSprintObservers(track, modes)
 
-        setRidersOnStart(teamsInRace, track, self.ui.placementObservers())
+        self.displays.bindRace(track, teamsInRace, modes, climberObservers, sprintObservers)
+        self.displays.refresh()
+
+        setRidersOnStart(teamsInRace, track, self.animations.placementObservers())
         for team in teamsInRace:
             for rider in team.ridersInRace:
                 rider.personnage.propulsor.newRace()
 
         race = Race(track, teamsInRace)
-        for observer in self.ui.raceObservers(race):
+        for observer in self.animations.raceObservers(race):
             race.addObserver(observer)
-        self.attachMiniRaces(race, track, modes)
-        self.ui.refresh()
+        for observer in climberObservers + sprintObservers:
+            race.addObserver(observer)
+
+        self.displays.onRaceStarted(race)
+        self.displays.refresh()
 
         while not race.isOver():
             race.newTurn()
             logRanking(race.ranking())
-            self.ui.refresh()
+            self.displays.refresh()
 
-        self.ui.afterRace(race)
+    def _createClimberObservers(self, track, modes):
+        if not modes.bestClimber:
+            return []
+        return [createClimberObserver(lastAscentSquare, points, modes.bestClimber)
+                for (points, lastAscentSquare) in getPointsForClimbs(track)]
 
-    def attachMiniRaces(self, race, track, modes):
-        if modes.bestClimber:
-            for observer in createClimbsObservers(track, modes.bestClimber):
-                race.addObserver(observer)
-                self.ui.onClimberObserver(observer)
-        if modes.intermediateSprint:
-            for observer in createSprintsObservers(track, modes.intermediateSprint):
-                race.addObserver(observer)
-                self.ui.onSprintObserver(observer)
-
-
-def createClimbsObservers(track, awardClimberPoints):
-    return [createClimberObserver(lastAscentSquare, points, awardClimberPoints)
-            for (points, lastAscentSquare) in getPointsForClimbs(track)]
-
-
-def createSprintsObservers(track, awardPoints):
-    return [createSprintObserver(lastSquare, points, awardPoints)
-            for (lastSquare, points) in getPointsForSprints(track)]
+    def _createSprintObservers(self, track, modes):
+        if not modes.intermediateSprint:
+            return []
+        return [createSprintObserver(lastSquare, points, modes.intermediateSprint)
+                for (lastSquare, points) in getPointsForSprints(track)]

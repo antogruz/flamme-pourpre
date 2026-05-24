@@ -13,7 +13,8 @@ from personnage import Personnage
 from riderMove import MovementRules
 from energyRules import EnergyRules
 from engineRunner import EngineRunner
-from uiBackend import NoopUIBackend
+from displayBinder import DisplayBinder
+from animationBinder import AnimationBinder
 
 
 def makeBotTeam():
@@ -31,7 +32,7 @@ def makeDiceRider():
 def main():
     teams = [makeBotTeam() for _ in range(3)]
     tour = Tour(teams)
-    runner = EngineRunner(NoopUIBackend())
+    runner = EngineRunner(DisplayBinder(), AnimationBinder())
     runner.runTour(tour, [randomPresetTrack, randomPresetTrack])
     scores = tour.getScores()
     assert len(scores) == len(teams), "Expected one score per team"

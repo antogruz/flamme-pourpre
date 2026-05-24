@@ -1,70 +1,77 @@
 #!/usr/bin/env python3
 
-import tkinter as tk
+# Tests d'intégration UI-agnostiques.
+#
+# Reproduisent les scénarios historiques (bots dice, peloton standard,
+# 2 courses opportunistic) en passant par UserInterface, comme une vraie
+# partie. Lancer avec --ui pour cibler une implémentation d'UI.
+
+import argparse
+
+import launcher
 from engineRunner import EngineRunner
-from tkUIBackend import TkUIBackend
 from jeu.tour import Tour
 from jeu.tracks import randomPresetTrack
-from teamBuilder import TeamBuilder
-from propulsion import SimpleTeamPropulsion
-from teamsDirector import TeamsDirector
+from jeu.teamBuilder import TeamBuilder
+from jeu.propulsion import SimpleTeamPropulsion
 from oracle import DefaultOracle
-from ridersDirector import RidersDirector
-from tkRidersDirector import TkRidersDirector
-from riderBuilderWithSpecialDisplay import RiderBuilderWithSpecialDisplay
-from displayRegistry import DisplayRegistry
 from beau.appearances import Appearances
-from beau.frames import Frames
 
-def integrationTests():
-    window = tk.Tk()
-    testDice(window)
-    integrationSingle(window)
-    twoRacesOpportunistic(window)
-    window.mainloop()
 
-def integrationSingle(window):
+def integrationTests(ui):
+    def runAll():
+        testDice(ui)
+        integrationSingle(ui)
+        twoRacesOpportunistic(ui)
+    ui.run(runAll)
+
+
+def testDice(ui):
     appearances = Appearances()
-    runner = EngineRunner(TkUIBackend(window, 0.003, [], appearances))
-    teamsDirector = TeamsDirector(appearances)
-    teams = [teamsDirector.makeStandardBots(color) for color in ["green", "red", "blue", "black", "magenta"]]
+    displays = ui.displays(appearances)
+    animations = ui.animations(displays)
+    runner = EngineRunner(displays, animations)
+    botsDirector = ui.botsTeamsDirector(appearances)
+    teams = [botsDirector.makeDiceBots(color) for color in ["blue", "red", "black"]]
     runner.runRace(randomPresetTrack(len(teams)), teams)
 
-def testDice(window):
+
+def integrationSingle(ui):
     appearances = Appearances()
-    runner = EngineRunner(TkUIBackend(window, 0.003, [], appearances))
-    teamsDirector = TeamsDirector(appearances)
-    teams = [teamsDirector.makeDiceBots(color) for color in ["blue", "red", "black"]]
+    displays = ui.displays(appearances)
+    animations = ui.animations(displays)
+    runner = EngineRunner(displays, animations)
+    botsDirector = ui.botsTeamsDirector(appearances)
+    teams = [botsDirector.makeStandardBots(color)
+             for color in ["green", "red", "blue", "black", "magenta"]]
     runner.runRace(randomPresetTrack(len(teams)), teams)
 
-def twoRacesOpportunistic(window):
+
+def twoRacesOpportunistic(ui):
     appearances = Appearances()
-    displayRegistry = DisplayRegistry()
+    displays = ui.displays(appearances)
     colors = ["blue", "red", "black"]
-    layout = OpportunisticLayout(window, len(colors))
-    teams = []
+    director = ui.playerRidersDirector(len(colors), displays, appearances)
     oracle = DefaultOracle()
-    for i, color in enumerate(colors):
+    teams = []
+    for color in colors:
         tb = TeamBuilder()
         tb.buildPropulsion(SimpleTeamPropulsion())
-        riderDirector = TkRidersDirector(
-            RidersDirector(RiderBuilderWithSpecialDisplay(displayRegistry, appearances, layout.cards[i], layout.specials[i], layout.talents[i])),
-            appearances,
-        )
-        tb.addRider(riderDirector.makeOpportunistic(oracle, color))
+        tb.addRider(director.makeOpportunistic(oracle, color))
         teams.append(tb.getResult())
     tour = Tour(teams)
-    runner = EngineRunner(TkUIBackend(window, 0.003, displayRegistry.getAll(), appearances))
+    animations = ui.animations(displays)
+    runner = EngineRunner(displays, animations)
     runner.runTour(tour, [randomPresetTrack, randomPresetTrack])
 
-class OpportunisticLayout:
-    def __init__(self, root, ridersCount):
-        window = tk.Toplevel(root)
-        frames = Frames(window)
-        self.cards = frames.newLine(ridersCount)
-        self.specials = frames.newLine(ridersCount)
-        self.talents = frames.newLine(ridersCount)
+
+def main():
+    parser = argparse.ArgumentParser(description="Integration tests")
+    parser.add_argument("--ui", default="tk", choices=sorted(launcher.UIS.keys()))
+    args = parser.parse_args()
+    ui = launcher.UIS[args.ui](fast=True)
+    integrationTests(ui)
+
 
 if __name__ == "__main__":
-    integrationTests()
-
+    main()

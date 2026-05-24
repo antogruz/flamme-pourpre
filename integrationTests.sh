@@ -1,3 +1,4 @@
 #!/bin/bash
 
-PYTHONPATH=$PYTHONPATH:beau/:jeu/:creation/:animate/:engine/ python3 main/integrationTests.py $@
+cd "$(dirname "$0")"
+PYTHONPATH=$PYTHONPATH:.:engine/:jeu/:beau/:creation/:animate/:homeMadeUI/:main/ python3 main/integrationTests.py $@
