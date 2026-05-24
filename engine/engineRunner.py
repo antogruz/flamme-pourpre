@@ -12,7 +12,7 @@
 #   - animations : AnimationBinder (côté push, RaceObservers d'animation)
 
 from race import Race, TeamInRace
-from raceSetup import setRidersOnStart
+from raceSetup import setRidersOnStart, ensureEnoughStartSpots
 from specialTour.extendTrack import extendTrack
 from meilleurGrimpeurObserver import createClimberObserver
 from intermediateSprintObserver import createSprintObserver, getPointsForSprints
@@ -49,6 +49,8 @@ class EngineRunner:
 
     def runRace(self, track, teams, logRanking = noLog, modes = SpecialModes()):
         teamsInRace = [TeamInRace(team) for team in teams]
+        ridersCount = sum(len(t.ridersToPlace) for t in teamsInRace)
+        track = ensureEnoughStartSpots(track, ridersCount)
         climberObservers = self._createClimberObservers(track, modes)
         sprintObservers = self._createSprintObservers(track, modes)
 
