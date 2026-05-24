@@ -88,7 +88,7 @@ def copy(l):
 
 class TourTest:
     def __before__(self):
-        self.a, self.b, self.c, self.d = Rider("a"), Rider("b"), Rider("c"), Rider("d")
+        self.a, self.b, self.c, self.d = Rider(), Rider(), Rider(), Rider()
         self.green = Team([self.a, self.b])
         self.blue = Team([self.c, self.d])
 
@@ -168,8 +168,7 @@ class Team:
         return sum([r.score for r in self.riders])
 
 class Rider:
-    def __init__(self, name, position = 0):
-        self.name = name
+    def __init__(self, position = 0):
         self.pos = position
         self.personnage = self
 
