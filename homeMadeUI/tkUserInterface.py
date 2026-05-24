@@ -10,12 +10,16 @@
 # paresseusement par les factories qui en ont besoin. Aucune contrainte
 # d'ordre entre playerOracle() et playerRidersDirector().
 #
-# Toutes les factories ne sont valides qu'à l'intérieur de run().
+# self.appearances est l'Appearances Tk-spécifique de cette UI (name +
+# shade ASCII + couleur Tk). Partagé en interne entre tous les composants
+# (oracle, displays, directors). L'orchestrateur n'y a pas accès — c'est
+# un détail d'implémentation de l'UI.
 
 import tkinter as tk
 from functools import partial
 
 from userInterface import UserInterface
+from appearances import Appearances
 from beau.frames import Frames
 from beau.menu import UserChoice
 from tkMenu import TkMenu
@@ -33,6 +37,7 @@ FAST_CLOCK = 0.003
 class TkUserInterface(UserInterface):
     def __init__(self, clock = DEFAULT_CLOCK):
         self.clock = clock
+        self.appearances = Appearances()
         self.root = None
         self.window = None
 
@@ -50,29 +55,29 @@ class TkUserInterface(UserInterface):
     def menu(self):
         return TkMenu(self.window)
 
-    def playerOracle(self, appearances):
+    def playerOracle(self):
         oracleFrame = tk.Frame(tk.Toplevel(self.root))
         oracleFrame.pack()
-        oracle = UserChoice(oracleFrame, appearances)
+        oracle = UserChoice(oracleFrame, self.appearances)
         def onExit(o):
             o.dontWait()
             self.root.destroy()
         self.root.protocol("WM_DELETE_WINDOW", partial(onExit, oracle))
         return oracle
 
-    def displays(self, appearances):
-        return TkDisplayBinder(self.window, self.clock, appearances)
+    def displays(self):
+        return TkDisplayBinder(self.window, self.clock, self.appearances)
 
     def animations(self, displays):
         return TkAnimationBinder(displays)
 
-    def playerRidersDirector(self, ridersCount, displays, appearances):
+    def playerRidersDirector(self, ridersCount, displays):
         layout = _RidersLayout(tk.Toplevel(self.root), ridersCount)
         layouts = list(zip(layout.cards, layout.specials, layout.talents))
-        return TkRidersDirector(RidersDirector(), displays, appearances, layouts)
+        return TkRidersDirector(RidersDirector(), displays, self.appearances, layouts)
 
-    def botsTeamsDirector(self, appearances):
-        return TeamsDirector(appearances)
+    def botsTeamsDirector(self):
+        return TeamsDirector(self.appearances)
 
 
 class _RidersLayout:

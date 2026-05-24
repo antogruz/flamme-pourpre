@@ -14,7 +14,6 @@ from tour import Tour
 from teamBuilder import TeamBuilder
 from tracks import randomPresetTrack
 from propulsion import SequentialPropulsion
-from appearances import Appearances
 from specialTour.teamProgression import TalentTeamProgression
 from engineRunner import EngineRunner
 
@@ -33,13 +32,12 @@ def run(ui):
     racesCount = menu.choose(list(range(1, 6)), "How many races to play?")
     ridersCount = menu.choose([1, 2, 3, 4], "How many riders in your team?")
 
-    appearances = Appearances()
-    displays = ui.displays(appearances)
-    director = ui.playerRidersDirector(ridersCount, displays, appearances)
-    oracle = ui.playerOracle(appearances)
+    displays = ui.displays()
+    director = ui.playerRidersDirector(ridersCount, displays)
+    oracle = ui.playerOracle()
 
     humanTeam = _buildHumanTeam(menu, ridersCount, gameMode, oracle, director)
-    botTeams = _buildBotTeams(menu, ui.botsTeamsDirector(appearances))
+    botTeams = _buildBotTeams(menu, ui.botsTeamsDirector())
 
     tour = Tour([humanTeam] + botTeams)
     tracks = [randomPresetTrack for _ in range(racesCount)]

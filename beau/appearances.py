@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 
-# Registre central de l'apparence des riders pour le display.
+# Registre central de l'apparence des riders pour l'UI Tk maison.
+# Spécifique à cette UI : shade = ASCII art, color = chaîne Tk.
+# Une UI Pygame/papercraft aurait son propre registry avec ses propres
+# types d'apparence (sprite, RGB, illustration, etc.).
+#
+# Peuplé à la construction des riders (cf. main/teamsDirector.py et
+# homeMadeUI/tkRidersDirector.py), lu par tous les displays beau/.
+#
 # jeu/ ne dépend pas de cette classe : les Personnage / RiderInRace
 # n'ont pas de name/shade/color, c'est ici qu'on les retrouve.
-# Peuplé à la construction des riders, lu par les displays.
 
 class Appearance:
     def __init__(self, name, shade, color):

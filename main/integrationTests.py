@@ -15,7 +15,6 @@ from jeu.tracks import randomPresetTrack
 from jeu.teamBuilder import TeamBuilder
 from jeu.propulsion import SimpleTeamPropulsion
 from oracle import DefaultOracle
-from beau.appearances import Appearances
 
 
 def integrationTests(ui):
@@ -27,31 +26,28 @@ def integrationTests(ui):
 
 
 def testDice(ui):
-    appearances = Appearances()
-    displays = ui.displays(appearances)
+    displays = ui.displays()
     animations = ui.animations(displays)
     runner = EngineRunner(displays, animations)
-    botsDirector = ui.botsTeamsDirector(appearances)
+    botsDirector = ui.botsTeamsDirector()
     teams = [botsDirector.makeDiceBots(color) for color in ["blue", "red", "black"]]
     runner.runRace(randomPresetTrack(len(teams)), teams)
 
 
 def integrationSingle(ui):
-    appearances = Appearances()
-    displays = ui.displays(appearances)
+    displays = ui.displays()
     animations = ui.animations(displays)
     runner = EngineRunner(displays, animations)
-    botsDirector = ui.botsTeamsDirector(appearances)
+    botsDirector = ui.botsTeamsDirector()
     teams = [botsDirector.makeStandardBots(color)
              for color in ["green", "red", "blue", "black", "magenta"]]
     runner.runRace(randomPresetTrack(len(teams)), teams)
 
 
 def twoRacesOpportunistic(ui):
-    appearances = Appearances()
-    displays = ui.displays(appearances)
+    displays = ui.displays()
     colors = ["blue", "red", "black"]
-    director = ui.playerRidersDirector(len(colors), displays, appearances)
+    director = ui.playerRidersDirector(len(colors), displays)
     oracle = DefaultOracle()
     teams = []
     for color in colors:

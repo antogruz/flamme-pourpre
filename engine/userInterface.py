@@ -16,6 +16,10 @@
 # main/main.py qui orchestre la partie en ne dépendant que de cette
 # interface.
 #
+# Les concepts d'apparence (name, shade ASCII, couleur Tk, sprite...) sont
+# internes à chaque UI : l'orchestrateur ne les voit pas. Chaque UserInterface
+# gère ses propres données d'apparence et les distribue à ses composants.
+#
 # Convention de cycle de vie :
 #   ui = SomeUserInterface()
 #   ui.run(callback)   # initialise le contexte, appelle callback() dedans,
@@ -35,11 +39,11 @@ class UserInterface:
         """Retourne un Menu pour les choix de configuration."""
         pass
 
-    def playerOracle(self, appearances):
+    def playerOracle(self):
         """Retourne un Oracle interactif pour le joueur humain."""
         pass
 
-    def displays(self, appearances):
+    def displays(self):
         """Retourne un DisplayBinder neuf pour cette partie."""
         pass
 
@@ -47,12 +51,12 @@ class UserInterface:
         """Retourne un AnimationBinder couplé au DisplayBinder donné."""
         pass
 
-    def playerRidersDirector(self, ridersCount, displays, appearances):
+    def playerRidersDirector(self, ridersCount, displays):
         """Retourne UN director capable de construire ridersCount coureurs
         à la chaîne (makeRouleur, makeSprinteur, ...), en branchant pour
         chacun les displays per-rider sur le DisplayBinder fourni."""
         pass
 
-    def botsTeamsDirector(self, appearances):
+    def botsTeamsDirector(self):
         """Retourne un TeamsDirector pour fabriquer les équipes de bots."""
         pass

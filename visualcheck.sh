@@ -11,4 +11,3 @@ done
 for f in animate/*.py ; do
     PYTHONPATH=$PYTHONPATH:jeu/:beau/ python3 $f
 done
-
