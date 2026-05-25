@@ -23,6 +23,9 @@ class DeckPropulsor:
 
     def newRace(self):
         self.cards.newRace()
+        for extra in self.extras:
+            if hasattr(extra, "newRace"):
+                extra.newRace()
 
     def pick(self, list, instruction):
         choice = self.oracle.pick(list, instruction)
