@@ -1,5 +1,5 @@
-from jeu.talent import Talent
-from jeu.deckPropulsor import ExtraChoice
+from talent import Talent
+from deckPropulsor import CombiningChoice
 
 
 class AccelerationEnCol(Talent):
@@ -13,7 +13,7 @@ class AccelerationEnCol(Talent):
                 "votre main en ignorant la limite de 5 cases en montagne.")
 
 
-class AccelerationChoice(ExtraChoice):
+class AccelerationChoice(CombiningChoice):
     def __init__(self, uncapped):
         self.uncapped = uncapped
         self.remainingUses = 1
@@ -23,9 +23,6 @@ class AccelerationChoice(ExtraChoice):
 
     def isAvailable(self):
         return self.remainingUses > 0
-
-    def isCombining(self):
-        return True
 
     def combine(self, value, propulsor):
         self.uncapped.bypass = True

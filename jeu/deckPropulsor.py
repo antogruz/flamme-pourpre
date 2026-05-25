@@ -20,12 +20,13 @@ class DeckPropulsor:
                 return ""
             index = self.pick([c.label() for c in choices], "Play a card")
             choice = choices[index]
-            if not choice.isCombining():
-                value = choice.applyTo(self)
-                for c in reversed(combining):
-                    value = c.combine(value, self)
-                return value
-            combining.append(choice)
+            if isinstance(choice, CombiningChoice):
+                combining.append(choice)
+                continue
+            value = choice.applyTo(self)
+            for c in reversed(combining):
+                value = c.combine(value, self)
+            return value
 
     def newRace(self):
         self.cards.newRace()
@@ -46,29 +47,18 @@ from unittests import *
 from cards import Cards
 
 
-class ExtraChoice:
-    """Interface for non-card choices offered by a DeckPropulsor.
+class Choice:
+    """Common base for entries in the propulsor's per-turn choice list.
 
-    Extras are registered via DeckPropulsor.addExtraChoice() and appear
-    alongside the drawn cards each turn, giving talents a way to surface
-    options that don't directly come from the hand: skip the hand, play
-    a card with a special effect, boost the energy of another choice,
-    bypass a road-type limit, etc.
+    Each turn, DeckPropulsor.generateMove() builds a list of Choices made
+    of (a) the drawn cards, wrapped in CardChoice, and (b) the extras
+    registered by talents via addExtraChoice(). The oracle picks one of
+    them by index; the propulsor then loops or stops depending on the
+    choice's type — see TerminatingChoice and CombiningChoice for the
+    two specialisations.
 
-    There are two flavours of extra, distinguished by isCombining():
-
-    - Terminating choices (the default) end the choice loop and provide
-      the value that becomes the rider's move. CardChoice itself is a
-      terminating choice; talent examples include EconomieEnergie's
-      "skip the hand" choice.
-
-    - Combining choices are picked first and stack on top of a later
-      choice. The propulsor loops: each time a combining choice is
-      picked it is held aside and another choice is offered, until the
-      oracle picks a terminating choice. The terminating choice
-      provides an initial value, then each combining choice's
-      combine(value, propulsor) is applied in reverse order of
-      selection (last picked, first applied).
+    Subclasses should always inherit from TerminatingChoice or
+    CombiningChoice rather than directly from Choice.
     """
 
     def label(self):
@@ -76,41 +66,13 @@ class ExtraChoice:
         pass
 
     def isAvailable(self):
-        """Return whether this extra should be offered this turn.
+        """Return whether this choice should be offered this turn.
 
-        Called once per loop iteration in generateMove(), after the
-        hand has been drawn. Use this to gate the choice on remaining
-        uses, hand size, road type, etc.
+        Called once per loop iteration in generateMove(), after the hand
+        has been drawn. Use this to gate the choice on remaining uses,
+        hand size, road type, etc.
         """
         pass
-
-    def isCombining(self):
-        """Return False for a terminating choice, True for a combining one.
-
-        Defaults to terminating, the most common case.
-        """
-        return False
-
-    def applyTo(self, propulsor):
-        """Apply a terminating choice's effect and return the move value.
-
-        Only called for terminating choices, once the oracle has picked
-        this choice as the final one of the turn. Should play/discard
-        cards as needed on `propulsor.cards` and return the value to be
-        fed to EnergyRules.energyFromCard() (possibly after combining
-        choices apply on top).
-        """
-        pass
-
-    def combine(self, value, propulsor):
-        """Modify the move value produced by an earlier choice.
-
-        Only called for combining choices, in reverse pick order, once
-        the terminating choice has provided an initial value. Should
-        apply the side effect (set a bypass flag, decrement usage, ...)
-        and return the new value.
-        """
-        return value
 
     def newRace(self):
         """Reset per-race state at the start of a new race.
@@ -121,7 +83,47 @@ class ExtraChoice:
         pass
 
 
-class CardChoice(ExtraChoice):
+class TerminatingChoice(Choice):
+    """A choice that ends the per-turn loop and yields the move value.
+
+    The canonical case is CardChoice (play a card from the hand). Talents
+    can also expose terminating choices that replace the card play
+    altogether (e.g. EconomieEnergie's "skip the hand").
+    """
+
+    def applyTo(self, propulsor):
+        """Apply the choice's effect and return the move value.
+
+        Called once the oracle picks this choice as the final one of the
+        turn. Should play or discard cards on `propulsor.cards` and
+        return the value to be fed to EnergyRules.energyFromCard()
+        (possibly after combining choices apply on top of it).
+        """
+        pass
+
+
+class CombiningChoice(Choice):
+    """A choice that stacks on top of a later choice to modify its value.
+
+    Combining choices are picked one after another; the propulsor keeps
+    offering choices until a TerminatingChoice is picked. Then each
+    combining choice's combine(value, propulsor) runs in reverse pick
+    order (last picked first applied) on the terminating choice's value.
+
+    Typical examples: Boost (adds a bonus to the played card), Accélération
+    en col (sets a flag bypassing the mountain limit).
+    """
+
+    def combine(self, value, propulsor):
+        """Modify the move value produced by a previous choice.
+
+        Should apply the side effect (set a bypass flag, decrement usage
+        counter, ...) and return the new move value.
+        """
+        return value
+
+
+class CardChoice(TerminatingChoice):
     def __init__(self, value):
         self.value = value
 
@@ -136,7 +138,7 @@ class CardChoice(ExtraChoice):
         return self.value
 
 
-class TerminatingExtraExample(ExtraChoice):
+class TerminatingChoiceExample(TerminatingChoice):
     def __init__(self, value):
         self.value = value
 
@@ -151,7 +153,7 @@ class TerminatingExtraExample(ExtraChoice):
         return self.value
 
 
-class CombiningExtraExample(ExtraChoice):
+class CombiningChoiceExample(CombiningChoice):
     def __init__(self, bonus):
         self.bonus = bonus
 
@@ -161,11 +163,22 @@ class CombiningExtraExample(ExtraChoice):
     def isAvailable(self):
         return True
 
-    def isCombining(self):
+    def combine(self, value, propulsor):
+        return value + self.bonus
+
+
+class MultiplyingChoiceExample(CombiningChoice):
+    def __init__(self, factor):
+        self.factor = factor
+
+    def label(self):
+        return f"x{self.factor}"
+
+    def isAvailable(self):
         return True
 
     def combine(self, value, propulsor):
-        return value + self.bonus
+        return value * self.factor
 
 
 class DeckPropulsorTest:
@@ -181,47 +194,30 @@ class DeckPropulsorTest:
     def testPlayTerminatingExtra(self):
         cards = Cards([9, 3, "f", 5])
         propulsor = DeckPropulsor(cards, ChoiceDoer(4))
-        propulsor.addExtraChoice(TerminatingExtraExample(8))
+        propulsor.addExtraChoice(TerminatingChoiceExample(8))
         assert_equals(8, propulsor.generateMove())
 
     def testCombiningExtraStacksOnCard(self):
         cards = Cards([5, 5, 5, 5])
         propulsor = DeckPropulsor(cards, ChoiceDoer(4))
-        propulsor.addExtraChoice(CombiningExtraExample(2))
+        propulsor.addExtraChoice(CombiningChoiceExample(2))
         assert_equals(7, propulsor.generateMove())
 
     def testCombiningExtraStacksOnTerminatingExtra(self):
         cards = Cards([])
         propulsor = DeckPropulsor(cards, ChoiceDoer(0))
-        propulsor.addExtraChoice(CombiningExtraExample(3))
-        propulsor.addExtraChoice(TerminatingExtraExample(10))
+        propulsor.addExtraChoice(CombiningChoiceExample(3))
+        propulsor.addExtraChoice(TerminatingChoiceExample(10))
         assert_equals(13, propulsor.generateMove())
 
     def testCombiningExtrasAppliedInReverseOrder(self):
         cards = Cards([4, 4, 4, 4])
         propulsor = DeckPropulsor(cards, ChoiceDoer(4))
-        propulsor.addExtraChoice(CombiningExtraExample(1))
-        propulsor.addExtraChoice(MultiplyingCombining(2))
+        propulsor.addExtraChoice(CombiningChoiceExample(1))
+        propulsor.addExtraChoice(MultiplyingChoiceExample(2))
         # Pick order: Add(1) then Mul(2) then Card(4).
         # Reverse application: Mul first, then Add → (4 * 2) + 1 = 9.
         assert_equals(9, propulsor.generateMove())
-
-
-class MultiplyingCombining(ExtraChoice):
-    def __init__(self, factor):
-        self.factor = factor
-
-    def label(self):
-        return f"x{self.factor}"
-
-    def isAvailable(self):
-        return True
-
-    def isCombining(self):
-        return True
-
-    def combine(self, value, propulsor):
-        return value * self.factor
 
 
 class ChoiceDoer():
