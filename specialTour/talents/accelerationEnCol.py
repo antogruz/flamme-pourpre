@@ -1,5 +1,5 @@
 from jeu.talent import Talent
-
+from jeu.deckPropulsor import ExtraChoice
 
 class AccelerationEnCol(Talent):
     def applyTo(self, personnage):
@@ -13,7 +13,7 @@ class AccelerationEnCol(Talent):
                 "votre main en ignorant la limite de 5 cases en montagne.")
 
 
-class AccelerationChoice:
+class AccelerationChoice(ExtraChoice):
     LABEL = "Accélération en col"
 
     def __init__(self, propulsor, uncapped):

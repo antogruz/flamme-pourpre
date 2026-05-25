@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 from talent import Talent
+from jeu.deckPropulsor import ExtraChoice
 
 class EconomieEnergie(Talent):
     def applyTo(self, personnage):
@@ -22,7 +23,7 @@ class BetterEmpty:
         return self.base.energyFromCard(card)
 
 
-class SkipProvider:
+class SkipProvider(ExtraChoice):
     def label(self):
         return ""
 
