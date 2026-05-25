@@ -25,10 +25,11 @@ class BetterEmpty:
 
 class SkipProvider(ExtraChoice):
     def label(self):
-        return ""
+        return "(3)"
 
     def isAvailable(self):
         return True
 
     def applyTo(self, propulsor):
         propulsor.cards.discardHand()
+        return ""

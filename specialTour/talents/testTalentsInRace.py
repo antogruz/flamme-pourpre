@@ -19,6 +19,7 @@ from superSprint import SuperSprint
 from recuperationActive import RecuperationActive
 from imblocableClimber import ImblocableClimber
 from accelerationEnCol import AccelerationEnCol
+from boost import Boost
 
 class TalentsInRaceTest():
     def __before__(self):
@@ -289,7 +290,7 @@ class TalentsInRaceTest():
 
     def testAccelerationEnCol(self):
         self.track = Track([(30, "ascent")])
-        self.createDeckHero([6, 6, 6, 6, 6, 6, 6, 6], 4, AccelerationEnCol())
+        self.createDeckHero([6] * 20, 4, AccelerationEnCol())
         self.createRace()
         self.race.newTurn()
         assert_equals(6, self.getMainRider().square)
@@ -298,6 +299,18 @@ class TalentsInRaceTest():
         self.getMainRider().personnage.propulsor.newRace()
         self.race.newTurn()
         assert_equals(17, self.getMainRider().square)
+
+    def testBoost(self):
+        self.createDeckHero([5] * 20, 4, Boost(bonus=2, uses=1))
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(7, self.getMainRider().square)
+        self.race.newTurn()
+        assert_equals(12, self.getMainRider().square)
+        self.getMainRider().personnage.propulsor.newRace()
+        self.race.newTurn()
+        assert_equals(19, self.getMainRider().square)
+
 
 class ChoiceDoer:
     def __init__(self, value):

@@ -1,12 +1,12 @@
 from jeu.talent import Talent
 from jeu.deckPropulsor import ExtraChoice
 
+
 class AccelerationEnCol(Talent):
     def applyTo(self, personnage):
         uncapped = UncappedAscentRules(personnage.movementRules)
         personnage.movementRules = uncapped
-        personnage.propulsor.addExtraChoice(
-            AccelerationChoice(personnage.propulsor, uncapped))
+        personnage.propulsor.addExtraChoice(AccelerationChoice(uncapped))
 
     def displayRule(self):
         return ("Accélération en col : une fois par course, jouez une carte de "
@@ -14,37 +14,26 @@ class AccelerationEnCol(Talent):
 
 
 class AccelerationChoice(ExtraChoice):
-    LABEL = "Accélération en col"
-
-    def __init__(self, propulsor, uncapped):
-        self.propulsor = propulsor
+    def __init__(self, uncapped):
         self.uncapped = uncapped
         self.remainingUses = 1
-        self.nextLabel = self.LABEL
 
     def label(self):
-        result = self.nextLabel
-        self.nextLabel = self.LABEL
-        return result
+        return "Accélération en col"
 
     def isAvailable(self):
         return self.remainingUses > 0
 
+    def isCombining(self):
+        return True
+
+    def combine(self, value, propulsor):
+        self.uncapped.bypass = True
+        self.remainingUses -= 1
+        return value
+
     def newRace(self):
         self.remainingUses = 1
-
-    def applyTo(self, propulsor):
-        cards = list(propulsor.cards.hand)
-        if not cards:
-            return
-        index = propulsor.oracle.pick(cards, "Choisissez la carte à jouer (Accélération en col)")
-        if index < 0 or index >= len(cards):
-            index = 0
-        chosen = cards[index]
-        propulsor.cards.play(chosen)
-        self.uncapped.bypass = True
-        self.nextLabel = chosen
-        self.remainingUses -= 1
 
 
 class UncappedAscentRules:
