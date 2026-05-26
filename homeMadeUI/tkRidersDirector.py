@@ -77,6 +77,9 @@ class TkRidersDirector:
 
 def _sortedSets(rider, sets):
     return [
-        sorted([card for card in rider.propulsor.cards.deck if color in str(card)])
+        sorted(
+            [card for card in rider.propulsor.cards.deck if color in card.label()],
+            key = lambda c: c.label(),
+        )
         for color in sets
     ]

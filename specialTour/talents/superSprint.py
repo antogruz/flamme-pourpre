@@ -12,7 +12,7 @@ class SuperSprintEnergyRules(EnergyRules):
     def __init__(self, base):
         self.base = base
 
-    def energyFromCard(self, card):
-        if card == 9:
-            return 11
-        return self.base.energyFromCard(card)
+    def energyFromMove(self, move):
+        if move.label()[0] == '9':
+            return move.energy() + 2
+        return self.base.energyFromMove(move)

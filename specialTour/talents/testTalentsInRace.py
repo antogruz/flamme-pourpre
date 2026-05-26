@@ -21,6 +21,14 @@ from imblocableClimber import ImblocableClimber
 from accelerationEnCol import AccelerationEnCol
 from boost import Boost
 
+
+def labels(cards):
+    return [c.label() for c in cards]
+
+def energies(cards):
+    return [c.energy() for c in cards]
+
+
 class TalentsInRaceTest():
     def __before__(self):
         self.track = Track([(30, "normal")])
@@ -182,27 +190,27 @@ class TalentsInRaceTest():
 
     def testRecuperationActiveIncreasesACard(self):
         self.prepareRecuperationActive("refuel", [2, 3])
-        assert_contains(4, self.getMainRider().personnage.propulsor.cards.discard)
+        assert_contains(4, energies(self.getMainRider().personnage.propulsor.cards.discard))
 
     def testRecuperationActiveDoesNothingOnStandardRoad(self):
         self.prepareRecuperationActive("normal", [2, 3])
-        assert_contains(3, self.getMainRider().personnage.propulsor.cards.discard)
+        assert_contains(3, energies(self.getMainRider().personnage.propulsor.cards.discard))
 
     def testRecuperationActiveDoesNothingIfRiderGoesTooFast(self):
         self.prepareRecuperationActive("refuel", [7, 3])
-        assert_contains(3, self.getMainRider().personnage.propulsor.cards.discard)
+        assert_contains(3, energies(self.getMainRider().personnage.propulsor.cards.discard))
 
     def testRecuperationActiveOnDescent(self):
         self.prepareRecuperationActive("descent", [4, 4])
-        assert_contains(5, self.getMainRider().personnage.propulsor.cards.discard)
+        assert_contains(5, energies(self.getMainRider().personnage.propulsor.cards.discard))
 
     def testRecuperationActiveAllowsPlayerToChooseWhichCardToIncrement(self):
         self.track = Track([(30, "refuel")])
         self.createDeckHero([2, 3, 4, 5], 1, RecuperationActive())
         self.createRace()
         self.race.newTurn()
-        assert_similars([2, 5, 5, "f"], self.getMainRider().personnage.propulsor.cards.discard)
-        assert_similars([2, 4, 5], self.oracle.choices[1])
+        assert_similars(["2", "5", "5", "f"], labels(self.getMainRider().personnage.propulsor.cards.discard))
+        assert_similars(["2", "4", "5"], self.oracle.choices[1])
 
     def testRecuperationActiveOnlyAllowToIncrementCardsJustDiscarded(self):
         self.track = Track([(30, "refuel")])
@@ -210,22 +218,22 @@ class TalentsInRaceTest():
         self.createRace()
         self.race.newTurn()
         self.race.newTurn()
-        assert_similars([2, 4, 5], self.oracle.choices[3])
+        assert_similars(["2", "4", "5"], self.oracle.choices[3])
 
     def testRecuperationActiveCannotIncrementExhaustCards(self):
         self.prepareRecuperationActive("refuel", [2, "f", "f"])
-        assert_similars(["f", "f", "f"], self.getMainRider().personnage.propulsor.cards.discard)
+        assert_similars(["f", "f", "f"], labels(self.getMainRider().personnage.propulsor.cards.discard))
 
     def testCardsAreResetAfterRace(self):
         self.prepareRecuperationActive("refuel", [2, 3])
         self.getMainRider().personnage.propulsor.newRace()
-        assert_contains(3, self.getMainRider().personnage.propulsor.cards.deck)
+        assert_contains(3, energies(self.getMainRider().personnage.propulsor.cards.deck))
 
     def testCardsAreNotResetAgainAfterEachRace(self):
         self.prepareRecuperationActive("refuel", [2, 3, 4])
         self.getMainRider().personnage.propulsor.newRace()
         self.getMainRider().personnage.propulsor.newRace()
-        assert_contains(4, self.getMainRider().personnage.propulsor.cards.deck)
+        assert_contains(4, energies(self.getMainRider().personnage.propulsor.cards.deck))
 
     def testRecuperationActiveOnBiggerHandSize(self):
         self.track = Track([(30, "refuel")])
@@ -233,13 +241,13 @@ class TalentsInRaceTest():
         self.hero.propulsor.cards.handSize = 5
         self.createRace()
         self.race.newTurn()
-        assert_similars([2, 4, 5, 6], self.oracle.choices[1])
+        assert_similars(["2", "4", "5", "6"], self.oracle.choices[1])
 
     def testRecuperationActiveCanResetPlayedCards(self):
         self.prepareRecuperationActive("refuel", [2, 3])
         self.race.newTurn()
         self.getMainRider().personnage.propulsor.newRace()
-        assert_contains(3, self.getMainRider().personnage.propulsor.cards.deck)
+        assert_contains(3, energies(self.getMainRider().personnage.propulsor.cards.deck))
 
     def testImblocableClimber(self):
         self.track = Track([(30, "ascent")])

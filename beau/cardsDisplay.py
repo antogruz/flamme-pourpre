@@ -37,9 +37,13 @@ class CardsDisplay:
         else:
             hide(self.discard)
         destroy(self.allCardsDiscarded)
-        self.allCardsDiscarded = [smallCard(self.fullDiscardFrame, createBeautifulCard(str(card), self.color)) for card in discard]
-        toDisplay = sorted([ createBeautifulCard(str(card), self.color) for card in played], key = getValue)
+        self.allCardsDiscarded = [smallCard(self.fullDiscardFrame, createBeautifulCard(labelOf(card), self.color)) for card in discard]
+        toDisplay = sorted([ createBeautifulCard(labelOf(card), self.color) for card in played], key = getValue)
         displayPlayed(self.playedFrame, toDisplay)
+
+def labelOf(card):
+    """Accept either a Move object (with .label()) or a raw value (for visual tests)."""
+    return card.label() if hasattr(card, "label") else str(card)
 
 def getValue(niceCard):
     return int(niceCard.text)

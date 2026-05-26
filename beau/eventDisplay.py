@@ -54,7 +54,8 @@ class EventDisplay:
 
 
 def updateCardLabel(label, card, defaultColor):
-    niceCard = createBeautifulCard(card, defaultColor)
+    cardLabel = card.label() if hasattr(card, "label") else card
+    niceCard = createBeautifulCard(cardLabel, defaultColor)
     label.config(text = niceCard.text, fg = niceCard.color, bg = niceCard.background)
 
 if __name__ == "__main__":

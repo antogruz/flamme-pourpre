@@ -1,38 +1,50 @@
 #!/usr/bin/env python3
 
-import re
 from unittests import runTests, assert_equals
 
-# Convertit la carte jouée par un coureur en énergie consommable par MovementRules.
-# Une instance par coureur : permet à certains coureurs d'avoir des règles spécifiques
-# (fatigue à 3, carte peloton dépendant des alliés, etc.) en sous-classant.
+
+class Move:
+    """Interface for the result of a propulsor's generateMove().
+
+    A Move is what a propulsor produces on each turn; the engine then
+    converts it into actual energy through EnergyRules and BonusRule.
+    The UI may consume `label()` to display the played card / combined
+    choices in animations.
+
+    Implementations: SimpleCard, FatigueCard (cards.py), EmptyCard
+    (deckPropulsor.py), and the combining wrappers BoostedCard /
+    MultipliedCard (deckPropulsor.py).
+    """
+    def label(self):
+        """Human-readable representation, suitable for animations."""
+        pass
+
+    def energy(self):
+        """Base energy yielded by this move before bonuses."""
+        pass
+
 
 class EnergyRules:
-    """Interface for converting a played card into consumable energy.
+    """Interface for converting a Move into consumable energy.
 
-    The default implementation returns the numeric value of the card
-    (2 for fatigue or empty hand). Talents may decorate it (Effort Long,
-    Économie d'Énergie, etc.) by wrapping the rider's `energyRules`.
+    The default implementation simply returns `move.energy()`. Talents may
+    decorate it (Effort Long, Économie d'Énergie, Super Sprint, etc.) by
+    wrapping the rider's `energyRules`.
     """
-    def energyFromCard(self, card):
-        """Return the energy yielded by `card` for the rider."""
-        if card == "" or card == "f":
-            return 2
-        return extractNumberFrom(card)
-
-def extractNumberFrom(card):
-    return int(re.sub("[a-z]||[A-Z]", "", str(card)))
+    def energyFromMove(self, move):
+        """Return the energy yielded by `move` for the rider."""
+        return move.energy()
 
 
 class BonusRule:
     """Interface for bonus energy rules attached to a personnage.
 
-    Implement this to add extra energy on top of the card's base value,
+    Implement this to add extra energy on top of the move's base energy,
     typically based on the race snapshot (group position, escape, sprint phase, etc.).
     Bonuses from all rules attached to a rider are summed.
     """
-    def bonusFor(self, card, rider, snapshot):
-        """Return the bonus energy granted to `rider` for playing `card`."""
+    def bonusFor(self, move, rider, snapshot):
+        """Return the bonus energy granted to `rider` for playing `move`."""
         pass
 
 
@@ -41,16 +53,25 @@ class EnergyRulesTest:
         self.rules = EnergyRules()
 
     def testNumberCard(self):
-        assert_equals(9, self.rules.energyFromCard(9))
+        assert_equals(9, self.rules.energyFromMove(StubMove("9", 9)))
 
-    def testColoredNumberCard(self):
-        assert_equals(5, self.rules.energyFromCard("5magenta"))
+    def testFatigueLikeMove(self):
+        assert_equals(2, self.rules.energyFromMove(StubMove("f", 2)))
 
-    def testFatigue(self):
-        assert_equals(2, self.rules.energyFromCard("f"))
+    def testEmptyMove(self):
+        assert_equals(2, self.rules.energyFromMove(StubMove("", 2)))
 
-    def testNoCard(self):
-        assert_equals(2, self.rules.energyFromCard(""))
+
+class StubMove(Move):
+    def __init__(self, label, energy):
+        self._label = label
+        self._energy = energy
+
+    def label(self):
+        return self._label
+
+    def energy(self):
+        return self._energy
 
 
 if __name__ == "__main__":

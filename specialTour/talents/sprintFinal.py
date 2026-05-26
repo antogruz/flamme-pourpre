@@ -9,8 +9,8 @@ class SprintFinal(Talent):
 
 class SprintFinalBonus:
     def bonusFor(self, card, rider, snapshot):
-        if rider.personnage.propulsor.cards.cardsLeft() <= 4:
+        if rider.personnage.propulsor.cards.cardsLeft() < 3:
             return 2
-        if rider.personnage.propulsor.cards.cardsLeft() <= 8:
+        if rider.personnage.propulsor.cards.cardsLeft() < 7:
             return 1
         return 0

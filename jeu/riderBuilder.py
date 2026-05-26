@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import random
-from cards import Cards
+from cards import Cards, createCards
 from deckPropulsor import DeckPropulsor
 from dicePropulsor import DicePropulsor
 from personnage import Personnage
@@ -24,7 +24,7 @@ class RiderBuilder:
         self.oracle = oracle
 
     def buildDeck(self, originalCards, shuffle = random.shuffle, endOfRaceDecksManagers = None):
-        self.cards = Cards(originalCards, shuffle, endOfRaceDecksManagers)
+        self.cards = Cards(createCards(originalCards), shuffle, endOfRaceDecksManagers)
         self.propulsor = DeckPropulsor(self.cards, self.oracle)
 
     def buildOpportunisticDeck(self, baseCards, sets = ["goldenrod", "magenta"], shuffle = random.shuffle, endOfRaceDecksManagers = None):

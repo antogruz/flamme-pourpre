@@ -16,7 +16,7 @@ class BetterFatigue:
         self.base = base
         self.fatigueValue = fatigueValue
 
-    def energyFromCard(self, card):
-        if card == "f":
+    def energyFromMove(self, move):
+        if move.label()[0] == "f":
             return self.fatigueValue
-        return self.base.energyFromCard(card)
+        return self.base.energyFromMove(move)

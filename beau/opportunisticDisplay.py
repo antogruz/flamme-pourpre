@@ -22,7 +22,8 @@ class OpportunisticDisplay:
         for line, set in enumerate(self.sets):
             lineLabels = []
             for column, card in enumerate(set):
-                label = bigCard(self.window, createBeautifulCard(card))
+                cardLabel = card.label() if hasattr(card, "label") else card
+                label = bigCard(self.window, createBeautifulCard(cardLabel))
                 label.grid(row = line, column = column, padx = 1, pady = 1)
                 lineLabels.append(label)
             labels.append(lineLabels)

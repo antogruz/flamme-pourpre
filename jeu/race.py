@@ -86,9 +86,9 @@ class Race():
 def arrived(rider, track):
     return track.getRoadType(rider.getSquare()) == "end"
 
-def energyOf(rider, card, snapshot):
-    base = rider.personnage.energyRules.energyFromCard(card)
-    bonus = sum(rule.bonusFor(card, rider, snapshot) for rule in rider.personnage.bonusRules)
+def energyOf(rider, move, snapshot):
+    base = rider.personnage.energyRules.energyFromMove(move)
+    bonus = sum(rule.bonusFor(move, rider, snapshot) for rule in rider.personnage.bonusRules)
     return base + bonus
 
 class RaceObserver:
@@ -224,9 +224,10 @@ class RaceTest():
         assert_equals([a, b, c, d], race.ranking())
 
 from riderBuilder import RiderBuilder
+from cards import SimpleCard
 def createRider():
     rb = RiderBuilder()
-    rb.buildPropulsor(SimplePropulsor(2))
+    rb.buildPropulsor(SimplePropulsor(SimpleCard(2)))
     return rb.getResult()
 
 class SimplePropulsor():
@@ -235,7 +236,7 @@ class SimplePropulsor():
 
     def generateMove(self):
         return self.move
-    
+
     def exhaust(self):
         pass
 

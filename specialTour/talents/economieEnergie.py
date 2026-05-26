@@ -1,7 +1,8 @@
 #! /usr/bin/env python3
 
 from talent import Talent
-from deckPropulsor import TerminatingChoice
+from cards import TerminatingChoice
+from deckPropulsor import EmptyCard
 
 class EconomieEnergie(Talent):
     def applyTo(self, personnage):
@@ -17,10 +18,10 @@ class BetterEmpty:
         self.base = base
         self.emptyValue = emptyValue
 
-    def energyFromCard(self, card):
-        if card == "":
+    def energyFromMove(self, move):
+        if move.label() == "":
             return self.emptyValue
-        return self.base.energyFromCard(card)
+        return self.base.energyFromMove(move)
 
 
 class SkipProvider(TerminatingChoice):
@@ -30,6 +31,9 @@ class SkipProvider(TerminatingChoice):
     def isAvailable(self):
         return True
 
-    def applyTo(self, propulsor):
-        propulsor.cards.discardHand()
-        return ""
+    def newRace(self):
+        pass
+
+    def onPlay(self, cards):
+        cards.discardHand()
+        return EmptyCard()

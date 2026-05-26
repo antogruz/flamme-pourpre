@@ -1,5 +1,6 @@
 from race import RaceObserver
 from talent import Talent
+from jeu.cards import removeExhausts
 
 class Endurance(Talent, RaceObserver):
     def __init__(self):
@@ -18,14 +19,10 @@ class Endurance(Talent, RaceObserver):
 
     def modifyCards(self, cards):
         removeExhausts(cards.deck, self.fatiguesCount)
-    
-    def onRiderMove(self, rider, start, end, obstacles, card):
+
+    def onRiderMove(self, rider, start, end, obstacles, move):
         if rider.personnage is not self.personnage:
             return
-        if card == "f":
+        if move.label()[0] == "f":
             self.fatiguesCount += 1
 
-def removeExhausts(deck, count):
-    for i in range(count):
-        if "f" in deck:
-            deck.remove("f")

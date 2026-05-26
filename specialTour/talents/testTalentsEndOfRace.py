@@ -14,7 +14,7 @@ class TestTalentsEndOfRace:
         race.newTurn()
         personnage.propulsor.newRace()
 
-        assert_equals(0, personnage.propulsor.cards.deck.count("f"))
+        assert_equals(0, fatigueCount(personnage))
 
     def testEnduranceRemovesOneFatigueFromDeck(self):
         personnage = createPersonnage(3, ["f"])
@@ -22,16 +22,16 @@ class TestTalentsEndOfRace:
         race.newTurn()
         personnage.propulsor.newRace()
 
-        assert_equals(1, personnage.propulsor.cards.deck.count("f"))
+        assert_equals(1, fatigueCount(personnage))
 
     def testEnduranceWithoutPlayingFatigues(self):
-        personnage = createPersonnage(2, [2])
+        personnage = createPersonnage(2, ["2"])
         race = prepareRace(2, personnage, Endurance())
         race.newTurn()
         personnage.propulsor.newRace()
 
-        assert_equals(2, personnage.propulsor.cards.deck.count("f"))
-    
+        assert_equals(2, fatigueCount(personnage))
+
     def testEnduranceCumulatesBetweenRaces(self):
         # Le coureur s'endurcit progressivement : chaque fatigue jouée s'ajoute
         # au compteur, et en fin de course, le compteur entier est retiré du deck.
@@ -43,14 +43,18 @@ class TestTalentsEndOfRace:
         otherRace.newTurn()
         personnage.propulsor.newRace()
 
-        assert_equals(0, personnage.propulsor.cards.deck.count("f"))
+        assert_equals(0, fatigueCount(personnage))
 
     def testEnduranceRemovesTooManyFatiguesFromDeck(self):
         personnage = createPersonnage(1, ["f"])
         race = prepareRace(2, personnage, Endurance())
         race.newTurn()
         personnage.propulsor.newRace()
-        assert_equals(0, personnage.propulsor.cards.deck.count("f"))
+        assert_equals(0, fatigueCount(personnage))
+
+
+def fatigueCount(personnage):
+    return sum(1 for c in personnage.propulsor.cards.deck if c.label() == "f")
 
 def createPersonnage(fatiguesCount, cardsToPlay):
     rb = RiderBuilder()

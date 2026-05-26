@@ -1,5 +1,5 @@
 from talent import Talent
-from deckPropulsor import CombiningChoice
+from deckPropulsor import CombiningChoice, BoostedCard
 
 
 class Boost(Talent):
@@ -26,9 +26,9 @@ class BoostChoice(CombiningChoice):
     def isAvailable(self):
         return self.remainingUses > 0
 
-    def combine(self, value, propulsor):
+    def combine(self, move, propulsor):
         self.remainingUses -= 1
-        return value + self.bonus
+        return BoostedCard(move, self.bonus)
 
     def newRace(self):
         self.remainingUses = self.uses
