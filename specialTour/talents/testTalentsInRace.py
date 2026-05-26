@@ -319,6 +319,12 @@ class TalentsInRaceTest():
         self.race.newTurn()
         assert_equals(19, self.getMainRider().square)
 
+    def testBoostOnFatigueCard(self):
+        self.createDeckHero(["f"] * 20, 4, Boost(bonus=2, uses=1))
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(4, self.getMainRider().square)
+
 
 class ChoiceDoer:
     def __init__(self, value):
