@@ -12,7 +12,7 @@ class Poursuivant(Talent):
 
 
 class NotInLeadingGroupBonus:
-    def bonusFor(self, card, rider, snapshot):
+    def bonusFor(self, moves, rider, snapshot):
         if rider not in snapshot.leadingGroup().riders:
             return 1
         return 0

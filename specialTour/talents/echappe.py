@@ -12,7 +12,7 @@ class Echappe(Talent):
 
 
 class InSmallLeadingGroupBonus:
-    def bonusFor(self, card, rider, snapshot):
+    def bonusFor(self, moves, rider, snapshot):
         leadingGroup = snapshot.leadingGroup()
         if rider not in leadingGroup.riders:
             return 0

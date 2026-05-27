@@ -57,7 +57,7 @@ class Race():
             start = r.position()
             r.move(energies[r], self.track, self.obstaclesByRider[r])
             for observer in self.observers:
-                observer.onRiderMove(r, start, r.position(), self.obstaclesByRider[r], moves[r])
+                observer.onRiderMove(r, start, r.position(), self.obstaclesByRider[r], list(moves[r]))
 
         slipstreaming(self.riders, self.track, self.observers, obstaclesFromRiders(self.riders))
         self.checkArrivals()
@@ -86,9 +86,9 @@ class Race():
 def arrived(rider, track):
     return track.getRoadType(rider.getSquare()) == "end"
 
-def energyOf(rider, move, snapshot):
-    base = rider.personnage.energyRules.energyFromMove(move)
-    bonus = sum(rule.bonusFor(move, rider, snapshot) for rule in rider.personnage.bonusRules)
+def energyOf(rider, moves, snapshot):
+    base = sum(rider.personnage.energyRules.energyFromMove(m) for m in moves)
+    bonus = sum(rule.bonusFor(moves, rider, snapshot) for rule in rider.personnage.bonusRules)
     return base + bonus
 
 class RaceObserver:
@@ -105,8 +105,13 @@ class RaceObserver:
         """Called during the setup phase, after each rider is placed on the track."""
         pass
 
-    def onRiderMove(self, rider, start, end, obstacles, card):
-        """Called when a rider moves from start to end position."""
+    def onRiderMove(self, rider, start, end, obstacles, moves):
+        """Called when a rider moves from start to end position.
+
+        `moves` is the list of Moves played this turn (typically the
+        played card first, followed by any combining moves picked).
+        Each Move exposes label() and energy().
+        """
         pass
 
     def onRiderArrived(self, rider, square, rank):
@@ -234,8 +239,8 @@ class SimplePropulsor():
     def __init__(self, move):
         self.move = move
 
-    def generateMove(self):
-        return self.move
+    def generateMoves(self):
+        return [self.move]
 
     def exhaust(self):
         pass

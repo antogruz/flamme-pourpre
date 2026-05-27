@@ -12,7 +12,7 @@ class RoadAnimator(RaceObserver):
         self.track = track
         self.appearances = appearances
 
-    def onRiderMove(self, rider, start, end, obstacles, card):
+    def onRiderMove(self, rider, start, end, obstacles, moves):
         path = findPath(self.track, obstacles, start, end)
         for i in range(len(path) - 1):
             sleep(self.clock)
@@ -50,8 +50,8 @@ class EventAnimator(RaceObserver):
     def __init__(self, display):
         self.display = display
 
-    def onRiderMove(self, rider, start, end, obstacles, card):
-        self.display.displayEvent(rider, card)
+    def onRiderMove(self, rider, start, end, obstacles, moves):
+        self.display.displayEvent(rider, moves)
 
     def animateGroup(self, group):
         pass
@@ -99,10 +99,19 @@ class AnimateMovesTester(VisualTester):
         sprinteur = self.makeRider(sprinteurShade, "red", (1, 0))
         self.displayRiders([rouleur, sprinteur])
         for animator in self.animators:
-            animator.onRiderMove(sprinteur, (1, 0), (3, 0), Obstacles([]), "f")
+            animator.onRiderMove(sprinteur, (1, 0), (3, 0), Obstacles([]), [StubMove("f")])
         for animator in self.animators:
-            animator.onRiderMove(rouleur, (0, 0), (3, 1), Obstacles([]), 3)
+            animator.onRiderMove(rouleur, (0, 0), (3, 1), Obstacles([]), [StubMove("3"), StubMove("+2")])
         sleep(0.5)
+
+
+class StubMove:
+    def __init__(self, label):
+        self._label = label
+    def label(self):
+        return self._label
+    def energy(self):
+        return 0
 
 class AnimateRoadTester(VisualTester):
     def __before__(self):

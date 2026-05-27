@@ -98,29 +98,28 @@ def exhaustCards(deck):
     return [card for card in deck if card.label() == "f"]
 
 
-class TerminatingChoice:
-    """A choice the propulsor offers each turn that ends the per-turn
-    loop and yields the move value.
+class Card:
+    """Interface for anything the player can pick to play each turn.
 
-    The propulsor invokes onPlay(cards) once this choice is picked as
-    the final one of the turn. The implementation applies its effect
-    on the Cards instance and returns the played card (or a Card-like
-    object exposing energy()) that will be fed to EnergyRules and
-    BonusRule consumers.
+    Covers both cards cycling through the deck (SimpleCard,
+    FatigueCard, OpportunisticCard) and permanent extras added by
+    talents (BoostChoice, AccelerationChoice, SkipProvider). The
+    object doesn't need to know whether it lives in a deck cycle or
+    as a permanent extra — those are just two ways the propulsor
+    makes it available.
+
+    Each card carries its own energy and label (used both for the
+    pick menu and animations). onPlay(cards) applies the side effect
+    (deck mutation, internal counter, etc.) and returns the Card
+    contributed to the turn's list — often `self`. doesEndTurn()
+    tells the propulsor whether to keep offering picks or commit.
     """
-    def label(self): pass
-    def isAvailable(self): pass
-    def newRace(self): pass
-    def onPlay(self, cards): pass
-
-
-class Card(TerminatingChoice):
-    """A playable card in a deck/hand. Each card is its own TerminatingChoice."""
     def label(self): pass
     def energy(self): pass
     def isAvailable(self): pass
     def newRace(self): pass
     def onPlay(self, cards): pass
+    def doesEndTurn(self): pass
 
 
 class SimpleCard(Card):
@@ -143,6 +142,9 @@ class SimpleCard(Card):
         cards.commitPlay(self, cards.played)
         return self
 
+    def doesEndTurn(self):
+        return True
+
 
 class FatigueCard(Card):
     def label(self):
@@ -160,6 +162,10 @@ class FatigueCard(Card):
     def onPlay(self, cards):
         cards.commitPlay(self, None)
         return self
+
+    def doesEndTurn(self):
+        return True
+
 
 from unittests import assert_equals, runTests, assert_similars
 class CardsTester():

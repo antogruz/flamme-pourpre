@@ -1,5 +1,5 @@
 from talent import Talent
-from deckPropulsor import CombiningChoice
+from cards import Card
 
 
 class AccelerationEnCol(Talent):
@@ -13,7 +13,7 @@ class AccelerationEnCol(Talent):
                 "votre main en ignorant la limite de 5 cases en montagne.")
 
 
-class AccelerationChoice(CombiningChoice):
+class AccelerationChoice(Card):
     def __init__(self, uncapped):
         self.uncapped = uncapped
         self.remainingUses = 1
@@ -21,13 +21,19 @@ class AccelerationChoice(CombiningChoice):
     def label(self):
         return "Accélération en col"
 
+    def energy(self):
+        return 0
+
     def isAvailable(self):
         return self.remainingUses > 0
 
-    def combine(self, value, propulsor):
+    def onPlay(self, cards):
         self.uncapped.bypass = True
         self.remainingUses -= 1
-        return value
+        return self
+
+    def doesEndTurn(self):
+        return False
 
     def newRace(self):
         self.remainingUses = 1

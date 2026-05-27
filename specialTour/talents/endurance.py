@@ -20,9 +20,10 @@ class Endurance(Talent, RaceObserver):
     def modifyCards(self, cards):
         removeExhausts(cards.deck, self.fatiguesCount)
 
-    def onRiderMove(self, rider, start, end, obstacles, move):
+    def onRiderMove(self, rider, start, end, obstacles, moves):
         if rider.personnage is not self.personnage:
             return
-        if move.label()[0] == "f":
-            self.fatiguesCount += 1
+        for move in moves:
+            if move.label() == "f":
+                self.fatiguesCount += 1
 

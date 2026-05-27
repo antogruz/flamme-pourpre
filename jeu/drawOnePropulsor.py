@@ -10,12 +10,12 @@ class DrawOnePropulsor:
         self.shuffle = shuffle
         self.newRace()
 
-    def generateMove(self):
+    def generateMoves(self):
         if self.index >= len(self.cards):
-            return EmptyCard()
+            return [EmptyCard()]
         move = self.cards[self.index]
         self.index += 1
-        return move
+        return [move]
 
     def newRace(self):
         self.index = 0

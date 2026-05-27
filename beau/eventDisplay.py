@@ -15,8 +15,17 @@ class EventTester(VisualTester):
         appearances.register(blue, "Rouleur", rouleurShade, "blue")
         appearances.register(red, "Opportuniste", opportunisticShade, "red")
         display = EventDisplay(self.frame, appearances)
-        display.displayEvent(blue, "f")
-        display.displayEvent(red, "9magenta")
+        display.displayEvent(blue, [StubMove("f")])
+        display.displayEvent(red, [StubMove("9magenta"), StubMove("+2")])
+
+
+class StubMove:
+    def __init__(self, label):
+        self._label = label
+    def label(self):
+        return self._label
+    def energy(self):
+        return 0
 
 class EventDisplay:
     def __init__(self, window, appearances):
@@ -36,27 +45,33 @@ class EventDisplay:
 
         self.current = None
 
-    def displayEvent(self, rider, card):
+    def displayEvent(self, rider, moves):
         if self.current:
             self.updatePrevious(self.current[0], self.current[1])
-        self.updateCurrent(rider, card)
-        self.current = (rider, card)
+        self.updateCurrent(rider, moves)
+        self.current = (rider, moves)
 
-    def updatePrevious(self, rider, card):
+    def updatePrevious(self, rider, moves):
         appearance = self.appearances.of(rider)
         self.previousRider.config(text = appearance.shade, fg = appearance.color)
-        updateCardLabel(self.previousCard, card, appearance.color)
+        updateCardLabel(self.previousCard, moves, appearance.color)
 
-    def updateCurrent(self, rider, card):
+    def updateCurrent(self, rider, moves):
         appearance = self.appearances.of(rider)
         self.currentRider.config(text = appearance.name + " " + appearance.shade, fg = appearance.color)
-        updateCardLabel(self.currentCard, card, appearance.color)
+        updateCardLabel(self.currentCard, moves, appearance.color)
 
 
-def updateCardLabel(label, card, defaultColor):
-    cardLabel = card.label() if hasattr(card, "label") else card
+def updateCardLabel(label, moves, defaultColor):
+    cardLabel = labelOf(moves)
     niceCard = createBeautifulCard(cardLabel, defaultColor)
     label.config(text = niceCard.text, fg = niceCard.color, bg = niceCard.background)
+
+
+def labelOf(moves):
+    if isinstance(moves, list):
+        return " ".join(m.label() for m in moves)
+    return moves.label() if hasattr(moves, "label") else moves
 
 if __name__ == "__main__":
     runVisualTestsInWindow(EventTester)

@@ -8,8 +8,8 @@ class DicePropulsor:
     def __init__(self, moves):
         self.moves = [asMove(m) for m in moves]
 
-    def generateMove(self):
-        return random.choice(self.moves)
+    def generateMoves(self):
+        return [random.choice(self.moves)]
 
     def newRace(self):
         pass

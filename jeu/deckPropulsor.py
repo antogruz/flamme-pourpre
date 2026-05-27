@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from cards import Cards, FatigueCard, SimpleCard, TerminatingChoice, createCards
+from cards import Cards, Card, FatigueCard, SimpleCard, createCards
 
 
 class DeckPropulsor:
@@ -12,23 +12,29 @@ class DeckPropulsor:
     def addExtraChoice(self, provider):
         self.extras.append(provider)
 
-    def generateMove(self):
+    def generateMoves(self):
+        """Returns the list of Moves played this turn.
+
+        The list contains the played card first (or EmptyCard for empty
+        hand / skip), followed by each non-terminating choice's own Move
+        contribution, in pick order. Each Move exposes label() + energy();
+        the engine sums their energies, animations can iterate them.
+        """
         primary = list(self.cards.draw())
-        combining = []
+        picked = []
+        moves = []
         while True:
-            available = [e for e in self.extras if e.isAvailable() and e not in combining]
+            available = [e for e in self.extras if e.isAvailable() and e not in picked]
             choices = primary + available
             if not choices:
-                return EmptyCard()
+                return [EmptyCard()]
             index = self.pick([c.label() for c in choices], "Play a card")
             choice = choices[index]
-            if isinstance(choice, CombiningChoice):
-                combining.append(choice)
-                continue
-            labelAndEnergy = choice.onPlay(self.cards)
-            for c in reversed(combining):
-                labelAndEnergy = c.combine(labelAndEnergy, self)
-            return labelAndEnergy
+            move = choice.onPlay(self.cards)
+            if choice.doesEndTurn():
+                return [move] + moves
+            picked.append(choice)
+            moves.append(move)
 
     def newRace(self):
         self.cards.newRace()
@@ -44,45 +50,29 @@ class DeckPropulsor:
     def exhaust(self):
         self.cards.discard.append(FatigueCard())
 
-class EmptyCard:
+class EmptyCard(Card):
+    """Fallback card returned by the propulsor when the hand is empty."""
     def label(self):
         return ""
 
     def energy(self):
         return 2
 
+    def isAvailable(self):
+        return True
 
-class CombiningChoice:
-    """A choice that stacks on top of a TerminatingChoice to modify the move.
+    def newRace(self):
+        pass
 
-    Combining choices are picked one after another; the propulsor keeps
-    offering choices until a TerminatingChoice is picked. Then each
-    combining choice's combine(labelAndEnergy, propulsor) runs in reverse
-    pick order (last picked first applied) on the terminating choice's
-    result.
+    def onPlay(self, cards):
+        return self
 
-    Both `label()` and `energy()` of the returned object can be modified:
-    energy is what the engine uses to move the rider, label is what the UI
-    can display (animations, played-card history, etc.).
-
-    Typical examples: Boost (adds a bonus to the played card), Accélération
-    en col (sets a flag bypassing the mountain limit).
-    """
-    def label(self): pass
-    def isAvailable(self): pass
-    def newRace(self): pass
-    def combine(self, labelAndEnergy, propulsor):
-        """Modify the move (label + energy) produced by a previous choice.
-
-        Returns an object exposing label() and energy() — typically a
-        decorator that wraps the previous one (see BoostedCard,
-        MultipliedCard for reference patterns).
-        """
-        return labelAndEnergy
+    def doesEndTurn(self):
+        return True
 
 
 from unittests import assert_equals, runTests, assert_similars
-class TerminatingChoiceExample(TerminatingChoice):
+class TerminatingExample(Card):
     def __init__(self, energy):
         self._energy = energy
 
@@ -102,30 +92,19 @@ class TerminatingChoiceExample(TerminatingChoice):
     def energy(self):
         return self._energy
 
+    def doesEndTurn(self):
+        return True
 
-class CombiningChoiceExample(CombiningChoice):
+
+class CombiningExample(Card):
     def __init__(self, bonus):
         self.bonus = bonus
 
     def label(self):
         return f"+{self.bonus}"
 
-    def isAvailable(self):
-        return True
-
-    def newRace(self):
-        pass
-
-    def combine(self, value, propulsor):
-        return BoostedCard(value, self.bonus)
-
-
-class MultiplyingChoiceExample(CombiningChoice):
-    def __init__(self, factor):
-        self.factor = factor
-
-    def label(self):
-        return f"x{self.factor}"
+    def energy(self):
+        return self.bonus
 
     def isAvailable(self):
         return True
@@ -133,80 +112,63 @@ class MultiplyingChoiceExample(CombiningChoice):
     def newRace(self):
         pass
 
-    def combine(self, value, propulsor):
-        return MultipliedCard(value, self.factor)
+    def onPlay(self, cards):
+        return self
 
-
-class BoostedCard:
-    def __init__(self, base, bonus):
-        self.base = base
-        self.bonus = bonus
-
-    def label(self):
-        return f"{self.base.label()}+{self.bonus}"
-
-    def energy(self):
-        return self.base.energy() + self.bonus
-
-
-class MultipliedCard:
-    def __init__(self, base, factor):
-        self.base = base
-        self.factor = factor
-
-    def label(self):
-        return f"{self.base.label()}x{self.factor}"
-
-    def energy(self):
-        return self.base.energy() * self.factor
+    def doesEndTurn(self):
+        return False
 
 
 class DeckPropulsorTest:
     def testPlayFirstCard(self):
         cards = Cards(createCards([9, 3, "f", 5]))
         propulsor = DeckPropulsor(cards, ChoiceDoer(0))
-        assert_equals(9, propulsor.generateMove().energy())
-        assert_equals(3, propulsor.generateMove().energy())
-        assert_equals(2, propulsor.generateMove().energy())  # fatigue
-        assert_equals(5, propulsor.generateMove().energy())
-        assert_equals(2, propulsor.generateMove().energy())  # empty hand default
+        assert_equals([9], energies(propulsor.generateMoves()))
+        assert_equals([3], energies(propulsor.generateMoves()))
+        assert_equals([2], energies(propulsor.generateMoves()))  # fatigue
+        assert_equals([5], energies(propulsor.generateMoves()))
+        assert_equals([2], energies(propulsor.generateMoves()))  # empty hand default
 
     def testPlayTerminatingExtra(self):
         cards = Cards(createCards([9, 3, "f", 5]))
         propulsor = DeckPropulsor(cards, ChoiceDoer(4))
-        propulsor.addExtraChoice(TerminatingChoiceExample(8))
-        assert_equals(8, propulsor.generateMove().energy())
+        propulsor.addExtraChoice(TerminatingExample(8))
+        assert_equals([8], energies(propulsor.generateMoves()))
 
     def testCombiningExtraStacksOnCard(self):
         cards = Cards(createCards([5, 5, 5, 5]))
         propulsor = DeckPropulsor(cards, ChoiceDoer(4))
-        propulsor.addExtraChoice(CombiningChoiceExample(2))
-        assert_equals(7, propulsor.generateMove().energy())
+        propulsor.addExtraChoice(CombiningExample(2))
+        moves = propulsor.generateMoves()
+        assert_equals([5, 2], energies(moves))
+        assert_equals(["5", "+2"], labels(moves))
 
     def testCombiningExtraStacksOnTerminatingExtra(self):
         cards = Cards([])
         propulsor = DeckPropulsor(cards, ChoiceDoer(0))
-        propulsor.addExtraChoice(CombiningChoiceExample(3))
-        propulsor.addExtraChoice(TerminatingChoiceExample(10))
-        assert_equals(13, propulsor.generateMove().energy())
+        propulsor.addExtraChoice(CombiningExample(3))
+        propulsor.addExtraChoice(TerminatingExample(10))
+        moves = propulsor.generateMoves()
+        assert_equals([10, 3], energies(moves))
 
-    def testCombiningExtrasAppliedInReverseOrder(self):
+    def testCombiningExtrasInPickOrder(self):
         cards = Cards(createCards([4, 4, 4, 4]))
         propulsor = DeckPropulsor(cards, ChoiceDoer(4))
-        propulsor.addExtraChoice(CombiningChoiceExample(1))
-        propulsor.addExtraChoice(MultiplyingChoiceExample(2))
-        # Pick order: Add(1) then Mul(2) then Card(4).
-        # Reverse application: Mul first, then Add → (4 * 2) + 1 = 9.
-        move = propulsor.generateMove()
-        assert_equals(9, move.energy())
-        assert_equals("4x2+1", move.label())
+        propulsor.addExtraChoice(CombiningExample(1))
+        propulsor.addExtraChoice(CombiningExample(2))
+        # Pick order: +1, then +2 (now first in extras list), then Card(4).
+        # The list reflects all moves of the turn.
+        moves = propulsor.generateMoves()
+        # Terminating card comes first, then combining cards in pick order.
+        assert_equals(["4", "+1", "+2"], labels(moves))
+        assert_equals(7, sum(m.energy() for m in moves))
 
     def testEmptyHandReturnsEmptyCard(self):
         cards = Cards([])
         propulsor = DeckPropulsor(cards, ChoiceDoer(0))
-        move = propulsor.generateMove()
-        assert_equals("", move.label())
-        assert_equals(2, move.energy())
+        moves = propulsor.generateMoves()
+        assert_equals([""], labels(moves))
+        assert_equals([2], energies(moves))
 
     def testExhaustPushesFatigueCard(self):
         cards = Cards(createCards([5]))
@@ -214,6 +176,13 @@ class DeckPropulsorTest:
         propulsor.exhaust()
         assert_equals(1, len(cards.discard))
         assert_equals("f", cards.discard[0].label())
+
+
+def labels(moves):
+    return [m.label() for m in moves]
+
+def energies(moves):
+    return [m.energy() for m in moves]
 
 
 class ChoiceDoer():

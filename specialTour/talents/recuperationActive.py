@@ -15,7 +15,7 @@ class RecuperationActive(Talent, RaceObserver):
     def onRaceStart(self, track):
         self.track = track
 
-    def onRiderMove(self, rider, start, end, obstacles, move):
+    def onRiderMove(self, rider, start, end, obstacles, moves):
         if rider.personnage is not self.personnage:
             return
         if self.track.getRoadType(start[0]) == "refuel":

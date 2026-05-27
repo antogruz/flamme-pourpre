@@ -9,7 +9,7 @@ class SequentialPropulsion():
         ridersToPick = list(riders)
         while (ridersToPick):
             rider = self.pickRider(ridersToPick)
-            moves[rider] = rider.personnage.propulsor.generateMove()
+            moves[rider] = rider.personnage.propulsor.generateMoves()
         return moves
 
     def pickRider(self, riders):
@@ -20,4 +20,4 @@ class SequentialPropulsion():
 
 class SimpleTeamPropulsion():
     def pickNextMoves(self, riders):
-        return {r: r.personnage.propulsor.generateMove() for r in riders}
+        return {r: r.personnage.propulsor.generateMoves() for r in riders}

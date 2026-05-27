@@ -1,5 +1,5 @@
 from talent import Talent
-from deckPropulsor import CombiningChoice, BoostedCard
+from cards import Card
 
 
 class Boost(Talent):
@@ -14,21 +14,27 @@ class Boost(Talent):
         return f"Boost : {self.uses} fois par course, ajoutez {self.bonus} à l'énergie d'une carte jouée."
 
 
-class BoostChoice(CombiningChoice):
+class BoostChoice(Card):
     def __init__(self, bonus, uses):
         self.bonus = bonus
         self.uses = uses
         self.remainingUses = uses
 
     def label(self):
-        return f"Boost +{self.bonus}"
+        return f"+{self.bonus}"
+
+    def energy(self):
+        return self.bonus
 
     def isAvailable(self):
         return self.remainingUses > 0
 
-    def combine(self, move, propulsor):
+    def onPlay(self, cards):
         self.remainingUses -= 1
-        return BoostedCard(move, self.bonus)
+        return self
+
+    def doesEndTurn(self):
+        return False
 
     def newRace(self):
         self.remainingUses = self.uses
