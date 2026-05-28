@@ -389,6 +389,17 @@ class SlipstremingTester():
         assert_equals((5, 0), self.others[0].position())
         assert_equals((6, 0), self.others[1].position())
 
+    def testSlipstreamOrderByGroupWithSeveralRules(self):
+        self.track = Track([(1, "ascent"), (10, "descent")])
+        self.rider = createRider(2, 0)
+        self.addRider(0)
+        self.addRider(4)
+        self.rider.personnage.team = Team([self.rider.personnage, self.others[0].personnage])
+        self.rider.personnage.gainTalent(ColsEnEquipe())
+        self.slipstream()
+        assert_equals((2, 0), self.others[0].position())
+        assert_equals((3, 0), self.rider.position())
+
 
 from riderBuilder import RiderBuilder
 def createRider(square, lane):
