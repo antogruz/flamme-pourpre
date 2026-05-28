@@ -29,8 +29,11 @@ def run(ui):
     (menu, displays, ...) disposent du contexte graphique initialisé."""
     menu = ui.menu()
     gameMode = menu.choose(["Tour", "Special Tour"], "Game mode")
-    racesCount = menu.choose(list(range(1, 6)), "How many races to play?")
     ridersCount = menu.choose([1, 2, 3, 4], "How many riders in your team?")
+    if gameMode == "Special Tour":
+        racesCount = 2 * ridersCount + 2
+    else:
+        racesCount = menu.choose(list(range(1, 6)), "How many races to play?")
 
     displays = ui.displays()
     director = ui.playerRidersDirector(ridersCount, displays)
