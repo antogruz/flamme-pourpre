@@ -1,6 +1,5 @@
 from jeu.race import RaceObserver
 from jeu.talent import Talent
-from jeu.cards import SimpleCard
 
 class RecuperationActive(Talent, RaceObserver):
     def displayRule(self):
@@ -31,19 +30,10 @@ class RecuperationActive(Talent, RaceObserver):
             return
         choice = propulsor.oracle.pick([c.label() for c in eligibleCards], "Choose a card to increment")
         card = eligibleCards[choice]
-        incremented = SimpleCard(card.energy() + 1)
-        replaceCard(propulsor.cards.discard, card, incremented)
-        self.history.append((card, incremented))
+        self.history.append((card, card.energy()))
+        card.setEnergy(card.energy() + 1)
 
     def modifyCards(self, cards):
-        for card, incrementedCard in self.history:
-            for list in [cards.played, cards.deck]:
-                if incrementedCard in list:
-                    list.remove(incrementedCard)
-                    list.append(card)
-                    break
+        for card, originalEnergy in self.history:
+            card.setEnergy(originalEnergy)
         self.history = []
-
-def replaceCard(list, before, after):
-    list.remove(before)
-    list.append(after)

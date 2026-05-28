@@ -20,6 +20,7 @@ from recuperationActive import RecuperationActive
 from imblocableClimber import ImblocableClimber
 from accelerationEnCol import AccelerationEnCol
 from boost import Boost
+from recuperation import Recuperation
 
 
 def labels(cards):
@@ -34,12 +35,13 @@ class TalentsInRaceTest():
         self.track = Track([(30, "normal")])
         self.preparedTeams = [[], []]
         self.teamsInRace = []
+        self.heroTalents = []
 
     def createHero(self, cards, talent, position = (0, 0)):
         rb = RiderBuilder()
         rb.buildPropulsor(DrawOnePropulsor(cards, shuffle=noop))
         self.hero = rb.getResult()
-        self.hero.gainTalent(talent)
+        self.heroTalents.append(talent)
         self.hero.position = position
         self.preparedTeams[0].append(self.hero)
 
@@ -49,9 +51,12 @@ class TalentsInRaceTest():
         rb.buildOracle(self.oracle)
         rb.buildDeck(deck, shuffle=noop)
         self.hero = rb.getResult()
-        self.hero.gainTalent(talent)
+        self.heroTalents.append(talent)
         self.hero.position = position
         self.preparedTeams[0].append(self.hero)
+
+    def addHeroTalent(self, talent):
+        self.heroTalents.append(talent)
 
     def getMainRider(self):
         return self.teamsInRace[0].ridersInRace[0]
@@ -76,6 +81,8 @@ class TalentsInRaceTest():
             self.teamsInRace.append(teamInRace)
             for rider in team:
                 teamInRace.placeNextRider(rider.position[0], rider.position[1])
+        for talent in self.heroTalents:
+            self.hero.gainTalent(talent)
         self.race = Race(self.track, self.teamsInRace)
 
     def testEffortLong(self):
@@ -130,7 +137,7 @@ class TalentsInRaceTest():
 
     def testEffortLongAndPoursuivantStack(self):
         self.createHero(["f"], EffortLong())
-        self.hero.gainTalent(Poursuivant())
+        self.addHeroTalent(Poursuivant())
         self.addMinion((10, 0))
         self.createRace()
         self.race.newTurn()
@@ -325,6 +332,19 @@ class TalentsInRaceTest():
         self.race.newTurn()
         assert_equals(4, self.getMainRider().square)
 
+    def testRecuperation(self):
+        self.createDeckHero([2] * 20, 0, Recuperation())
+        self.createRace()
+        self.race.newTurn()
+        self.race.newTurn()
+        assert_equals(7, self.getMainRider().personnage.propulsor.cards.discardCount())
+
+    def testRecuperationOnExhaustCard(self):
+        self.createDeckHero(["f"] * 20, 0, Recuperation())
+        self.createRace()
+        self.race.newTurn()
+        self.race.newTurn()
+        assert_equals(6, self.getMainRider().personnage.propulsor.cards.discardCount())
 
 class ChoiceDoer:
     def __init__(self, value):

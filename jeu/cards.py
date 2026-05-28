@@ -132,6 +132,13 @@ class SimpleCard(Card):
     def energy(self):
         return self.number
 
+    def setEnergy(self, value):
+        """Mutate the card's energy in place. Talents that increment/decrement
+        a card should call this rather than swapping the card with a new one,
+        so that other systems holding a reference to the card stay in sync.
+        """
+        self.number = value
+
     def isAvailable(self):
         return True
 

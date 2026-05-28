@@ -6,6 +6,8 @@ class Team:
         self.propulsor = propulsor
         self.oracle = oracle
         self.progression = progression
+        for rider in riders:
+            rider.team = self
 
 
 class TeamProgression:

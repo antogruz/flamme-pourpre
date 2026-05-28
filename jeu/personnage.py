@@ -7,15 +7,22 @@ class Personnage():
         self.energyRules = energyRules
         self.bonusRules = []
         self.slipstreamRules = []
+        self.groupSlipstreamRules = []
         self.playOrderRules = []
         self.obstacleFactories = []
         self.talents = []
         self.raceObservers = []
         self.profile = None
+        self.team = None
 
     def gainTalent(self, talent):
         self.talents.append(talent)
         talent.applyTo(self)
+
+    def teammates(self):
+        if not self.team:
+            return []
+        return [r for r in self.team.riders if r is not self]
 
     def addRaceObserver(self, observer):
         self.raceObservers.append(observer)
@@ -25,6 +32,9 @@ class Personnage():
 
     def addSlipstreamRule(self, rule):
         self.slipstreamRules.append(rule)
+
+    def addGroupSlipstreamRule(self, rule):
+        self.groupSlipstreamRules.append(rule)
 
     def addPlayOrderRule(self, rule):
         self.playOrderRules.append(rule)

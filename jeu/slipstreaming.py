@@ -15,6 +15,7 @@ def slipstreaming(riders, track, observers = None, obstacles = None):
     if obstacles is None:
         obstacles = obstaclesFromRiders(riders)
     applyPersonalRules(riders, track, observers, obstacles)
+    applyGroupRules(riders, track, observers, obstacles)
     candidates = tailToHead(riders)
     while candidates:
         group, others = splitByGroupBehind(candidates)
@@ -73,6 +74,16 @@ def applyPersonalRules(riders, track, observers, obstacles):
                     observer.onSlipstream([(rider, origin, rider.position())])
 
 
+def applyGroupRules(riders, track, observers, obstacles):
+    rules = []
+    for rider in riders:
+        for rule in rider.personnage.groupSlipstreamRules:
+            if rule not in rules:
+                rules.append(rule)
+    for rule in rules:
+        rule.apply(riders, track, observers, obstacles)
+
+
 class SlipstreamRule:
     """Interface for personal slipstreaming rules.
 
@@ -85,6 +96,23 @@ class SlipstreamRule:
         pass
 
 
+class GroupSlipstreamRule:
+    """Interface for group-level slipstreaming rules.
+
+    Implement this to add a custom slipstream pass that operates across multiple
+    riders (typically an affinity group like a team). Runs between personal rules
+    and the standard iterative slipstream loop. The rule is responsible for its
+    own fixed-point iteration if chaining is desired.
+    """
+    def apply(self, riders, track, observers, obstacles):
+        """Apply this rule on the race state.
+
+        May move riders by calling `rider.earnSquares(...)`, and should notify
+        each observer via `observer.onSlipstream([(rider, origin, end)])`.
+        """
+        pass
+
+from specialTour.talents.colsEnEquipe import ColsEnEquipe
 from specialTour.talents.remonteeDePeloton import RemonteeDePeloton
 from specialTour.talents.inlarguable import Inlarguable
 from unittests import assert_equals, runTests
@@ -290,10 +318,86 @@ class SlipstremingTester():
         self.slipstream()
         self.assertPosition(2)
 
+    def testColsEnEquipe(self):
+        self.track = Track([(10, "ascent")])
+        self.rider.personnage.gainTalent(ColsEnEquipe())
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(1)
+
+    def testColsEnEquipeSolo(self):
+        self.track = Track([(10, "ascent")])
+        self.rider.personnage.gainTalent(ColsEnEquipe())
+        self.slipstream()
+        self.assertPosition(0)
+
+    def testColsEnEquipeWithOtherRidersInFront(self):
+        self.track = Track([(10, "ascent")])
+        self.rider.personnage.gainTalent(ColsEnEquipe())
+        self.addRider(1)
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(0)
+
+    def testColsEnEquipeDoesNotWorkOnStoneRoads(self):
+        self.track = Track([(10, "stone")])
+        self.rider.personnage.gainTalent(ColsEnEquipe())
+        self.addRider(2)
+        self.slipstream()
+        self.assertPosition(0)
+
+    def testColsEnEquipeAllowTeammatesToGetSlipstreamed(self):
+        self.track = Track([(10, "ascent")])
+        self.rider = createRider(2, 0)
+        self.addRider(0)
+        self.rider.personnage.team = Team([self.rider.personnage, self.others[0].personnage])
+        self.rider.personnage.gainTalent(ColsEnEquipe())
+        self.slipstream()
+        assert_equals((1, 0), self.others[0].position())
+
+    def testColsEnEquipeAllowsAllTeammatesToGetSlipstreamed(self):
+        self.track = Track([(10, "ascent")])
+        self.rider = createRider(3, 0)
+        self.addRider(0)
+        self.addRider(1)
+        self.rider.personnage.team = Team([self.rider.personnage, self.others[0].personnage, self.others[1].personnage])
+        self.rider.personnage.gainTalent(ColsEnEquipe())
+        self.slipstream()
+        assert_equals((1, 0), self.others[0].position())
+        assert_equals((2, 0), self.others[1].position())
+
+    def testColsEnEquipeTeammatesAreSlipstreamedWithGrimpeur(self):
+        self.track = Track([(10, "ascent")])
+        self.rider = createRider(3, 0)
+        self.addRider(1)
+        self.addRider(5)
+        self.rider.personnage.team = Team([self.rider.personnage, self.others[0].personnage])
+        self.rider.personnage.gainTalent(ColsEnEquipe())
+        self.slipstream()
+        assert_equals((3, 0), self.others[0].position())
+        assert_equals((4, 0), self.rider.position())
+
+    def testMultipleSlipstreamingsRulesIdealResolution(self):
+        self.track = Track([(6, "normal"), (6, "ascent"), (6, "descent")])
+        self.rider = createRider(7, 0)
+        self.addRider(2)
+        self.addRider(5)
+        self.rider.personnage.team = Team([self.rider.personnage, self.others[0].personnage, self.others[1].personnage])
+        self.rider.personnage.gainTalent(ColsEnEquipe())
+        self.others[0].personnage.gainTalent(Inlarguable())
+        self.slipstream()
+        assert_equals((5, 0), self.others[0].position())
+        assert_equals((6, 0), self.others[1].position())
+
+
 from riderBuilder import RiderBuilder
 def createRider(square, lane):
     rb = RiderBuilder()
     return RiderInRace(rb.getResult(), square, lane)
+
+class Team:
+    def __init__(self, riders):
+        self.riders = riders
 
 class Logger():
     def __init__(self):
