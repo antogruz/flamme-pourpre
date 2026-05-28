@@ -10,7 +10,7 @@ from teamBuilder import TeamBuilder
 from propulsion import SimpleTeamPropulsion
 from dicePropulsor import DicePropulsor
 from personnage import Personnage
-from riderMove import MovementRules
+from riderMove import StandardMovementRules
 from energyRules import EnergyRules
 from engineRunner import EngineRunner
 from displayBinder import DisplayBinder
@@ -26,7 +26,7 @@ def makeBotTeam():
 
 
 def makeDiceRider():
-    return Personnage(MovementRules(), DicePropulsor([3, 4, 5, 6, 7, 8]), EnergyRules())
+    return Personnage(StandardMovementRules(), DicePropulsor([3, 4, 5, 6, 7, 8]), EnergyRules())
 
 
 def main():

@@ -15,7 +15,7 @@
 # dans jeu/ introduirait jeu/ → specialTour/.
 
 from jeu.riderBuilder import RiderBuilder
-from jeu.riderMove import MovementRules
+from jeu.riderMove import StandardMovementRules
 from jeu.dicePropulsor import DicePropulsor
 from jeu.drawOnePropulsor import DrawOnePropulsor
 from specialTour.profiles.personnagesProfiles import rouleurStandardProfile, sprinteurStandardProfile
@@ -23,7 +23,7 @@ from specialTour.profiles.personnagesProfiles import rouleurStandardProfile, spr
 class RidersDirector:
     def makeRouleur(self, oracle):
         builder = RiderBuilder()
-        builder.buildMovementRules(MovementRules())
+        builder.buildMovementRules(StandardMovementRules())
         builder.buildOracle(oracle)
         builder.buildDeck(rouleurDeck())
         rider = builder.getResult()
@@ -32,7 +32,7 @@ class RidersDirector:
 
     def makeSprinteur(self, oracle):
         builder = RiderBuilder()
-        builder.buildMovementRules(MovementRules())
+        builder.buildMovementRules(StandardMovementRules())
         builder.buildOracle(oracle)
         builder.buildDeck(sprinteurDeck())
         rider = builder.getResult()
@@ -41,39 +41,39 @@ class RidersDirector:
 
     def makeGrimpeur(self, oracle):
         builder = RiderBuilder()
-        builder.buildMovementRules(MovementRules())
+        builder.buildMovementRules(StandardMovementRules())
         builder.buildOracle(oracle)
         builder.buildDeck(grimpeurDeck())
         return builder.getResult()
 
     def makeOpportunistic(self, oracle, sets = ["goldenrod", "magenta"]):
         builder = RiderBuilder()
-        builder.buildMovementRules(MovementRules())
+        builder.buildMovementRules(StandardMovementRules())
         builder.buildOracle(oracle)
         builder.buildOpportunisticDeck([2, 3, 4, 5, 9], sets)
         return builder.getResult()
 
     def makeDiceRider(self):
         builder = RiderBuilder()
-        builder.buildMovementRules(MovementRules())
+        builder.buildMovementRules(StandardMovementRules())
         builder.buildPropulsor(DicePropulsor([3, 4, 5, 6, 7, 8]))
         return builder.getResult()
 
     def makeDiceSprinteur(self):
         builder = RiderBuilder()
-        builder.buildMovementRules(MovementRules())
+        builder.buildMovementRules(StandardMovementRules())
         builder.buildPropulsor(DicePropulsor([2, 3, 4, 5, 6, 10]))
         return builder.getResult()
 
     def makeMuscleRouleur(self):
         builder = RiderBuilder()
-        builder.buildMovementRules(MovementRules())
+        builder.buildMovementRules(StandardMovementRules())
         builder.buildPropulsor(DrawOnePropulsor(rouleurDeck()))
         return builder.getResult()
 
     def makeMuscleSprinteur(self):
         builder = RiderBuilder()
-        builder.buildMovementRules(MovementRules())
+        builder.buildMovementRules(StandardMovementRules())
         builder.buildPropulsor(DrawOnePropulsor(sprinteurDeck() + [5]))
         return builder.getResult()
 

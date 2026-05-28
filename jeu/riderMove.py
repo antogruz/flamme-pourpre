@@ -2,12 +2,32 @@
 
 from track import streamable, Track
 
-# Cette classe regroupe les méthodes permettant à un coureur de se déplacer sur un circuit.
-# Elle est responsable de toutes les règles de déplacement (terrain, aspiration).
-# Elle doit être modifiée si les règles de déplacement changent, et les instances doivent être modifiées si un coureur ne suit plus les règles de déplacement de base (aspiré en montagne, avance de 6 en descente, peut dépasser les coureurs, etc.
-# On a séparé la responsabilité de donner la position avec celle de connaitre les règles de déplacement. Finalement, ce sont deux choses différentes. Les mouvements du rider peuvent dépendre des règles du jeu spécifiques à chaque coureur. Et pour les mettre en oeuvre, on a besoin d'une entité sur laquelle modifier la position
+# Ce module définit comment un coureur se déplace sur un circuit en fonction de
+# l'énergie d'une carte, du terrain et des obstacles. L'interface MovementRules
+# décrit le contrat consommé par RiderInRace ; StandardMovementRules en fournit
+# l'implémentation par défaut (terrain, plafond montagne, etc.). Les talents
+# peuvent décorer ou remplacer cette implémentation pour modifier les règles
+# (bypass de la montagne, bonus en descente, etc.).
 
-class MovementRules():
+
+class MovementRules:
+    """Interface pour les règles de déplacement d'un coureur.
+
+    Une implémentation calcule, pour une carte d'énergie donnée et un état de
+    course (position, terrain, obstacles), la nouvelle position du coureur.
+    Les talents peuvent fournir un décorateur ou une implémentation alternative,
+    en se reposant éventuellement sur une instance existante.
+    """
+    def computeNewPosition(self, startingPosition, energy, track, obstacles):
+        """Calcule et retourne la nouvelle position `(square, lane)` du coureur."""
+        pass
+
+    def findAvailableSlot(self, obstacles, startingPosition, distance, track):
+        """Trouve la case libre la plus avancée à `distance` cases de `startingPosition`."""
+        pass
+
+
+class StandardMovementRules(MovementRules):
     def computeNewPosition(self, startingPosition, energy, track, obstacles):
         distance = self.adaptDistanceToRoadType(startingPosition[0], energy, track)
         return self.findAvailableSlot(obstacles, startingPosition, distance, track)
@@ -48,11 +68,11 @@ def containsAscent(track, start, end):
 
 from unittests import runTests, assert_equals
 
-class MovementRulesTest():
+class StandardMovementRulesTest():
     def __before__(self):
         self.race = Race()
         self.position = (0, 0)
-        self.movementRules = MovementRules()
+        self.movementRules = StandardMovementRules()
 
     def move(self, energy):
         return self.movementRules.computeNewPosition(self.position, energy, self.race.track, self.race)
@@ -132,4 +152,4 @@ class Race():
 
 
 if __name__ == "__main__":
-    runTests(MovementRulesTest())
+    runTests(StandardMovementRulesTest())

@@ -21,6 +21,7 @@ from imblocableClimber import ImblocableClimber
 from accelerationEnCol import AccelerationEnCol
 from boost import Boost
 from recuperation import Recuperation
+from descenteDeCol import DescenteDeCol
 
 
 def labels(cards):
@@ -345,6 +346,19 @@ class TalentsInRaceTest():
         self.race.newTurn()
         self.race.newTurn()
         assert_equals(6, self.getMainRider().personnage.propulsor.cards.discardCount())
+
+    def testDescenteDeCol(self):
+        self.track = Track([(5, "normal"), (20, "descent"), (10, "ascent")])
+        self.createHero([6, 2, 7, 7], DescenteDeCol())
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(6, self.getMainRider().square)
+        self.race.newTurn()
+        assert_equals(12, self.getMainRider().square)
+        self.race.newTurn()
+        assert_equals(21, self.getMainRider().square)
+        self.race.newTurn()
+        assert_equals(26, self.getMainRider().square)
 
 class ChoiceDoer:
     def __init__(self, value):

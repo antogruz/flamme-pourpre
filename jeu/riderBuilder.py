@@ -7,14 +7,14 @@ from dicePropulsor import DicePropulsor
 from personnage import Personnage
 from opportunistic import createOpportunisticCards
 from energyRules import EnergyRules
-from riderMove import MovementRules
+from riderMove import StandardMovementRules
 
 class RiderBuilder:
     def __init__(self):
         self.oracle = None
         self.cards = None
         self.propulsor = None
-        self.movementRules = MovementRules()
+        self.movementRules = StandardMovementRules()
         self.energyRules = EnergyRules()
 
     def buildEnergyRules(self, energyRules):
