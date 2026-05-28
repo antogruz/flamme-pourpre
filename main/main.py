@@ -12,7 +12,7 @@
 
 from tour import Tour
 from teamBuilder import TeamBuilder
-from tracks import randomPresetTrack
+from tracks import randomDistinctTracks
 from propulsion import SequentialPropulsion
 from specialTour.teamProgression import TalentTeamProgression
 from engineRunner import EngineRunner
@@ -40,7 +40,7 @@ def run(ui):
     botTeams = _buildBotTeams(menu, ui.botsTeamsDirector())
 
     tour = Tour([humanTeam] + botTeams)
-    tracks = [randomPresetTrack for _ in range(racesCount)]
+    tracks = randomDistinctTracks(ridersCount, racesCount)
     animations = ui.animations(displays)
     runner = EngineRunner(displays, animations)
     bonusPerRace = 2 if gameMode == "Special Tour" else 0

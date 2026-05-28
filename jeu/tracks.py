@@ -56,6 +56,13 @@ def allTracksBuilders():
     return [corsoPaseo, colDuBallon, hauteMontagne, classicissima, rondeVanWevelgem, firenzeMilano, stage7, stage8, stage9, stage10, stage11, stage12]
 
 import random
+def randomDistinctTracks(playersCount, count):
+    pool = list(allTracksBuilders())
+    random.shuffle(pool)
+    if count <= len(pool):
+        return pool[:count]
+    return pool + random.choices(pool, k=count - len(pool))
+
 def randomPresetTrack(playersCount):
     return random.choice(allTracksBuilders())(playersCount)
 
