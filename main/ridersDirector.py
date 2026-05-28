@@ -18,7 +18,7 @@ from jeu.riderBuilder import RiderBuilder
 from jeu.riderMove import StandardMovementRules
 from jeu.dicePropulsor import DicePropulsor
 from jeu.drawOnePropulsor import DrawOnePropulsor
-from specialTour.profiles.personnagesProfiles import rouleurStandardProfile, sprinteurStandardProfile
+from specialTour.profiles.personnagesProfiles import rouleurStandardProfile, sprinteurStandardProfile, grimpeurStandardProfile
 
 class RidersDirector:
     def makeRouleur(self, oracle):
@@ -44,7 +44,9 @@ class RidersDirector:
         builder.buildMovementRules(StandardMovementRules())
         builder.buildOracle(oracle)
         builder.buildDeck(grimpeurDeck())
-        return builder.getResult()
+        rider = builder.getResult()
+        rider.profile = grimpeurStandardProfile()
+        return rider
 
     def makeOpportunistic(self, oracle, sets = ["goldenrod", "magenta"]):
         builder = RiderBuilder()

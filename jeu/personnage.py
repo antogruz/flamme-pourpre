@@ -9,6 +9,7 @@ class Personnage():
         self.slipstreamRules = []
         self.groupSlipstreamRules = []
         self.playOrderRules = []
+        self.exhaustionRules = []
         self.obstacleFactories = []
         self.talents = []
         self.raceObservers = []
@@ -38,6 +39,9 @@ class Personnage():
 
     def addPlayOrderRule(self, rule):
         self.playOrderRules.append(rule)
+
+    def addExhaustionRule(self, rule):
+        self.exhaustionRules.append(rule)
 
     def addObstacleFactory(self, factory):
         self.obstacleFactories.append(factory)

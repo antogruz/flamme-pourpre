@@ -11,6 +11,12 @@ from specialTour.talents.superSprint import SuperSprint
 from specialTour.talents.sprintFinal import SprintFinal
 from specialTour.talents.recuperationActive import RecuperationActive
 from specialTour.talents.regularite import Regularite
+from specialTour.talents.accelerationEnCol import AccelerationEnCol
+from specialTour.talents.imblocableClimber import ImblocableClimber
+from specialTour.talents.colsEnEquipe import ColsEnEquipe
+from specialTour.talents.recuperation import Recuperation
+from specialTour.talents.descenteDeCol import DescenteDeCol
+from specialTour.talents.colsEnSolo import ColsEnSolo
 class PersonnageProfile:
     def __init__(self, name, tiers):
         self.name = name
@@ -41,4 +47,11 @@ def sprinteurStandardProfile():
     tiers = [
         [RemonteeDePeloton, Inlarguable, SeFaufiler],
         [SuperSprint, SprintFinal, RecuperationActive, Regularite]
+    ])
+
+def grimpeurStandardProfile():
+    return PersonnageProfile("Grimpeur Standard",
+    tiers = [
+        [AccelerationEnCol, ImblocableClimber, ColsEnEquipe],
+        [Recuperation, DescenteDeCol, ColsEnSolo]
     ])

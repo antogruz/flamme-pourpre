@@ -22,6 +22,7 @@ from accelerationEnCol import AccelerationEnCol
 from boost import Boost
 from recuperation import Recuperation
 from descenteDeCol import DescenteDeCol
+from colsEnSolo import ColsEnSolo
 
 
 def labels(cards):
@@ -359,6 +360,35 @@ class TalentsInRaceTest():
         assert_equals(21, self.getMainRider().square)
         self.race.newTurn()
         assert_equals(26, self.getMainRider().square)
+
+    def testColsEnSolo(self):
+        self.track = Track([(2, "normal"), (20, "ascent")])
+        self.createDeckHero([2] * 20, 0, ColsEnSolo())
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(2, self.getMainRider().square)
+        assert_equals(3, self.getMainRider().personnage.propulsor.cards.discardCount())
+
+    def testColsEnSoloDoesNothingOnFlat(self):
+        self.createDeckHero([2] * 20, 0, ColsEnSolo())
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(2, self.getMainRider().square)
+        assert_equals(4, self.getMainRider().personnage.propulsor.cards.discardCount())
+
+    def testColsEnSoloResetsAcrossTurns(self):
+        self.track = Track([(3, "normal"), (1, "ascent"), (30, "normal")])
+        self.createDeckHero([2] * 20, 0, ColsEnSolo())
+        self.createRace()
+        self.race.newTurn()
+        assert_equals(2, self.getMainRider().square)
+        assert_equals(4, self.getMainRider().personnage.propulsor.cards.discardCount())
+        self.race.newTurn()
+        assert_equals(4, self.getMainRider().square)
+        assert_equals(7, self.getMainRider().personnage.propulsor.cards.discardCount())
+        self.race.newTurn()
+        assert_equals(6, self.getMainRider().square)
+        assert_equals(11, self.getMainRider().personnage.propulsor.cards.discardCount())
 
 class ChoiceDoer:
     def __init__(self, value):
